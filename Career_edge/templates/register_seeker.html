@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Seeker Registration - Job Portal</title>
+    <style>
+        /* Overall page layout */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff; /* Light blue background */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+        }
+
+        /* Header styles */
+        header {
+            background-color: #ffffff; /* White background */
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            font-size: 24px;
+            margin-right: 20px;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-right: 10px;
+            background-color: #f0f8ff; /* Light blue background */
+            padding: 5px 10px; /* Adjust padding as needed */
+            border-radius: 5px; /* Rounded corners */
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .login-button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .login-button:hover {
+            background-color: #555;
+        }
+
+        /* Main section */
+        main {
+            flex: 1; /* Expand main section to fill remaining space */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        main section {
+            background-color: #fff; /* White background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 25%; /* Set width of the form */
+            text-align: center;
+            margin: 20px auto; /* Center the form horizontally */
+        }
+
+        form {
+            text-align: left; /* Align form elements to the left */
+        }
+
+        form label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        form input[type="text"],
+        form input[type="password"],
+        form button {
+            width: calc(100% - 22px); /* Adjusted width for borders */
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        form button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #555;
+        }
+
+        /* Logo Image */
+        .logo img {
+            width: 5rem; /* Adjust width as needed */
+            height: auto; /* Maintain aspect ratio */
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
+        
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="/static/images/logo.png" alt="Career Edge Logo">
+            <nav>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                </ul>
+            </nav>
+        </div>
+        <a href="{% url 'user_login' %}" class="login-button">Login</a>
+    </header>
+    
+    <main>
+        <section>
+            <h2 >Job Seeker Registration</h2>
+            <form method="post">
+                {% csrf_token %}
+                <label for="username">Username:</label><br>
+                <input type="text" id="username" name="username"><br><br>
+                <label for="password">Password:</label><br>
+                <input type="password" id="password" name="password"><br><br>
+                <button type="submit">Register</button>
+            </form>
+        </section>
+    </main>
+    
+</body>
+</html>
