@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Portal Home</title>
+    <style>
+        /* Overall page layout */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff; /* Light blue background */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+        }
+
+        /* Header styles */
+        header {
+            background-color: #ffffff; /* White background */
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            font-size: 24px;
+            margin-right: 20px;
+        }
+
+        .navigation ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .navigation ul li {
+            margin-right: 10px;
+            background-color: #f0f8ff; /* Light blue background */
+            padding: 5px 10px; /* Adjust padding as needed */
+            border-radius: 5px; /* Rounded corners */
+        }
+
+        .navigation ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .login-button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .login-button:hover {
+            background-color: #555;
+        }
+
+        /* Welcome message */
+        .welcome-message {
+            text-align: center; /* Align text to the center */
+            margin-top: 10px; /* Slightly up from the center */
+            margin-bottom: 20px; /* Add some space below */
+            font-size: 20px;
+            padding: 15px; /* Adjusted padding for a more compact box */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a box shadow */
+            width: 25%; /* Set width of the box */
+            margin-left: 20rem; /* Push box towards the left */
+            position: relative;
+            right:10rem;
+            font-weight: bolder;
+            top:10rem;
+        }
+
+        /* Registration links */
+        .registration-links {
+            text-align: center;
+            margin-top: 10px; /* Adjusted margin-top */
+        }
+
+        .registration-links a {
+            display: inline-block;
+            padding: 8px 16px; /* Adjusted padding for smaller buttons */
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 12px; /* Smaller font size for the links */
+            position: relative;
+            right: 21rem;
+            bottom:14rem;
+            top:10rem;
+        }
+
+        .registration-links a:hover {
+            background-color: #555;
+        }
+
+        /* Statement for users without an account */
+        .no-account-statement {
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+            position: relative;
+            right: 22rem;
+            bottom:7rem;
+            top:10rem;
+        }
+        .logo1{
+            width: 5rem;
+            height: 3rem;
+            margin-left: 2rem;
+            margin-right: 2rem;
+        }
+        .Homeimg {
+            position: relative;
+            left: 50rem; /* Adjust position as needed */
+            height: 40rem;
+            width: 30rem;
+            bottom: 15rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="/static/images/logo.png" alt="Welcome Image" class="logo1">
+
+            <nav class="navigation">
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                </ul>
+            </nav>
+        </div>
+        <a href="{% url 'user_login' %}" class="login-button">Login</a>
+    </header>
+
+    <!-- Welcome message -->
+    <div class="welcome-message">
+        <p>Welcome to Career Edge!</p>
+    </div>
+
+    <!-- Statement for users without an account -->
+    <div class="no-account-statement">
+        <p>If you don't have an account yet, register now:</p>
+    </div>
+
+    <!-- Registration links -->
+    <div class="registration-links">
+        <a href="{% url 'user_register_seeker' %}">Register as Job Seeker</a>
+        <a href="{% url 'user_register_provider' %}">Register as Job Provider</a>
+    </div>
+   
+        <img src="/static/images/Homeimg.png" alt="Welcome Image" class="Homeimg">
+    
+</body>
+</html>
