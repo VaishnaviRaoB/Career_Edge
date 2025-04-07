@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Job Listings</title>
+    <style>
+        /* Overall page layout */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff; /* Light blue background */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+        }
+
+        /* Header styles */
+        header {
+            background-color: #ffffff; /* White background */
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 6rem; /* Adjust size as needed */
+            margin-right: 3rem; /* Space between logo and text */
+            margin-left: 2rem;
+            height: 3rem;
+        }
+
+        .navigation ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            position: relative;
+            right:50rem;
+            top:.5rem;
+        }
+
+        .navigation ul li {
+            margin-right: 10px;
+            background-color: #f0f8ff; /* Light blue background */
+            padding: 5px 10px; /* Adjust padding as needed */
+            border-radius: 5px; /* Rounded corners */
+        }
+
+        .navigation ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .navigation ul li a:hover {
+            background-color: #555;
+            color: #fff; /* Change text color on hover */
+        }
+
+        /* Main content */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        ul li {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #fff; /* White background */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        ul li h3 {
+            margin-bottom: 10px;
+        }
+
+        ul li p {
+            color: #666; /* Gray text color */
+        }
+
+        ul li a.view-applications {
+            text-decoration: none;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            align-self: flex-start;
+            background-color: #333;
+        }
+
+        ul li a.view-applications:hover {
+            background-color: #555;
+        }
+
+        form {
+            display: inline;
+        }
+
+        form button.delete-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        form button.delete-btn:hover {
+            background-color: #555;
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #ffffff;
+            padding: 10px;
+            text-align: center;
+        }
+        .logo1{
+            width: 5rem;
+            height: 3rem;
+            margin-left: 2rem;
+            margin-right: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="/static/images/logo.png" alt="Logo">
+        </div>
+        <nav class="navigation">
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'about' %}">About Us</a></li>
+                <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                <li><a href="{% url 'user_logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <ul>
+            {% for job in jobs %}
+                <li>
+                    <h3>{{ job.title }}</h3>
+                    <p>{{ job.description }}</p>
+                    <a href="{% url 'view_job_applications' job.id %}" class="view-applications">View Applications</a>
+                    <form action="{% url 'delete_job' job.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this job listing?')">Delete</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    </main>
+    <footer>
+        <p>&copy; 2024 Job Portal. All rights reserved.</p>
+    </footer>
+</body>
+</html>
