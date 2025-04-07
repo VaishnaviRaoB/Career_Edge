@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Seeker Dashboard</title>
+    <style>
+        /* Overall page layout */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff; /* Light blue background */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header styles */
+        header {
+            background-color: #ffffff; /* White background */
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            font-size: 24px;
+            margin-right: 20px;
+            color: #333; /* Dark text color */
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-right: 10px;
+            background-color: #f0f8ff; /* Light blue background */
+            padding: 5px 10px; /* Adjust padding as needed */
+            border-radius: 5px; /* Rounded corners */
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        /* Main section */
+        main {
+            flex: 1; /* Expand main section to fill remaining space */
+            padding: 20px;
+            display: flex;
+            justify-content: center; /* Center content horizontally */
+            align-items: flex-start; /* Align items to the top */
+        }
+
+        main section {
+            background-color: #fff; /* White background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            max-width: 800px; /* Limit main section width */
+            width: 100%; /* Ensure full width on smaller screens */
+        }
+
+        main section h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        /* Job box styles */
+        .job-box {
+            background-color: #f0f0f0; /* Light gray background */
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer; /* Add cursor pointer to indicate clickable */
+            transition: background-color 0.3s ease; /* Smooth transition for background color change */
+            width: 50%; /* Ensure job boxes take full width of their container */
+        }
+
+        .job-box:hover {
+            background-color: #e0e0e0; /* Lighter gray background on hover */
+        }
+
+        .job-box h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #333; /* Dark text color */
+            cursor: pointer; /* Add cursor pointer to indicate clickable */
+        }
+
+        .job-box p {
+            margin-top: 0;
+            color: #666; /* Medium gray text color */
+        }
+
+        .job-box a {
+            display: inline-block;
+            padding: 8px 16px;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-top: 10px;
+            color: #333;
+        }
+        .btn{
+            background-color: #ccc;
+        }
+        .job-box a:hover {
+            background-color: #555;
+        }
+
+        /* Search bar styles */
+        .search-bar {
+            width: 100%;
+            max-width: 600px; /* Limit search bar width */
+            margin-bottom: 20px;
+            align-self: center; /* Center search bar horizontally */
+        }
+
+        .search-bar input[type="text"] {
+            width: calc(100% - 90px); /* Adjusted width for search input */
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .search-bar button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+            left: 35rem;
+            bottom: 2.5rem;
+        }
+
+        .search-bar button:hover {
+            background-color: #555;
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #ffffff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .logo1 {
+            width: 5rem;
+            height: 3rem;
+            margin-left: 2rem;
+            margin-right: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="/static/images/logo.png" alt="Welcome Image" class="logo1">
+            <nav>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                    <li><a href="{% url 'user_logout' %}">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <section>
+            <h2>Available Jobs</h2>
+            
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <form method="get" action="{% url 'search_jobs' %}">
+                    <input type="text" name="q" placeholder="Search jobs...">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+            
+            {% for job in jobs %}
+            <div class="job-box">
+                <h3><a href="{% url 'job_details' job.id %}">{{ job.title }}</a></h3>
+                <p>{{ job.description }}</p>
+                <a href="{% url 'apply_for_job' job.id %}" class="btn">Apply</a>
+            </div>
+            {% endfor %}
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Job Portal. All rights reserved.</p>
+    </footer>
+</body>
+</html>
