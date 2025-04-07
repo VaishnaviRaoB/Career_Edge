@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ job.title }}</title>
+    <style>
+        /* Add your styling for job details page here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff; /* Light blue background */
+            padding: 20px;
+        }
+
+        /* Header styles */
+        header {
+            background-color: #ffffff; /* White background */
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            font-size: 24px;
+            margin-right: 20px;
+        }
+
+        .navigation ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .navigation ul li {
+            margin-right: 10px;
+            background-color: #f0f8ff; /* Light blue background */
+            padding: 5px 10px; /* Adjust padding as needed */
+            border-radius: 5px; /* Rounded corners */
+        }
+
+        .navigation ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        /* Job details container */
+        .job-details {
+            background-color: #fff; /* White background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .job-details h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #333; /* Dark text color */
+        }
+
+        .job-details p {
+            margin-top: 0;
+            color: #666; /* Medium gray text color */
+        }
+
+        .job-details a {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .job-details a:hover {
+            background-color: #555;
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #ffffff;
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <span>Job Details</span>
+        </div>
+        <nav class="navigation">
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'about' %}">About Us</a></li>
+                <li><a href="{% url 'contact' %}">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="job-details">
+        <h2>{{ job.title }}</h2>
+        <p><strong>Description:</strong> {{ job.description }}</p>
+        <p><strong>Company:</strong> {{ job.company }}</p>
+        <p><strong>Location:</strong> {{ job.location }}</p>
+        <p><strong>Skills Required:</strong> {{ job.skills }}</p>
+        <p><strong>Salary Range:</strong> {{ job.salary }}</p>
+        <!-- Add more details as needed -->
+        <a href="{% url 'apply_for_job' job.id %}">Apply</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Job Portal. All rights reserved.</p>
+    </footer>
+</body>
+</html>
