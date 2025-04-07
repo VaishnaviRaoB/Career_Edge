@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Applications for {{ job.title }}</title>
+    <style>
+        /* Overall page layout */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff; /* Light blue background */
+        }
+
+        /* Header styles */
+        header {
+            background-color: #ffffff; /* White background */
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333; /* Dark text color */
+        }
+
+        /* Main content section */
+        main {
+            padding: 20px;
+            text-align: center;
+        }
+
+        main ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+            gap: 20px;
+            justify-items: center;
+        }
+
+        main ul li {
+            background-color: #fff; /* White background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        main ul li h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #333; /* Dark text color */
+        }
+
+        main ul li p {
+            margin: 5px 0;
+            color: #666; /* Gray text color */
+        }
+
+        main ul li .email-link {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        main ul li .email-link:hover {
+            background-color: #555;
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #ffffff;
+            padding: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        footer p {
+            margin: 0;
+            color: #666; /* Gray text color */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Job Applications for {{ job.title }}</h1>
+    </header>
+    <main>
+        <ul>
+            {% for application in applications %}
+                <li>
+                    <h3>Applicant: {{ application.applicant.username }}</h3>
+                    <p><strong>Name:</strong> {{ application.name }}</p>
+                    <p><strong>Skills:</strong> {{ application.skills }}</p>
+                    <p><strong>Qualification:</strong> {{ application.qualification }}</p>
+                    <p><strong>Email:</strong> {{ application.email }}</p>
+                    <p><strong>Phone:</strong> {{ application.phone }}</p>
+                    <a href="{{ application.resume.url }}" download="{{ application.resume.name }}"class="email-link">Download Resume</a><br>
+                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ application.email }}" target="_blank" class="email-link">Compose in Gmail</a>
+                </li>
+            {% empty %}
+                <li>No applications found for this job.</li>
+            {% endfor %}
+        </ul>
+    </main>
+</body>
+</html>
