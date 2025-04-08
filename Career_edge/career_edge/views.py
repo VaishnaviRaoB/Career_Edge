@@ -5,7 +5,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views import View
-
+from .models import UserProfile, JobSeeker, JobProvider
+import re
 # Home page view
 def home(request):
     return render(request, 'home.html')
@@ -38,38 +39,66 @@ def user_login(request):
     
     return render(request, 'login.html')
 
-# User registration view for seekers
+def validate_password(password):
+    return (
+        len(password) >= 8 and
+        re.search(r"\d", password) and
+        re.search(r"[!@#$%^&*]", password) and
+        re.search(r"[a-zA-Z]", password)
+    )
+
 def user_register_seeker(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        
-        user = User.objects.filter(username=username).first()
-        if user:
+
+        if not username or not password:
+            return render(request, 'register_seeker.html', {'error': 'All fields are required.'})
+
+        if not validate_password(password):
+            return render(request, 'register_seeker.html', {
+                'error': 'Password must be at least 8 characters long and include a letter, number, and special character.'
+            })
+
+        if User.objects.filter(username=username).exists():
             return render(request, 'register_seeker.html', {'error': 'Username already exists.'})
-        
+
         user = User.objects.create_user(username=username, password=password)
-        profile, created = UserProfile.objects.get_or_create(user=user, role='seeker')
-        
+        profile = UserProfile.objects.create(user=user, role='seeker')
+        JobSeeker.objects.create(
+    user_profile=profile,
+    full_name=username,  # default placeholder
+    skills='Not provided yet',   # default placeholder
+    experience_years=None        # okay to leave empty
+)
+
         return redirect('user_login')
-    
+
     return render(request, 'register_seeker.html')
 
-# User registration view for providers
+
 def user_register_provider(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        
-        user = User.objects.filter(username=username).first()
-        if user:
+
+        if not username or not password:
+            return render(request, 'register_provider.html', {'error': 'All fields are required.'})
+
+        if not validate_password(password):
+            return render(request, 'register_provider.html', {
+                'error': 'Password must be at least 8 characters long and include a letter, number, and special character.'
+            })
+
+        if User.objects.filter(username=username).exists():
             return render(request, 'register_provider.html', {'error': 'Username already exists.'})
-        
+
         user = User.objects.create_user(username=username, password=password)
-        profile, created = UserProfile.objects.get_or_create(user=user, role='provider')
-        
+        profile = UserProfile.objects.create(user=user, role='provider')
+        JobProvider.objects.create(user_profile=profile)
+
         return redirect('user_login')
-    
+
     return render(request, 'register_provider.html')
 
 # Seeker dashboard view

@@ -172,12 +172,18 @@
             <h2>Job Provider Registration</h2>
             <form method="post">
                 {% csrf_token %}
+                {% if error %}
+                    <p style="color:red;">{{ error }}</p>
+                {% endif %}
                 <label for="username">Username:</label><br>
                 <input type="text" id="username" name="username" required><br><br>
+            
                 <label for="password">Password:</label><br>
-                <input type="password" id="password" name="password" required><br><br>
+                <input type="password" id="password" name="password" required minlength="8" pattern="(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{8,}" title="Password must be at least 8 characters long and include a letter, number, and special character."><br><br>
+            
                 <button type="submit">Register</button>
             </form>
+            
         </section>
     </main>
     <footer>

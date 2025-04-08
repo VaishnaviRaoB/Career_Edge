@@ -8,12 +8,31 @@ class UserProfile(models.Model):
         ('seeker', 'Seeker'),
         ('provider', 'Provider'),
     )
-    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=USER_ROLES)
 
     def __str__(self):
         return f'{self.user.username} - {self.role}'
+
+
+class JobSeeker(models.Model):
+    user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=100)
+    experience_years = models.IntegerField(null=True, blank=True)
+    skills = models.TextField()
+
+    def __str__(self):
+        return self.full_name
+
+
+class JobProvider(models.Model):
+    user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
+    company_name = models.CharField(max_length=100)
+    company_description = models.TextField()
+    contact_email = models.EmailField()
+
+    def __str__(self):
+        return self.company_name
 class Job(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
