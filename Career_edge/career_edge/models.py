@@ -37,7 +37,7 @@ class JobProvider(models.Model):
 class Job(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
-    company = models.URLField(max_length=255, default='https://example.com')
+    company = models.URLField(max_length=255, blank=True, null=True)
     location = models.CharField(max_length=255)
     provider = models.ForeignKey(User, on_delete=models.CASCADE)
     skills = models.CharField(max_length=255, default="")

@@ -45,7 +45,7 @@
             padding: 0;
             display: flex;
             position: relative;
-            right:50rem;
+            right:60rem;
             top:.5rem;
         }
 
@@ -231,8 +231,13 @@
             {% for job in jobs %}
                 <li>
                     <h3>{{ job.title }}</h3>
-                    <p>{{ job.description }}</p>
+                    <p><strong>Description:</strong> {{ job.description }}</p>
+                    <p><strong>Company Website:</strong><a href="{{ job.company }}" target="_blank">{{ job.company }}</a></p>
+                    <p><strong>Location:</strong> {{ job.location }}</p>
+                    <p><strong>Salary:</strong> ₹{{ job.salary }}</p>
+    
                     <a href="{% url 'view_job_applications' job.id %}" class="view-applications">View Applications</a>
+    
                     <form action="{% url 'delete_job' job.id %}" method="post">
                         {% csrf_token %}
                         <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this job listing?')">Delete</button>
@@ -241,6 +246,7 @@
             {% endfor %}
         </ul>
     </main>
+    
     
     <footer>
         <p>&copy; 2025 Job Portal. All rights reserved.</p>
