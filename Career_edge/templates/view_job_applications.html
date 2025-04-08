@@ -4,33 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Applications for {{ job.title }}</title>
-    <style>
-        /* Overall page layout */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f8ff; /* Light blue background */
-        }
+    <style>html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
 
-        /* Header styles */
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background-color: #f0f8ff;
+    }
+
+    main {
+        flex: 1;
+        padding: 20px;
+        text-align: center;
+    }
+        
+
         header {
-            background-color: #ffffff; /* White background */
+            background-color: #ffffff;
             padding: 10px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        header h1 {
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo1 {
+            width: 5rem;
+            height: 3rem;
+            margin-left: 2rem;
+            margin-right: 2rem;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
             margin: 0;
-            font-size: 24px;
-            color: #333; /* Dark text color */
+            display: flex;
         }
 
-        /* Main content section */
-        main {
-            padding: 20px;
-            text-align: center;
+        nav ul li {
+            margin-right: 10px;
+            background-color: #f0f8ff;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
         }
 
         main ul {
@@ -38,13 +74,13 @@
             padding: 0;
             margin: 0;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             justify-items: center;
         }
 
         main ul li {
-            background-color: #fff; /* White background */
+            background-color: #fff;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -54,12 +90,12 @@
         main ul li h3 {
             margin-top: 0;
             margin-bottom: 10px;
-            color: #333; /* Dark text color */
+            color: #333;
         }
 
         main ul li p {
             margin: 5px 0;
-            color: #666; /* Gray text color */
+            color: #666;
         }
 
         main ul li .email-link {
@@ -77,35 +113,45 @@
             background-color: #555;
         }
 
-        /* Footer styles */
         footer {
             background-color: #ffffff;
             padding: 10px;
             text-align: center;
-            margin-top: 20px;
+            margin-top: 50px;
         }
 
         footer p {
             margin: 0;
-            color: #666; /* Gray text color */
+            color: #666;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Job Applications for {{ job.title }}</h1>
+        <div class="logo">
+            <img src="/static/images/logo.png" alt="Logo" class="logo1">
+            <nav>
+                <ul>
+                    <li><a href="{% url 'provider_dashboard' %}">Home</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                    <li><a href="{% url 'user_logout' %}">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
     <main>
+        <h1>Job Applications for {{ job.title }}</h1>
         <ul>
             {% for application in applications %}
                 <li>
                     <h3>Applicant: {{ application.applicant.username }}</h3>
                     <p><strong>Name:</strong> {{ application.name }}</p>
                     <p><strong>Skills:</strong> {{ application.skills }}</p>
-                    <p><strong>Qualification:</strong> {{ application.qualification }}</p>
+                    <p><strong>Qualification:</strong> {{ application.qualifications }}</p>
                     <p><strong>Email:</strong> {{ application.email }}</p>
                     <p><strong>Phone:</strong> {{ application.phone }}</p>
-                    <a href="{{ application.resume.url }}" download="{{ application.resume.name }}"class="email-link">Download Resume</a><br>
+                    <a href="{{ application.resume.url }}" download="{{ application.resume.name }}" class="email-link">Download Resume</a><br>
                     <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ application.email }}" target="_blank" class="email-link">Compose in Gmail</a>
                 </li>
             {% empty %}
@@ -113,6 +159,8 @@
             {% endfor %}
         </ul>
     </main>
- 
+    <footer>
+        <p>&copy; 2023 Job Portal. All rights reserved.</p>
+    </footer>
 </body>
 </html>
