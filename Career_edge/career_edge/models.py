@@ -33,24 +33,25 @@ class JobProvider(models.Model):
 
     def __str__(self):
         return self.company_name
+# models.py
 class Job(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
-    company = models.CharField(max_length=255, default='Not Specified')  # Default value for company
-    location = models.CharField(max_length=255, default='Unknown')  # Default value for location
+    company = models.URLField(max_length=255, default='https://example.com')
+    location = models.CharField(max_length=255)
     provider = models.ForeignKey(User, on_delete=models.CASCADE)
     skills = models.CharField(max_length=255, default="")
-    salary = models.CharField(max_length=100, blank=True, null=True)  
+    salary = models.CharField(max_length=50, blank=True, null=True)
+
     def __str__(self):
         return self.title
-
 
 class JobApplication(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     applicant = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     skills = models.CharField(max_length=255)
-    qualification = models.CharField(max_length=255)
+    qualifications = models.CharField(max_length=255, blank=True)
     email = models.EmailField(max_length=255,  default="")  # Add email field
     phone = models.CharField(max_length=20,  default="")  
     resume = models.FileField(upload_to='resumes/')

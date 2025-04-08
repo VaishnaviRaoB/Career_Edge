@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -135,11 +136,59 @@
             padding: 10px;
             text-align: center;
         }
+        
         .logo1{
             width: 5rem;
             height: 3rem;
             margin-left: 2rem;
             margin-right: 2rem;
+        }
+        
+        /* Notification styles */
+        .messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .alert {
+            background-color: #333;
+            color: white;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: slideIn 0.5s ease;
+        }
+
+        .alert-success {
+            background-color: #4CAF50;
+        }
+
+        .alert-error {
+            background-color: #f44336;
+        }
+
+        .alert-warning {
+            background-color: #ff9800;
+        }
+
+        .alert-info {
+            background-color: #2196F3;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -157,6 +206,26 @@
             </ul>
         </nav>
     </header>
+    
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    <script>
+        // Auto-hide messages after 5 seconds
+        setTimeout(function() {
+            const messageElements = document.querySelectorAll('.messages .alert');
+            messageElements.forEach(function(element) {
+                element.style.display = 'none';
+            });
+        }, 5000); // Hide after 5 seconds
+    </script>
+    {% endif %}
+    
     <main>
         <ul>
             {% for job in jobs %}
@@ -172,8 +241,9 @@
             {% endfor %}
         </ul>
     </main>
+    
     <footer>
-        <p>&copy; 2024 Job Portal. All rights reserved.</p>
+        <p>&copy; 2025 Job Portal. All rights reserved.</p>
     </footer>
 </body>
 </html>

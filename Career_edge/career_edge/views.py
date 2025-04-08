@@ -5,8 +5,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views import View
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
 from .models import UserProfile, JobSeeker, JobProvider
+from .forms import JobForm
 import re
+from django.urls import reverse
 # Home page view
 def home(request):
     return render(request, 'home.html')
@@ -161,14 +165,11 @@ def view_job_applications(request, job_id):
 # Delete a job view
 @login_required
 def delete_job(request, job_id):
-    job = get_object_or_404(Job, pk=job_id)
-
+    job = get_object_or_404(Job, id=job_id)
     if request.method == 'POST':
         job.delete()
         messages.success(request, 'Job listing deleted successfully.')
-    
-    return redirect('view_jobs')
-
+    return redirect('view_jobs') 
 # Class-based view to view jobs for a provider
 class ViewJobsView(View):
     def get(self, request):
@@ -178,32 +179,21 @@ class ViewJobsView(View):
 # Class-based view for the provider dashboard
 class ProviderDashboardView(View):
     def get(self, request):
-        return render(request, 'provider_dashboard.html')
-
-# Class-based view to add a job
+        return render(request, 'provider_dashboard.html')# views.py
 class AddJobView(View):
     def get(self, request):
-        return render(request, 'add_job.html')
+        form = JobForm()
+        return render(request, 'add_job.html', {'form': form})
 
     def post(self, request):
-        title = request.POST.get('title')
-        description = request.POST.get('description')
-        company = request.POST.get('company')
-        location = request.POST.get('location')
-        skills = request.POST.get('skills')  # Ensure skills are captured
-        salary = request.POST.get('salary') 
+        form = JobForm(request.POST)
+        if form.is_valid():
+            job = form.save(commit=False)
+            job.provider = request.user
+            job.save()
+            return redirect('view_jobs')  # or change this to 'add_job'
+        return render(request, 'add_job.html', {'form': form})
 
-        Job.objects.create(
-            title=title,
-            description=description,
-            company=company,
-            location=location,
-            provider=request.user,
-            skills=skills,  # Save skills to the Job object
-            salary=salary, 
-        )
-        messages.success(request, 'Job listing added successfully.')
-        return redirect('view_jobs')
 def job_details(request, job_id):
     job = get_object_or_404(Job, id=job_id)
     return render(request, 'job_details.html', {'job': job})
