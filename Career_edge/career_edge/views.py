@@ -12,6 +12,7 @@ from django.core.exceptions import ValidationError
 from .models import UserProfile, JobSeeker, JobProvider,SavedJob
 from .forms import JobForm
 import re
+from django.db.models import Q
 from django.db import models
 from django.views.decorators.http import require_POST
 from django.urls import reverse
@@ -141,11 +142,26 @@ def provider_dashboard(request):
     return render(request, 'provider_dashboard.html')
 
 # View jobs posted by a provider
+
 @login_required
 def view_jobs(request):
+    query = request.GET.get('q', '')
+    # Get jobs for the current provider only
     jobs = Job.objects.filter(provider=request.user)
-    return render(request, 'view_jobs.html', {'jobs': jobs})
 
+    if query:
+        # Apply the search filter
+        jobs = jobs.filter(
+            Q(title__icontains=query) | 
+            Q(location__icontains=query) |
+            Q(description__icontains=query) |
+            Q(company__icontains=query)
+        )
+
+    return render(request, 'view_jobs.html', {
+        'jobs': jobs,
+        'query': query
+    })
 # Apply for a job view
 @login_required
 def apply_for_job(request, job_id):
@@ -230,13 +246,28 @@ def delete_job(request, job_id):
         job.delete()
         messages.success(request, 'Job listing deleted successfully.')
     return redirect('view_jobs') 
-# Class-based view to view jobs for a provider
-class ViewJobsView(View):
-    def get(self, request):
-        jobs = Job.objects.filter(provider=request.user)
-        return render(request, 'view_jobs.html', {'jobs': jobs})
+
 
 # Class-based view for the provider dashboard
+from django.db.models import Q
+
+class ViewJobsView(View):
+    def get(self, request):
+        query = request.GET.get('q', '')
+        jobs = Job.objects.filter(provider=request.user)
+        
+        if query:
+            jobs = jobs.filter(
+                Q(title__icontains=query) | 
+                Q(location__icontains=query) |
+                Q(description__icontains=query) |
+                Q(company__icontains=query)
+            )
+            
+        return render(request, 'view_jobs.html', {
+            'jobs': jobs,
+            'query': query
+        })
 class ProviderDashboardView(View):
     def get(self, request):
         return render(request, 'provider_dashboard.html')# views.py
