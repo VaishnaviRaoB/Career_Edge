@@ -242,12 +242,31 @@ def job_details(request, job_id):
     job = get_object_or_404(Job, id=job_id)
     return render(request, 'job_details.html', {'job': job})
 def search_jobs(request):
-    # Logic to handle job search
-    # Example: retrieve search query and filter jobs accordingly
-    query = request.GET.get('q', '')
-    jobs = Job.objects.filter(title__icontains=query)
+    q = request.GET.get('q', '')
+    company = request.GET.get('company', '')
+    location = request.GET.get('location', '')
+    min_salary = request.GET.get('min_salary', '')
+
+    jobs = Job.objects.all()
+
+    if q:
+        jobs = jobs.filter(title__icontains=q)
+    if company:
+        jobs = jobs.filter(company__icontains=company)
+    if location:
+        jobs = jobs.filter(location__icontains=location)
+    if min_salary:
+        try:
+            min_salary = int(min_salary)
+            jobs = jobs.filter(salary__gte=min_salary)
+        except ValueError:
+            min_salary = ''
 
     context = {
         'jobs': jobs,
+        'q': q,
+        'company': company,
+        'location': location,
+        'min_salary': min_salary
     }
     return render(request, 'seeker_dashboard.html', context)
