@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views import View
+from .forms import EditCompanyProfileForm
 from django.utils.dateparse import parse_date
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
@@ -106,7 +107,21 @@ def user_register_provider(request):
         return redirect('user_login')
 
     return render(request, 'register_provider.html')
+from django.contrib import messages
 
+def edit_company_profile(request):
+    provider = JobProvider.objects.get(user_profile__user=request.user)
+    updated = False
+
+    if request.method == 'POST':
+        form = EditCompanyProfileForm(request.POST, request.FILES, instance=provider)
+        if form.is_valid():
+            form.save()
+            updated = True  # Set flag to show message
+    else:
+        form = EditCompanyProfileForm(instance=provider)
+
+    return render(request, 'edit_company_profile.html', {'form': form, 'updated': updated})
 # Seeker dashboard view
 @login_required
 def seeker_dashboard(request):

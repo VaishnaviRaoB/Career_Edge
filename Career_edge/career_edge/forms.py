@@ -2,7 +2,7 @@
 
 from django import forms
 from django.contrib.auth.models import User
-from .models import Job, JobApplication, UserProfile
+from .models import Job, JobApplication, UserProfile, JobProvider
 
 from django import forms
 from .models import Job# forms.py
@@ -123,3 +123,8 @@ class JobApplicationForm(forms.ModelForm):
     class Meta:
         model = JobApplication
         fields = ['skills', 'qualifications', 'resume']
+
+class EditCompanyProfileForm(forms.ModelForm):
+    class Meta:
+        model = JobProvider
+        fields = ['company_name', 'company_description', 'website', 'logo']

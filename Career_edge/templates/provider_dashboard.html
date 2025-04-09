@@ -155,6 +155,19 @@
         .color {
             color: black;
         }
+        .nav-button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-left: 20px;
+}
+
+.nav-button:hover {
+    background-color: #555;
+}
+
     </style>
 </head>
 <body>
@@ -167,6 +180,7 @@
                     <li><a href="{% url 'about' %}">About Us</a></li>
                     <li><a href="{% url 'contact' %}">Contact Us</a></li>
                     <li><a href="{% url 'user_logout' %}">Logout</a></li>
+                    <a href="{% url 'edit_company_profile' %}" class="nav-button">Edit Profile</a>
                 </ul>
             </nav>
         </div>
