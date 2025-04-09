@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class UserProfile(models.Model):
     USER_ROLES = (
@@ -42,6 +43,7 @@ class Job(models.Model):
     provider = models.ForeignKey(User, on_delete=models.CASCADE)
     skills = models.CharField(max_length=255, default="")
     salary = models.CharField(max_length=50, blank=True, null=True)
+    date_posted = models.DateTimeField(default=timezone.now) 
 
     def __str__(self):
         return self.title
@@ -55,6 +57,7 @@ class JobApplication(models.Model):
     email = models.EmailField(max_length=255,  default="")  # Add email field
     phone = models.CharField(max_length=20,  default="")  
     resume = models.FileField(upload_to='resumes/')
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f'{self.name} - {self.job.title}'

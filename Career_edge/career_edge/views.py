@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views import View
+from django.utils.dateparse import parse_date
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 from .models import UserProfile, JobSeeker, JobProvider
@@ -160,8 +161,34 @@ def user_logout(request):
 def view_job_applications(request, job_id):
     job = get_object_or_404(Job, id=job_id)
     applications = JobApplication.objects.filter(job=job)
-    return render(request, 'view_job_applications.html', {'job': job, 'applications': applications})
 
+    # Get filter values from the query string
+    skill_query = request.GET.get('skill', '')
+    qualification_query = request.GET.get('qualification', '')
+    date_query = request.GET.get('date', '')
+
+    # Apply filters
+    if skill_query:
+        applications = applications.filter(skills__icontains=skill_query)
+
+    if qualification_query:
+        applications = applications.filter(qualifications__icontains=qualification_query)
+
+    if date_query:
+        try:
+            parsed_date = parse_date(date_query)
+            if parsed_date:
+                applications = applications.filter(created_at__date=parsed_date)
+        except:
+            pass
+
+    return render(request, 'view_job_applications.html', {
+        'job': job,
+        'applications': applications,
+        'skill_query': skill_query,
+        'qualification_query': qualification_query,
+        'date_query': date_query,
+    })
 # Delete a job view
 @login_required
 def delete_job(request, job_id):

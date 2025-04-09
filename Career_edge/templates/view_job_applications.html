@@ -142,6 +142,19 @@
     </header>
     <main>
         <h1>Job Applications for {{ job.title }}</h1>
+
+<form method="get" style="margin-bottom: 20px;">
+    <input type="text" name="skill" placeholder="Filter by Skill" value="{{ skill_query }}">
+    <input type="text" name="qualification" placeholder="Filter by Qualification" value="{{ qualification_query }}">
+    <input type="date" name="date" value="{{ date_query }}">
+    <button type="submit">Filter</button>
+    <a href="?">Clear</a>
+</form>
+<div style="display: inline-block; background-color: #e6f7ff; color: #003366; padding: 10px 20px; border-radius: 8px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px;">
+    {{ applications.count }} application{{ applications.count|pluralize }} found
+</div>
+
+
         <ul>
             {% for application in applications %}
                 <li>
@@ -151,11 +164,12 @@
                     <p><strong>Qualification:</strong> {{ application.qualifications }}</p>
                     <p><strong>Email:</strong> {{ application.email }}</p>
                     <p><strong>Phone:</strong> {{ application.phone }}</p>
+                    <p><strong>Date Applied:</strong> {{ application.created_at|date:"d M Y, h:i A" }}</p>
                     <a href="{{ application.resume.url }}" download="{{ application.resume.name }}" class="email-link">Download Resume</a><br>
                     <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ application.email }}" target="_blank" class="email-link">Compose in Gmail</a>
                 </li>
             {% empty %}
-                <li>No applications found for this job.</li>
+            
             {% endfor %}
         </ul>
     </main>

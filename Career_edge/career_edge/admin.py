@@ -17,6 +17,7 @@ class JobSeekerAdmin(admin.ModelAdmin):
 class JobProviderAdmin(admin.ModelAdmin):
     list_display = ('user_profile', 'company_name', 'contact_email')
 
-
+class JobAdmin(admin.ModelAdmin):
+    list_display = ('title', 'provider', 'date_posted')
 admin.site.register(Job)
 admin.site.register(JobApplication)

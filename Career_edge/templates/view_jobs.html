@@ -236,6 +236,7 @@
                     <p><strong>Company Website:</strong><a href="{{ job.company }}" target="_blank">{{ job.company }}</a></p>
                     <p><strong>Location:</strong> {{ job.location }}</p>
                     <p><strong>Salary:</strong> ₹{{ job.salary }}</p>
+                    <p><strong>Date Posted:</strong> {{ job.date_posted|date:"F d, Y - h:i A" }}</p>
     
                     <a href="{% url 'view_job_applications' job.id %}" class="view-applications">View Applications</a>
     
