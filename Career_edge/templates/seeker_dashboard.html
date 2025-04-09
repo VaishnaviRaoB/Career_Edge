@@ -4,25 +4,23 @@
     <meta charset="UTF-8">
     <title>Job Seeker Dashboard</title>
     <style>
-        /* Overall page layout */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f0f8ff; /* Light blue background */
+            background-color: #f0f8ff;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
 
-        /* Header styles */
         header {
-            background-color: #ffffff; /* White background */
+            background-color: #ffffff;
             padding: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .logo {
@@ -33,7 +31,7 @@
         .logo span {
             font-size: 24px;
             margin-right: 20px;
-            color: #333; /* Dark text color */
+            color: #333;
         }
 
         nav ul {
@@ -45,9 +43,9 @@
 
         nav ul li {
             margin-right: 10px;
-            background-color: #f0f8ff; /* Light blue background */
-            padding: 5px 10px; /* Adjust padding as needed */
-            border-radius: 5px; /* Rounded corners */
+            background-color: #f0f8ff;
+            padding: 5px 10px;
+            border-radius: 5px;
         }
 
         nav ul li a {
@@ -59,23 +57,22 @@
             text-decoration: underline;
         }
 
-        /* Main section */
         main {
-            flex: 1; /* Expand main section to fill remaining space */
+            flex: 1;
             padding: 20px;
             display: flex;
-            justify-content: center; /* Center content horizontally */
-            align-items: flex-start; /* Align items to the top */
+            justify-content: center;
+            align-items: flex-start;
         }
 
         main section {
-            background-color: #fff; /* White background */
+            background-color: #fff;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
-            max-width: 800px; /* Limit main section width */
-            width: 100%; /* Ensure full width on smaller screens */
+            max-width: 800px;
+            width: 100%;
         }
 
         main section h2 {
@@ -83,62 +80,64 @@
             margin-bottom: 10px;
         }
 
-        /* Job box styles */
+        .job-box-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
         .job-box {
-            background-color: #f0f0f0; /* Light gray background */
+            background-color: #f0f0f0;
             border: 1px solid #ccc;
             border-radius: 10px;
             padding: 15px;
-            margin-bottom: 15px;
-            cursor: pointer; /* Add cursor pointer to indicate clickable */
-            transition: background-color 0.3s ease; /* Smooth transition for background color change */
-            width: 50%; /* Ensure job boxes take full width of their container */
+            transition: background-color 0.3s ease;
         }
 
         .job-box:hover {
-            background-color: #e0e0e0; /* Lighter gray background on hover */
+            background-color: #e0e0e0;
         }
 
         .job-box h3 {
             margin-top: 0;
             margin-bottom: 10px;
             font-size: 18px;
-            color: #333; /* Dark text color */
-            cursor: pointer; /* Add cursor pointer to indicate clickable */
+            color: #333;
         }
 
         .job-box p {
-            margin-top: 0;
-            color: #666; /* Medium gray text color */
+            margin: 5px 0;
+            color: #555;
         }
 
-        .job-box a {
+        .apply-btn {
             display: inline-block;
             padding: 8px 16px;
-            color: #fff;
+            background-color: #ccc;
+            color: #333;
             text-decoration: none;
             border-radius: 5px;
             font-size: 14px;
-            margin-top: 10px;
-            color: #333;
-        }
-        .btn{
-            background-color: #ccc;
-        }
-        .job-box a:hover {
-            background-color: #555;
+            margin-bottom: 15px;
+            transition: background-color 0.3s;
         }
 
-        /* Search bar styles */
+        .apply-btn:hover {
+            background-color: #555;
+            color: #fff;
+        }
+
         .search-bar {
             width: 100%;
-            max-width: 600px; /* Limit search bar width */
+            max-width: 600px;
             margin-bottom: 20px;
-            align-self: center; /* Center search bar horizontally */
+            align-self: center;
         }
 
         .search-bar input[type="text"] {
-            width: calc(100% - 90px); /* Adjusted width for search input */
+            width: calc(100% - 90px);
             padding: 10px;
             margin-right: 10px;
             border: 1px solid #ccc;
@@ -163,7 +162,6 @@
             background-color: #555;
         }
 
-        /* Footer styles */
         footer {
             background-color: #ffffff;
             padding: 10px;
@@ -179,42 +177,49 @@
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <img src="/static/images/logo.png" alt="Welcome Image" class="logo1">
-            <nav>
-                <ul>
-                    <li><a href="{% url 'home' %}">Home</a></li>
-                    <li><a href="{% url 'about' %}">About Us</a></li>
-                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
-                    <li><a href="{% url 'user_logout' %}">Logout</a></li>
-                </ul>
-            </nav>
+<header>
+    <div class="logo">
+        <img src="/static/images/logo.png" alt="Welcome Image" class="logo1">
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'about' %}">About Us</a></li>
+                <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                <li><a href="{% url 'user_logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<main>
+    <section>
+        <h2>Available Jobs</h2>
+
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <form method="get" action="{% url 'search_jobs' %}">
+                <input type="text" name="q" placeholder="Search jobs...">
+                <button type="submit">Search</button>
+            </form>
         </div>
-    </header>
-    <main>
-        <section>
-            <h2>Available Jobs</h2>
+
+        <!-- Jobs Loop -->
+        {% for job in jobs %}
+            <a href="{% url 'job_details' job.id %}" class="job-box-link">
+                <div class="job-box">
+                    <h3>{{ job.title }}</h3>
+                    <p><strong>Company:</strong> {{ job.company }}</p>
+                    <p><strong>Salary:</strong> ₹{{ job.salary }}</p>
+                    <p><strong>Location:</strong> {{ job.location }}</p>
+                    <p><strong>Date Posted:</strong> {{ job.date_posted|date:"F d, Y" }}</p>
+                    <a href="{% url 'apply_for_job' job.id %}" class="apply-btn">Apply</a>
+                </div>
+            </a>
             
-            <!-- Search Bar -->
-            <div class="search-bar">
-                <form method="get" action="{% url 'search_jobs' %}">
-                    <input type="text" name="q" placeholder="Search jobs...">
-                    <button type="submit">Search</button>
-                </form>
-            </div>
-            
-            {% for job in jobs %}
-            <div class="job-box">
-                <h3><a href="{% url 'job_details' job.id %}">{{ job.title }}</a></h3>
-                <p>{{ job.description }}</p>
-                <a href="{% url 'apply_for_job' job.id %}" class="btn">Apply</a>
-            </div>
-            {% endfor %}
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2025 Job Portal. All rights reserved.</p>
-    </footer>
+        {% endfor %}
+    </section>
+</main>
+<footer>
+    <p>&copy; 2025 Job Portal. All rights reserved.</p>
+</footer>
 </body>
 </html>
