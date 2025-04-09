@@ -9,7 +9,7 @@ from .models import Job# forms.py
 class JobForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ['title', 'description', 'company', 'location', 'skills', 'salary', 'job_type', 'experience_level', 'logo']        
+        fields = ['title', 'description', 'company', 'location', 'skills', 'salary', 'job_type', 'experience_level', 'logo','last_date_to_apply']        
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Job Title', 'required': True}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Job Description', 'required': True}),
@@ -19,6 +19,7 @@ class JobForm(forms.ModelForm):
             'salary': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Salary (e.g. 60000-90000)', 'required': True}),
             'job_type': forms.Select(attrs={'class': 'form-control'}),
             'experience_level': forms.Select(attrs={'class': 'form-control'}),
+            'last_date_to_apply': forms.DateInput(attrs={'type': 'date'}),
         }
 
     def clean_salary(self):

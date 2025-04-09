@@ -311,8 +311,7 @@
                 <p class="job-detail"><strong>Experience Required:</strong> {{ job.experience_level }}</p>
                 <p class="job-detail"><strong>Job Type:</strong> {{ job.job_type }}</p>
                 <p class="job-detail"><strong>Salary:</strong> ₹{{ job.salary }}</p>
-                <p class="job-detail"><strong>Date Posted:</strong> {{ job.date_posted|date:"F d, Y - h:i A" }}</p>
-    
+                <p class="job-detail"><strong>Last Date to Apply:</strong> <span class="job-last-date">{{ job.last_date_to_apply|date:"F d, Y" }}</span></p>
                 <div class="action-buttons">
                     <a href="{% url 'view_job_applications' job.id %}" class="view-button">View Applications</a>
     
@@ -343,5 +342,24 @@
     <footer>
         <p>&copy; 2025 Job Portal. All rights reserved.</p>
     </footer>
+    <script>
+        // Get today's date
+        const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD' format
+        
+        // Loop through each job's last date to apply and check if it's passed
+        document.querySelectorAll('.job-last-date').forEach(function(lastDateElement) {
+            const lastDate = lastDateElement.textContent.trim();  // Get the last date text
+            
+            if (lastDate) {
+                // Convert the last date string to a Date object
+                const jobLastDate = new Date(lastDate);
+                
+                if (jobLastDate < new Date(today)) {
+                    // If the last date has passed, highlight the job listing as "Application Closed"
+                    lastDateElement.parentElement.innerHTML += '<p class="job-detail" style="color: red;"><strong>Application Closed</strong></p>';
+                }
+            }
+        });
+    </script>
 </body>
 </html>
