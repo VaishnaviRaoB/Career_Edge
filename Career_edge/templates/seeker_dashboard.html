@@ -63,6 +63,7 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
+            flex-direction: column;
         }
 
         main section {
@@ -73,6 +74,7 @@
             margin-bottom: 20px;
             max-width: 800px;
             width: 100%;
+            align-self: center;
         }
 
         main section h2 {
@@ -174,34 +176,67 @@
             margin-left: 2rem;
             margin-right: 2rem;
         }
+
         .filter-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
-}
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-.filter-bar input[type="text"],
-.filter-bar input[type="number"] {
-    padding: 10px;
-    flex: 1;
-    min-width: 150px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+        .filter-bar input[type="text"],
+        .filter-bar input[type="number"] {
+            padding: 10px;
+            flex: 1;
+            min-width: 150px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
 
-.filter-bar button {
-    padding: 10px 20px;
-    background-color: #333;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+        .filter-bar button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-.filter-bar button:hover {
-    background-color: #555;
-}
+        .filter-bar button:hover {
+            background-color: #555;
+        }
+
+        /* Message Box Styles */
+        .messages-container {
+            max-width: 800px;
+            width: 100%;
+            margin: 1rem auto;
+        }
+
+        .message-box {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            color: #155724;
+            border: 1px solid;
+        }
+
+        .message-box.success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .message-box.error,
+        .message-box.warning {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .message-box.info {
+            background-color: #cce5ff;
+            border-color: #b8daff;
+        }
 
     </style>
 </head>
@@ -219,11 +254,22 @@
         </nav>
     </div>
 </header>
+
 <main>
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="message-box {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <section>
         <h2>Available Jobs</h2>
 
-        <!-- Search Bar -->
+        <!-- Filter Bar -->
         <div class="filter-bar">
             <form method="get" action="{% url 'search_jobs' %}">
                 <input type="text" name="q" placeholder="Search job title or keywords..." value="{{ q }}">
@@ -249,7 +295,6 @@
                 <a href="{% url 'search_jobs' %}" style="padding: 10px 20px; background-color: #999; color: white; border-radius: 5px; text-decoration: none;">Clear Filters</a>
             </form>
         </div>
-        
 
         <!-- Jobs Loop -->
         {% if jobs %}
@@ -260,20 +305,30 @@
                     <p><strong>Company:</strong> {{ job.company }}</p>
                     <p><strong>Salary:</strong> ₹{{ job.salary }}</p>
                     <p><strong>Experience Required:</strong> {{ job.experience_level }}</p>
-<p><strong>Job Type:</strong> {{ job.job_type }}</p>
+                    <p><strong>Job Type:</strong> {{ job.job_type }}</p>
                     <p><strong>Location:</strong> {{ job.location }}</p>
                     <p><strong>Date Posted:</strong> {{ job.date_posted|date:"F d, Y" }}</p>
                     <a href="{% url 'apply_for_job' job.id %}" class="apply-btn">Apply</a>
                 </div>
             </a>
         {% endfor %}
-    {% else %}
-        <p style="text-align: center; font-size: 18px; color: #888;">No jobs found matching your criteria.</p>
-    {% endif %}
+        {% else %}
+            <p style="text-align: center; font-size: 18px; color: #888;">No jobs found matching your criteria.</p>
+        {% endif %}
     </section>
 </main>
+
 <footer>
     <p>&copy; 2025 Job Portal. All rights reserved.</p>
 </footer>
+<script>
+    setTimeout(() => {
+        const messages = document.querySelectorAll('.message-box');
+        messages.forEach(msg => {
+            msg.classList.add('fade-out');
+            setTimeout(() => msg.remove(), 1000);
+        });
+    }, 1000); // Show for 3 seconds
+</script>
 </body>
 </html>

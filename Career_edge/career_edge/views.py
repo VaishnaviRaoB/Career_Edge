@@ -139,11 +139,20 @@ def view_jobs(request):
     jobs = Job.objects.filter(provider=request.user)
     return render(request, 'view_jobs.html', {'jobs': jobs})
 
-# Apply for a job view
-@login_required
+# Apply for a job view@login_required
 def apply_for_job(request, job_id):
     job = get_object_or_404(Job, id=job_id)
-    
+
+    # Debugging
+    print(f"User: {request.user}, Applying to Job ID: {job.id}, Title: {job.title}")
+
+    # Check if the user has already applied to this job
+    already_applied = JobApplication.objects.filter(job=job, applicant=request.user).exists()
+
+    if already_applied:
+        messages.warning(request, f"You have already applied for the job: {job.title}")
+        return redirect('seeker_dashboard')
+
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
@@ -152,7 +161,7 @@ def apply_for_job(request, job_id):
         qualifications = request.POST.get('qualification')
         resume = request.FILES.get('resume')
         experience = request.POST.get('experience')
-        
+
         JobApplication.objects.create(
             job=job,
             applicant=request.user,
@@ -164,8 +173,9 @@ def apply_for_job(request, job_id):
             resume=resume,
             experience=experience,
         )
+        messages.success(request, f"Application submitted for {job.title} successfully.")
         return redirect('seeker_dashboard')
-    
+
     return render(request, 'apply.html', {'job': job})
 
 # User logout view
