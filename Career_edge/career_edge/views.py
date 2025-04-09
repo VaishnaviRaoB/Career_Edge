@@ -139,19 +139,17 @@ def view_jobs(request):
     jobs = Job.objects.filter(provider=request.user)
     return render(request, 'view_jobs.html', {'jobs': jobs})
 
-# Apply for a job view@login_required
+# Apply for a job view
+@login_required
 def apply_for_job(request, job_id):
     job = get_object_or_404(Job, id=job_id)
-
-    # Debugging
-    print(f"User: {request.user}, Applying to Job ID: {job.id}, Title: {job.title}")
 
     # Check if the user has already applied to this job
     already_applied = JobApplication.objects.filter(job=job, applicant=request.user).exists()
 
     if already_applied:
-        messages.warning(request, f"You have already applied for the job: {job.title}")
-        return redirect('seeker_dashboard')
+        messages.warning(request, "You have already applied for this job.")
+        return redirect('seeker_dashboard')  # or show the same apply page with a message
 
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -173,11 +171,10 @@ def apply_for_job(request, job_id):
             resume=resume,
             experience=experience,
         )
-        messages.success(request, f"Application submitted for {job.title} successfully.")
+        messages.success(request, "Application submitted successfully.")
         return redirect('seeker_dashboard')
 
     return render(request, 'apply.html', {'job': job})
-
 # User logout view
 @login_required
 def user_logout(request):
@@ -305,3 +302,12 @@ def search_jobs(request):
         'posted_date': posted_date,
     }
     return render(request, 'seeker_dashboard.html', context)
+
+@login_required
+def my_applications(request):
+    # Get all applications for the current user
+    applications = JobApplication.objects.filter(applicant=request.user).order_by('-created_at')
+    
+    return render(request, 'my_applications.html', {
+        'applications': applications,
+    })

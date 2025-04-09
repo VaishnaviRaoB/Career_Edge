@@ -3,6 +3,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.core.validators import MinLengthValidator, RegexValidator
 
 class UserProfile(models.Model):
     USER_ROLES = (
@@ -67,7 +68,15 @@ class JobApplication(models.Model):
     skills = models.CharField(max_length=255)
     qualifications = models.CharField(max_length=255, blank=True)
     email = models.EmailField(max_length=255,  default="")  # Add email field
-    phone = models.CharField(max_length=20,  default="")  
+    phone = models.CharField(
+        max_length=20,
+        validators=[
+            MinLengthValidator(10, message="Phone number must be at least 10 digits."),
+            RegexValidator(r'^\+?\d{10,20}$', message="Enter a valid phone number.")
+        ],
+        blank=True,
+        default=""
+    )
     resume = models.FileField(upload_to='resumes/')
     created_at = models.DateTimeField(default=timezone.now)
     experience = models.CharField(max_length=50, default="0") 
@@ -75,3 +84,4 @@ class JobApplication(models.Model):
 
     def __str__(self):
         return f'{self.name} - {self.job.title}'
+

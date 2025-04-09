@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Applications</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            font-size: 24px;
+            margin-right: 20px;
+            color: #333;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-right: 10px;
+            background-color: #f0f8ff;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        main section {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            max-width: 800px;
+            width: 100%;
+            align-self: center;
+        }
+
+        main section h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .application-box {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .application-box h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .application-box p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .status-pending {
+            background-color: #6c757d;
+        }
+
+        .status-shortlisted {
+            background-color: #28a745;
+        }
+
+        .status-interview {
+            background-color: #007bff;
+        }
+
+        .status-rejected {
+            background-color: #dc3545;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 0;
+            color: #888;
+        }
+
+        .empty-state p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        footer {
+            background-color: #ffffff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .logo1 {
+            width: 5rem;
+            height: 3rem;
+            margin-left: 2rem;
+            margin-right: 2rem;
+        }
+
+        /* Message Box Styles */
+        .messages-container {
+            max-width: 800px;
+            width: 100%;
+            margin: 1rem auto;
+        }
+
+        .message-box {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            color: #155724;
+            border: 1px solid;
+        }
+
+        .message-box.success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .message-box.error,
+        .message-box.warning {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .message-box.info {
+            background-color: #cce5ff;
+            border-color: #b8daff;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        <img src="/static/images/logo.png" alt="Welcome Image" class="logo1">
+        <nav>
+            <ul>
+                <li><a href="{% url 'seeker_dashboard' %}">Home</a></li>
+                <li><a href="{% url 'my_applications' %}">My Applications</a></li>
+                <li><a href="{% url 'about' %}">About Us</a></li>
+                <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                <li><a href="{% url 'user_logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="message-box {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <section>
+        <h2>My Job Applications</h2>
+
+        {% if applications %}
+            {% for application in applications %}
+                <div class="application-box">
+                    <h3>{{ application.job.title }}</h3>
+                    <p><strong>Company:</strong> {{ application.job.company }}</p>
+                    <p><strong>Applied on:</strong> {{ application.created_at|date:"F d, Y" }}</p>
+                    <p>
+                        <strong>Status:</strong> 
+                        {% if application.status == 'pending' %}
+                        <span class="status-badge status-pending">Pending</span>
+                        {% elif application.status == 'shortlisted' %}
+                        <span class="status-badge status-shortlisted">Shortlisted</span>
+                        {% elif application.status == 'interview' %}
+                        <span class="status-badge status-interview">Interview Scheduled</span>
+                        {% elif application.status == 'rejected' %}
+                        <span class="status-badge status-rejected">Rejected</span>
+                        {% endif %}
+                    </p>
+                    <p><strong>Location:</strong> {{ application.job.location }}</p>
+                    <p><strong>Job Type:</strong> {{ application.job.job_type }}</p>
+                    <p><strong>Salary:</strong> {{ application.job.salary }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>You haven't applied to any jobs yet.</p>
+                <a href="{% url 'seeker_dashboard' %}">Find Jobs</a>
+            </div>
+        {% endif %}
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2025 Job Portal. All rights reserved.</p>
+</footer>
+<script>
+    setTimeout(() => {
+        const messages = document.querySelectorAll('.message-box');
+        messages.forEach(msg => {
+            msg.classList.add('fade-out');
+            setTimeout(() => msg.remove(), 1000);
+        });
+    }, 1000); // Show for 3 seconds
+</script>
+</body>
+</html>
