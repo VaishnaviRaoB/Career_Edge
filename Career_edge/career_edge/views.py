@@ -12,6 +12,7 @@ from django.core.exceptions import ValidationError
 from .models import UserProfile, JobSeeker, JobProvider,SavedJob
 from .forms import JobForm
 import re
+from django.db import models
 from django.views.decorators.http import require_POST
 from django.urls import reverse
 # Home page view
@@ -326,9 +327,18 @@ def search_jobs(request):
 def my_applications(request):
     # Get all applications for the current user
     applications = JobApplication.objects.filter(applicant=request.user).order_by('-created_at')
+     # Handle search query
+    search_query = request.GET.get('q', '')
+    if search_query:
+        applications = applications.filter(
+            models.Q(job__title__icontains=search_query) |
+            models.Q(job__company__icontains=search_query) |
+            models.Q(job__location__icontains=search_query)
+        )
     
     return render(request, 'my_applications.html', {
         'applications': applications,
+        'search_query': search_query
     })
 
 
@@ -350,4 +360,16 @@ def toggle_bookmark(request, job_id):
 @login_required
 def saved_jobs(request):
     bookmarks = SavedJob.objects.filter(user=request.user).order_by('-saved_at')
-    return render(request, 'saved_jobs.html', {'bookmarks': bookmarks})
+    # Handle search query
+    search_query = request.GET.get('q', '')
+    if search_query:
+        bookmarks = bookmarks.filter(
+            models.Q(job__title__icontains=search_query) |
+            models.Q(job__company__icontains=search_query) |
+            models.Q(job__location__icontains=search_query)
+        )
+    
+    return render(request, 'saved_jobs.html', {
+        'bookmarks': bookmarks,
+        'search_query': search_query
+    })

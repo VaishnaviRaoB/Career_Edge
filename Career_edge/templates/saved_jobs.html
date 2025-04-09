@@ -204,6 +204,52 @@
             background-color: #cce5ff;
             border-color: #b8daff;
         }
+        .search-container {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-form input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.search-form button {
+    padding: 10px 15px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.search-form button:hover {
+    background-color: #555;
+}
+
+.clear-search {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.clear-search:hover {
+    background-color: #e0e0e0;
+}
     </style>
 </head>
 <body>
@@ -236,7 +282,16 @@
 
     <section>
         <h2>Saved Jobs</h2>
-
+<!-- Search Bar -->
+<div class="search-container">
+    <form method="get" action="{% url 'saved_jobs' %}" class="search-form">
+        <input type="text" name="q" placeholder="Search by job title, company or location..." value="{{ search_query }}">
+        <button type="submit">Search</button>
+        {% if search_query %}
+            <a href="{% url 'saved_jobs' %}" class="clear-search">Clear</a>
+        {% endif %}
+    </form>
+</div>
         {% if bookmarks %}
             {% for bookmark in bookmarks %}
                 <div class="job-box">
@@ -255,10 +310,15 @@
                     </div>
                 </div>
             {% endfor %}
-        {% else %}
+            {% else %}
             <div class="empty-state">
-                <p>You haven't saved any jobs yet.</p>
-                <a href="{% url 'seeker_dashboard' %}">Find Jobs</a>
+                {% if search_query %}
+                    <p>No saved jobs found matching "{{ search_query }}".</p>
+                    <a href="{% url 'saved_jobs' %}">Show All Saved Jobs</a>
+                {% else %}
+                    <p>You haven't saved any jobs yet.</p>
+                    <a href="{% url 'seeker_dashboard' %}">Find Jobs</a>
+                {% endif %}
             </div>
         {% endif %}
     </section>

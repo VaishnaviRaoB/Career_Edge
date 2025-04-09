@@ -1,7 +1,7 @@
 # career_edge/admin.py
 
 from django.contrib import admin
-from .models import UserProfile, Job, JobApplication, JobSeeker, JobProvider
+from .models import UserProfile, Job, JobApplication, JobSeeker, JobProvider, SavedJob
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
@@ -21,3 +21,5 @@ class JobAdmin(admin.ModelAdmin):
     list_display = ('title', 'provider', 'date_posted')
 admin.site.register(Job)
 admin.site.register(JobApplication)
+
+admin.site.register(SavedJob)
