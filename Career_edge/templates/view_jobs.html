@@ -230,7 +230,11 @@
         
         <ul>
             {% for job in jobs %}
-                <li>
+                <li>{% if job.logo %}
+                    <img src="{{ job.logo.url }}" alt="Company Logo" style="width: 100px; height: auto; margin-bottom: 10px;">
+                {% else %}
+                    <img src="{% static 'images/dummy-logo.png' %}" alt="Dummy Logo" style="width: 100px; height: auto; margin-bottom: 10px;">
+                {% endif %}
                     <h3>{{ job.title }}</h3>
                     <p><strong>Description:</strong> {{ job.description }}</p>
                     <p><strong>Company Website:</strong><a href="{{ job.company }}" target="_blank">{{ job.company }}</a></p>

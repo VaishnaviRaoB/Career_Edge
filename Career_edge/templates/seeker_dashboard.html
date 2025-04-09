@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -339,8 +340,20 @@
         <!-- Jobs Loop -->
         {% if jobs %}
         {% for job in jobs %}
+       
+           
             <a href="{% url 'job_details' job.id %}" class="job-box-link">
                 <div class="job-box">
+                     <!-- Company Logo -->
+            <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 25px;">
+                <div style="background: white; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid #ddd;">
+                    {% if job.logo %}
+                        <img src="{{ job.logo.url }}" alt="Company Logo" style="width: 120px; height: auto; object-fit: contain;" />
+                    {% else %}
+                        <img src="{% static 'images/dummy-logo.png' %}" alt="Dummy Logo" style="width: 120px; height: auto; object-fit: contain;" />
+                    {% endif %}
+                </div>
+            </div>
                     <h3>{{ job.title }}</h3>
                     <p><strong>Company:</strong> {{ job.company }}</p>
                     <p><strong>Salary:</strong> ₹{{ job.salary }}</p>

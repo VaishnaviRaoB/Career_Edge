@@ -50,6 +50,7 @@ class Job(models.Model):
     skills = models.CharField(max_length=255, default="")
     salary = models.CharField(max_length=50, blank=True, null=True)
     date_posted = models.DateTimeField(default=timezone.now)
+    logo = models.ImageField(upload_to='job_logos/', blank=True, null=True)
      
 
     def __str__(self):

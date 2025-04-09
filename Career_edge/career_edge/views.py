@@ -246,7 +246,7 @@ class AddJobView(View):
         return render(request, 'add_job.html', {'form': form})
 
     def post(self, request):
-        form = JobForm(request.POST)
+        form = JobForm(request.POST, request.FILES)
         if form.is_valid():
             job = form.save(commit=False)
             job.provider = request.user

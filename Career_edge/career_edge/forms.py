@@ -9,7 +9,7 @@ from .models import Job# forms.py
 class JobForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ['title', 'description', 'company', 'location', 'skills', 'salary', 'job_type', 'experience_level']
+        fields = ['title', 'description', 'company', 'location', 'skills', 'salary', 'job_type', 'experience_level', 'logo']        
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Job Title', 'required': True}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Job Description', 'required': True}),
