@@ -36,6 +36,7 @@ class JobProvider(models.Model):
 
     def __str__(self):
         return self.company_name
+
 # models.py
 class Job(models.Model):
     title = models.CharField(max_length=255)

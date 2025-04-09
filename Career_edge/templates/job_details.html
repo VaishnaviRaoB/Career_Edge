@@ -131,7 +131,21 @@
                 Not mentioned
             {% endif %}
         </p>
+        <p><strong>Experience Level:</strong> 
+            {% if job.experience_level %}
+                {{ job.experience_level }}
+            {% else %}
+                Not specified
+            {% endif %}
+        </p>
     
+        <p><strong>Job Type:</strong> 
+            {% if job.job_type %}
+                {{ job.job_type }}
+            {% else %}
+                Not mentioned
+            {% endif %}
+        </p>
         <p><strong>Salary Range:</strong> 
             {% if job.salary %}
                 {{ job.salary }}

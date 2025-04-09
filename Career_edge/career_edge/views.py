@@ -243,11 +243,19 @@ class AddJobView(View):
 def job_details(request, job_id):
     job = get_object_or_404(Job, id=job_id)
     return render(request, 'job_details.html', {'job': job})
+def extract_min_salary(salary_str):
+    if salary_str:
+        nums = re.findall(r'\d+', salary_str)
+        return int(nums[0]) if nums else 0
+    return 0
+
 def search_jobs(request):
     q = request.GET.get('q', '')
     company = request.GET.get('company', '')
     location = request.GET.get('location', '')
     min_salary = request.GET.get('min_salary', '')
+    job_type = request.GET.get('job_type', '')
+    experience_level = request.GET.get('experience_level', '')
 
     jobs = Job.objects.all()
 
@@ -260,15 +268,21 @@ def search_jobs(request):
     if min_salary:
         try:
             min_salary = int(min_salary)
-            jobs = jobs.filter(salary__gte=min_salary)
+            jobs = [job for job in jobs if extract_min_salary(job.salary) >= min_salary]
         except ValueError:
             min_salary = ''
+    if job_type:
+        jobs = jobs.filter(job_type__iexact=job_type)
+    if experience_level:
+        jobs = jobs.filter(experience_level__iexact=experience_level)
 
     context = {
         'jobs': jobs,
         'q': q,
         'company': company,
         'location': location,
-        'min_salary': min_salary
+        'min_salary': min_salary,
+        'job_type': job_type,
+        'experience_level': experience_level,
     }
     return render(request, 'seeker_dashboard.html', context)

@@ -230,6 +230,20 @@
                 <input type="text" name="company" placeholder="Company name" value="{{ company }}">
                 <input type="text" name="location" placeholder="Location" value="{{ location }}">
                 <input type="number" name="min_salary" placeholder="Minimum salary" value="{{ min_salary }}">
+                <select name="job_type">
+                    <option value="">All Job Types</option>
+                    <option value="Full-time" {% if request.GET.job_type == "Full-time" %}selected{% endif %}>Full-time</option>
+                    <option value="Part-time" {% if request.GET.job_type == "Part-time" %}selected{% endif %}>Part-time</option>
+                    <option value="Internship" {% if request.GET.job_type == "Internship" %}selected{% endif %}>Internship</option>
+                    <option value="Contract" {% if request.GET.job_type == "Contract" %}selected{% endif %}>Contract</option>
+                </select>
+            
+                <select name="experience_level">
+                    <option value="">All Experience Levels</option>
+                    <option value="Fresher" {% if request.GET.experience_level == "Fresher" %}selected{% endif %}>Fresher</option>
+                    <option value="Mid-level" {% if request.GET.experience_level == "Mid-level" %}selected{% endif %}>Mid-level</option>
+                    <option value="Senior" {% if request.GET.experience_level == "Senior" %}selected{% endif %}>Senior</option>
+                </select>
                 <button type="submit">Filter</button>
                 <a href="{% url 'search_jobs' %}" style="padding: 10px 20px; background-color: #999; color: white; border-radius: 5px; text-decoration: none;">Clear Filters</a>
             </form>
@@ -244,6 +258,8 @@
                     <h3>{{ job.title }}</h3>
                     <p><strong>Company:</strong> {{ job.company }}</p>
                     <p><strong>Salary:</strong> ₹{{ job.salary }}</p>
+                    <p><strong>Experience Required:</strong> {{ job.experience_level }}</p>
+<p><strong>Job Type:</strong> {{ job.job_type }}</p>
                     <p><strong>Location:</strong> {{ job.location }}</p>
                     <p><strong>Date Posted:</strong> {{ job.date_posted|date:"F d, Y" }}</p>
                     <a href="{% url 'apply_for_job' job.id %}" class="apply-btn">Apply</a>
