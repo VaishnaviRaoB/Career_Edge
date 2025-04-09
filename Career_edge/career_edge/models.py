@@ -42,10 +42,13 @@ class Job(models.Model):
     description = models.TextField()
     company = models.URLField(max_length=255, blank=True, null=True)
     location = models.CharField(max_length=255)
+    job_type = models.CharField(max_length=50, choices=[("Full-time", "Full-time"), ("Part-time", "Part-time"), ("Internship", "Internship"), ("Contract", "Contract")], default="Full-time")
+    experience_level = models.CharField(max_length=50, choices=[("Fresher", "Fresher"), ("Mid-level", "Mid-level"), ("Senior", "Senior")], default="Fresher")
     provider = models.ForeignKey(User, on_delete=models.CASCADE)
     skills = models.CharField(max_length=255, default="")
     salary = models.CharField(max_length=50, blank=True, null=True)
-    date_posted = models.DateTimeField(default=timezone.now) 
+    date_posted = models.DateTimeField(default=timezone.now)
+     
 
     def __str__(self):
         return self.title
