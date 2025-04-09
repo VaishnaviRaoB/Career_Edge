@@ -300,6 +300,7 @@
                     <p><strong>Experience Required:</strong> {{ bookmark.job.experience_level }}</p>
                     <p><strong>Job Type:</strong> {{ bookmark.job.job_type }}</p>
                     <p><strong>Location:</strong> {{ bookmark.job.location }}</p>
+                    <p><strong>Last Date to Apply:</strong> {{ bookmark.job.last_date_to_apply }}</p>
                     
                     <div class="button-container">
                         <a href="{% url 'apply_for_job' bookmark.job.id %}" class="apply-btn">Apply Now</a>
