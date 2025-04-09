@@ -69,6 +69,7 @@ class JobApplication(models.Model):
     phone = models.CharField(max_length=20,  default="")  
     resume = models.FileField(upload_to='resumes/')
     created_at = models.DateTimeField(default=timezone.now)
+    experience = models.CharField(max_length=50, default="0") 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
     def __str__(self):

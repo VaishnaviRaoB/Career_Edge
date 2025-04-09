@@ -151,6 +151,7 @@ def apply_for_job(request, job_id):
         skills = request.POST.get('skills')
         qualifications = request.POST.get('qualification')
         resume = request.FILES.get('resume')
+        experience = request.POST.get('experience')
         
         JobApplication.objects.create(
             job=job,
@@ -160,7 +161,8 @@ def apply_for_job(request, job_id):
             phone=phone,
             skills=skills,
             qualifications=qualifications,
-            resume=resume
+            resume=resume,
+            experience=experience,
         )
         return redirect('seeker_dashboard')
     
