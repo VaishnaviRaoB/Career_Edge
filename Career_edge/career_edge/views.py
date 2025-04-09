@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError
 from .models import UserProfile, JobSeeker, JobProvider
 from .forms import JobForm
 import re
+from django.views.decorators.http import require_POST
 from django.urls import reverse
 # Home page view
 def home(request):
@@ -155,32 +156,23 @@ def apply_for_job(request, job_id):
 def user_logout(request):
     logout(request)
     return redirect('home')
-
-# View applications for a job
 @login_required
 def view_job_applications(request, job_id):
     job = get_object_or_404(Job, id=job_id)
     applications = JobApplication.objects.filter(job=job)
 
-    # Get filter values from the query string
     skill_query = request.GET.get('skill', '')
     qualification_query = request.GET.get('qualification', '')
     date_query = request.GET.get('date', '')
 
-    # Apply filters
     if skill_query:
         applications = applications.filter(skills__icontains=skill_query)
-
     if qualification_query:
         applications = applications.filter(qualifications__icontains=qualification_query)
-
     if date_query:
-        try:
-            parsed_date = parse_date(date_query)
-            if parsed_date:
-                applications = applications.filter(created_at__date=parsed_date)
-        except:
-            pass
+        parsed_date = parse_date(date_query)
+        if parsed_date:
+            applications = applications.filter(created_at__date=parsed_date)
 
     return render(request, 'view_job_applications.html', {
         'job': job,
@@ -188,7 +180,17 @@ def view_job_applications(request, job_id):
         'skill_query': skill_query,
         'qualification_query': qualification_query,
         'date_query': date_query,
+        'STATUS_CHOICES': JobApplication.STATUS_CHOICES,
     })
+@require_POST
+@login_required
+def update_application_status(request, application_id):
+    application = get_object_or_404(JobApplication, id=application_id)
+    status = request.POST.get('status')
+    if status in dict(JobApplication.STATUS_CHOICES):
+        application.status = status
+        application.save()
+    return redirect('view_job_applications', job_id=application.job.id)
 # Delete a job view
 @login_required
 def delete_job(request, job_id):

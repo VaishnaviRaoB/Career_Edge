@@ -4,175 +4,257 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Applications for {{ job.title }}</title>
-    <style>html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-    }
-
-    body {
-        font-family: Arial, sans-serif;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-        background-color: #f0f8ff;
-    }
-
-    main {
-        flex: 1;
-        padding: 20px;
-        text-align: center;
-    }
-        
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fa;
+        }
 
         header {
-            background-color: #ffffff;
-            padding: 10px;
+            background-color: #fff;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
+            border-bottom: 1px solid #ddd;
         }
 
         .logo1 {
             width: 5rem;
-            height: 3rem;
-            margin-left: 2rem;
-            margin-right: 2rem;
+            height: auto;
         }
 
         nav ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
             display: flex;
-        }
-
-        nav ul li {
-            margin-right: 10px;
-            background-color: #f0f8ff;
-            padding: 5px 10px;
-            border-radius: 5px;
+            list-style: none;
+            gap: 15px;
+            margin: 0;
+            padding: 0;
         }
 
         nav ul li a {
             text-decoration: none;
             color: #333;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 5px;
         }
 
         nav ul li a:hover {
-            text-decoration: underline;
+            background-color: #e0e0e0;
         }
 
-        main ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            justify-items: center;
+        main {
+            padding: 40px 5%;
+            max-width: 1200px;
+            margin: auto;
         }
 
-        main ul li {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: left;
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #003366;
         }
 
-        main ul li h3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            color: #333;
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
-        main ul li p {
-            margin: 5px 0;
-            color: #666;
-        }
-
-        main ul li .email-link {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #333;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
+        form input[type="text"],
+        form input[type="date"],
+        form select {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
             font-size: 14px;
-            margin-top: 10px;
+            width: 200px;
         }
 
-        main ul li .email-link:hover {
-            background-color: #555;
+        form button,
+        .email-link {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        form button {
+            background-color: #003366;
+            color: white;
+        }
+
+        form button:hover {
+            background-color: #0055aa;
+        }
+
+        .email-link {
+            background-color: #888;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .email-link:hover {
+            background-color: #666;
+        }
+
+        .application-count {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 16px;
+            font-weight: bold;
+            color: #003366;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+            gap: 25px;
+        }
+
+        li {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+            transition: transform 0.2s;
+        }
+
+        li:hover {
+            transform: translateY(-5px);
+        }
+
+        li h3 {
+            margin: 0 0 10px;
+            color: #003366;
+            font-size: 18px;
+        }
+
+        li p {
+            margin: 6px 0;
+            font-size: 14px;
+            color: #444;
+        }
+
+        .status-form {
+            margin-top: 15px;
+        }
+
+        .status-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #003366;
+        }
+
+        .status-form select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .status-form button {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .status-form button:hover {
+            background-color: #218838;
+        }
+
+        .action-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
         }
 
         footer {
-            background-color: #ffffff;
-            padding: 10px;
+            background-color: #fff;
             text-align: center;
-            margin-top: 50px;
-        }
-
-        footer p {
-            margin: 0;
-            color: #666;
+            padding: 15px 0;
+            font-size: 14px;
+            color: #777;
+            border-top: 1px solid #ddd;
+            margin-top: 60px;
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo">
-            <img src="/static/images/logo.png" alt="Logo" class="logo1">
-            <nav>
-                <ul>
-                    <li><a href="{% url 'provider_dashboard' %}">Home</a></li>
-                    <li><a href="{% url 'about' %}">About Us</a></li>
-                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
-                    <li><a href="{% url 'user_logout' %}">Logout</a></li>
-                </ul>
-            </nav>
-        </div>
+        <img src="/static/images/logo.png" alt="Logo" class="logo1">
+        <nav>
+            <ul>
+                <li><a href="{% url 'provider_dashboard' %}">Home</a></li>
+                <li><a href="{% url 'about' %}">About Us</a></li>
+                <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                <li><a href="{% url 'user_logout' %}">Logout</a></li>
+            </ul>
+        </nav>
     </header>
+
     <main>
         <h1>Job Applications for {{ job.title }}</h1>
 
-<form method="get" style="margin-bottom: 20px;">
-    <input type="text" name="skill" placeholder="Filter by Skill" value="{{ skill_query }}">
-    <input type="text" name="qualification" placeholder="Filter by Qualification" value="{{ qualification_query }}">
-    <input type="date" name="date" value="{{ date_query }}">
-    <button type="submit">Filter</button>
-    <a href="?">Clear</a>
-</form>
-<div style="display: inline-block; background-color: #e6f7ff; color: #003366; padding: 10px 20px; border-radius: 8px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px;">
-    {{ applications.count }} application{{ applications.count|pluralize }} found
-</div>
+        <form method="get">
+            <input type="text" name="skill" placeholder="Filter by Skill" value="{{ skill_query }}">
+            <input type="text" name="qualification" placeholder="Filter by Qualification" value="{{ qualification_query }}">
+            <input type="date" name="date" value="{{ date_query }}">
+            <button type="submit">Filter</button>
+            <a href="?" class="email-link">Clear</a>
+        </form>
 
+        <div class="application-count">
+            {{ applications.count }} application{{ applications.count|pluralize }} found
+        </div>
 
         <ul>
             {% for application in applications %}
                 <li>
-                    <h3>Applicant: {{ application.applicant.username }}</h3>
-                    <p><strong>Name:</strong> {{ application.name }}</p>
+                    <h3>{{ application.name }}</h3>
+                    <p><strong>Username:</strong> {{ application.applicant.username }}</p>
                     <p><strong>Skills:</strong> {{ application.skills }}</p>
                     <p><strong>Qualification:</strong> {{ application.qualifications }}</p>
                     <p><strong>Email:</strong> {{ application.email }}</p>
                     <p><strong>Phone:</strong> {{ application.phone }}</p>
-                    <p><strong>Date Applied:</strong> {{ application.created_at|date:"d M Y, h:i A" }}</p>
-                    <a href="{{ application.resume.url }}" download="{{ application.resume.name }}" class="email-link">Download Resume</a><br>
-                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ application.email }}" target="_blank" class="email-link">Compose in Gmail</a>
+                    <p><strong>Applied On:</strong> {{ application.created_at|date:"d M Y, h:i A" }}</p>
+                    <p><strong>Status:</strong> {{ application.get_status_display }}</p>
+
+                    <form method="post" action="{% url 'update_application_status' application.id %}" class="status-form">
+                        {% csrf_token %}
+                        <label for="status_{{ application.id }}">Change Status:</label>
+                        <select name="status" id="status_{{ application.id }}">
+                            {% for key, label in application.STATUS_CHOICES %}
+                                <option value="{{ key }}" {% if application.status == key %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">Update Status</button>
+                    </form>
+
+                    <div class="action-links">
+                        <a href="{{ application.resume.url }}" download class="email-link">Download Resume</a>
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ application.email }}" target="_blank" class="email-link">Email via Gmail</a>
+                    </div>
                 </li>
             {% empty %}
-            
+                <li>No applications found.</li>
             {% endfor %}
         </ul>
     </main>
+
     <footer>
         <p>&copy; 2023 Job Portal. All rights reserved.</p>
     </footer>

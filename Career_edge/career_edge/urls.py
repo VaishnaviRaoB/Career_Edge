@@ -25,6 +25,8 @@ urlpatterns = [
     path('provider/dashboard/', ProviderDashboardView.as_view(), name='provider_dashboard'),
     path('job/<int:job_id>/', views.job_details, name='job_details'),
     path('search/', views.search_jobs, name='search_jobs'),
+    path('dashboard/provider/application/<int:application_id>/update_status/', views.update_application_status, name='update_application_status'),
+ 
 
 ]
 if settings.DEBUG:
