@@ -85,3 +85,13 @@ class JobApplication(models.Model):
     def __str__(self):
         return f'{self.name} - {self.job.title}'
 
+class SavedJob(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    saved_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('job', 'user')  # Prevents duplicate bookmarks
+        
+    def __str__(self):
+        return f"{self.user.username} - {self.job.title}"

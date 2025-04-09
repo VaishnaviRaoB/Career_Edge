@@ -9,7 +9,7 @@ from .forms import EditCompanyProfileForm
 from django.utils.dateparse import parse_date
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
-from .models import UserProfile, JobSeeker, JobProvider
+from .models import UserProfile, JobSeeker, JobProvider,SavedJob
 from .forms import JobForm
 import re
 from django.views.decorators.http import require_POST
@@ -126,8 +126,14 @@ def edit_company_profile(request):
 @login_required
 def seeker_dashboard(request):
     jobs = Job.objects.all()
-    return render(request, 'seeker_dashboard.html', {'jobs': jobs})
-
+    
+    # Get IDs of jobs saved by the current user
+    saved_job_ids = SavedJob.objects.filter(user=request.user).values_list('job_id', flat=True)
+    
+    return render(request, 'seeker_dashboard.html', {
+        'jobs': jobs,
+        'saved_job_ids': saved_job_ids
+    })
 # Provider dashboard view
 @login_required
 def provider_dashboard(request):
@@ -247,9 +253,17 @@ class AddJobView(View):
             return redirect('view_jobs')  # or change this to 'add_job'
         return render(request, 'add_job.html', {'form': form})
 
+@login_required
 def job_details(request, job_id):
     job = get_object_or_404(Job, id=job_id)
-    return render(request, 'job_details.html', {'job': job})
+    
+    # Check if this job is saved by the current user
+    is_saved = SavedJob.objects.filter(user=request.user, job=job).exists()
+    
+    return render(request, 'job_details.html', {
+        'job': job,
+        'is_saved': is_saved
+    })
 def extract_min_salary(salary_str):
     if salary_str:
         nums = re.findall(r'\d+', salary_str)
@@ -291,6 +305,10 @@ def search_jobs(request):
          jobs = jobs.filter(date_posted__date=posted_date_obj)
         except ValueError:
          posted_date = ''
+    saved_job_ids = []
+    if request.user.is_authenticated:
+        saved_job_ids = SavedJob.objects.filter(user=request.user).values_list('job_id', flat=True)
+    
     context = {
         'jobs': jobs,
         'q': q,
@@ -300,6 +318,7 @@ def search_jobs(request):
         'job_type': job_type,
         'experience_level': experience_level,
         'posted_date': posted_date,
+        'saved_job_ids': saved_job_ids,
     }
     return render(request, 'seeker_dashboard.html', context)
 
@@ -311,3 +330,24 @@ def my_applications(request):
     return render(request, 'my_applications.html', {
         'applications': applications,
     })
+
+
+@login_required
+def toggle_bookmark(request, job_id):
+    job = get_object_or_404(Job, id=job_id)
+    saved_job, created = SavedJob.objects.get_or_create(user=request.user, job=job)
+    
+    if not created:
+        # If it already existed, the user is unbookmarking it
+        saved_job.delete()
+        messages.success(request, f"'{job.title}' removed from your saved jobs.")
+    else:
+        messages.success(request, f"'{job.title}' saved to your bookmarks.")
+    
+    # Redirect back to the page where the user was
+    return redirect(request.META.get('HTTP_REFERER', 'seeker_dashboard'))
+
+@login_required
+def saved_jobs(request):
+    bookmarks = SavedJob.objects.filter(user=request.user).order_by('-saved_at')
+    return render(request, 'saved_jobs.html', {'bookmarks': bookmarks})

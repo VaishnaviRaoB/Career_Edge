@@ -28,6 +28,8 @@ urlpatterns = [
     path('dashboard/provider/application/<int:application_id>/update_status/', views.update_application_status, name='update_application_status'),
     path('edit-company-profile/', views.edit_company_profile, name='edit_company_profile'),
     path('my-applications/', views.my_applications, name='my_applications'),
+    path('job/bookmark/<int:job_id>/', views.toggle_bookmark, name='toggle_bookmark'),
+path('saved-jobs/', views.saved_jobs, name='saved_jobs'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Job Seeker Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -236,7 +237,44 @@
         .message-box.info {
             background-color: #cce5ff;
             border-color: #b8daff;
-        }
+        }.button-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.apply-btn, .bookmark-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.apply-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.bookmark-btn {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.bookmark-btn.bookmarked {
+    background-color: #ffeb3b;
+    color: #333;
+}
+
+.bookmark-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.bookmark-btn.bookmarked:hover {
+    background-color: #ffd700;
+}
 
     </style>
 </head>
@@ -249,6 +287,7 @@
                 <li><a href="{% url 'seeker_dashboard' %}">Home</a></li>
                 <li><a href="{% url 'about' %}">About Us</a></li>
                 <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                <li><a href="{% url 'saved_jobs' %}">Saved Jobs</a></li>
                 <li><a href="{% url 'my_applications' %}">My Applications</a></li>
                 <li><a href="{% url 'user_logout' %}">Logout</a></li>
             </ul>
@@ -309,7 +348,19 @@
                     <p><strong>Job Type:</strong> {{ job.job_type }}</p>
                     <p><strong>Location:</strong> {{ job.location }}</p>
                     <p><strong>Date Posted:</strong> {{ job.date_posted|date:"F d, Y" }}</p>
-                    <a href="{% url 'apply_for_job' job.id %}" class="apply-btn">Apply</a>
+                    <div class="button-container">
+                        <a href="{% url 'apply_for_job' job.id %}" class="apply-btn">Apply</a>
+                        
+                        {% if job.id in saved_job_ids %}
+                            <a href="{% url 'toggle_bookmark' job.id %}" class="bookmark-btn bookmarked">
+                                <i class="fas fa-bookmark"></i> Saved
+                            </a>
+                        {% else %}
+                            <a href="{% url 'toggle_bookmark' job.id %}" class="bookmark-btn">
+                                <i class="far fa-bookmark"></i> Save Job
+                            </a>
+                        {% endif %}
+                    </div>
                 </div>
             </a>
         {% endfor %}

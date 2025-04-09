@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My Applications</title>
+    <title>Saved Jobs</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -82,49 +82,62 @@
             margin-bottom: 10px;
         }
 
-        .application-box {
+        .job-box {
             background-color: #f0f0f0;
             border: 1px solid #ccc;
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 15px;
+            position: relative;
         }
 
-        .application-box h3 {
+        .job-box h3 {
             margin-top: 0;
             margin-bottom: 10px;
             font-size: 18px;
             color: #333;
         }
 
-        .application-box p {
+        .job-box p {
             margin: 5px 0;
             color: #555;
         }
 
-        .status-badge {
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .apply-btn, .remove-btn {
             display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 5px;
             font-size: 14px;
-            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .apply-btn {
+            background-color: #4CAF50;
             color: white;
         }
 
-        .status-pending {
-            background-color: #6c757d;
+        .remove-btn {
+            background-color: #f44336;
+            color: white;
         }
 
-        .status-shortlisted {
-            background-color: #28a745;
+        .apply-btn:hover, .remove-btn:hover {
+            opacity: 0.9;
         }
 
-        .status-interview {
-            background-color: #007bff;
-        }
-
-        .status-rejected {
-            background-color: #dc3545;
+        .saved-date {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #888;
+            font-size: 12px;
         }
 
         .empty-state {
@@ -222,34 +235,29 @@
     {% endif %}
 
     <section>
-        <h2>My Job Applications</h2>
+        <h2>Saved Jobs</h2>
 
-        {% if applications %}
-            {% for application in applications %}
-                <div class="application-box">
-                    <h3>{{ application.job.title }}</h3>
-                    <p><strong>Company:</strong> {{ application.job.company }}</p>
-                    <p><strong>Applied on:</strong> {{ application.created_at|date:"F d, Y" }}</p>
-                    <p>
-                        <strong>Status:</strong> 
-                        {% if application.status == 'pending' %}
-                        <span class="status-badge status-pending">Pending</span>
-                        {% elif application.status == 'shortlisted' %}
-                        <span class="status-badge status-shortlisted">Shortlisted</span>
-                        {% elif application.status == 'interview' %}
-                        <span class="status-badge status-interview">Interview Scheduled</span>
-                        {% elif application.status == 'rejected' %}
-                        <span class="status-badge status-rejected">Rejected</span>
-                        {% endif %}
-                    </p>
-                    <p><strong>Location:</strong> {{ application.job.location }}</p>
-                    <p><strong>Job Type:</strong> {{ application.job.job_type }}</p>
-                    <p><strong>Salary:</strong> {{ application.job.salary }}</p>
+        {% if bookmarks %}
+            {% for bookmark in bookmarks %}
+                <div class="job-box">
+                    <span class="saved-date">Saved on {{ bookmark.saved_at|date:"F d, Y" }}</span>
+                    <h3>{{ bookmark.job.title }}</h3>
+                    <p><strong>Company:</strong> {{ bookmark.job.company }}</p>
+                    <p><strong>Salary:</strong> {{ bookmark.job.salary }}</p>
+                    <p><strong>Experience Required:</strong> {{ bookmark.job.experience_level }}</p>
+                    <p><strong>Job Type:</strong> {{ bookmark.job.job_type }}</p>
+                    <p><strong>Location:</strong> {{ bookmark.job.location }}</p>
+                    
+                    <div class="button-container">
+                        <a href="{% url 'apply_for_job' bookmark.job.id %}" class="apply-btn">Apply Now</a>
+                        <a href="{% url 'toggle_bookmark' bookmark.job.id %}" class="remove-btn">Remove</a>
+                        <a href="{% url 'job_details' bookmark.job.id %}" class="apply-btn" style="background-color: #007bff;">View Details</a>
+                    </div>
                 </div>
             {% endfor %}
         {% else %}
             <div class="empty-state">
-                <p>You haven't applied to any jobs yet.</p>
+                <p>You haven't saved any jobs yet.</p>
                 <a href="{% url 'seeker_dashboard' %}">Find Jobs</a>
             </div>
         {% endif %}
@@ -266,7 +274,7 @@
             msg.classList.add('fade-out');
             setTimeout(() => msg.remove(), 1000);
         });
-    }, 1000); // Show for 3 seconds
+    }, 3000); // Show for 3 seconds
 </script>
 </body>
 </html>
