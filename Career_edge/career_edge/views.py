@@ -256,6 +256,8 @@ def search_jobs(request):
     min_salary = request.GET.get('min_salary', '')
     job_type = request.GET.get('job_type', '')
     experience_level = request.GET.get('experience_level', '')
+    posted_date = request.GET.get('posted_date', '')
+
 
     jobs = Job.objects.all()
 
@@ -275,7 +277,13 @@ def search_jobs(request):
         jobs = jobs.filter(job_type__iexact=job_type)
     if experience_level:
         jobs = jobs.filter(experience_level__iexact=experience_level)
-
+    if posted_date:
+        try:
+         from datetime import datetime
+         posted_date_obj = datetime.strptime(posted_date, '%Y-%m-%d').date()
+         jobs = jobs.filter(date_posted__date=posted_date_obj)
+        except ValueError:
+         posted_date = ''
     context = {
         'jobs': jobs,
         'q': q,
@@ -284,5 +292,6 @@ def search_jobs(request):
         'min_salary': min_salary,
         'job_type': job_type,
         'experience_level': experience_level,
+        'posted_date': posted_date,
     }
     return render(request, 'seeker_dashboard.html', context)

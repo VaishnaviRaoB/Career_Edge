@@ -244,6 +244,7 @@
                     <option value="Mid-level" {% if request.GET.experience_level == "Mid-level" %}selected{% endif %}>Mid-level</option>
                     <option value="Senior" {% if request.GET.experience_level == "Senior" %}selected{% endif %}>Senior</option>
                 </select>
+                <input type="date" name="posted_date" value="{{ posted_date }}">
                 <button type="submit">Filter</button>
                 <a href="{% url 'search_jobs' %}" style="padding: 10px 20px; background-color: #999; color: white; border-radius: 5px; text-decoration: none;">Clear Filters</a>
             </form>
