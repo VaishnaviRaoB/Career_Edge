@@ -329,7 +329,8 @@
                     <option value="Mid-level" {% if request.GET.experience_level == "Mid-level" %}selected{% endif %}>Mid-level</option>
                     <option value="Senior" {% if request.GET.experience_level == "Senior" %}selected{% endif %}>Senior</option>
                 </select>
-                <input type="date" name="posted_date" value="{{ posted_date }}">
+                <label for="last_date">Last Date to Apply:</label>
+    <input type="date" name="last_date" value="{{ last_date }}">
                 <button type="submit">Filter</button>
                 <a href="{% url 'search_jobs' %}" style="padding: 10px 20px; background-color: #999; color: white; border-radius: 5px; text-decoration: none;">Clear Filters</a>
             </form>
@@ -358,7 +359,7 @@
                     <p><strong>Experience Required:</strong> {{ job.experience_level }}</p>
                     <p><strong>Job Type:</strong> {{ job.job_type }}</p>
                     <p><strong>Location:</strong> {{ job.location }}</p>
-                    <p><strong>Date Posted:</strong> {{ job.date_posted|date:"F d, Y" }}</p>
+                    <p><strong>Last Date to Apply:</strong> {{ job.last_date_to_apply }}</p>
                     <div class="button-container">
                         <a href="{% url 'apply_for_job' job.id %}" class="apply-btn">Apply</a>
                         

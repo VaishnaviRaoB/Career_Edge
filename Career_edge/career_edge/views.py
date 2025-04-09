@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
+from datetime import datetime
 from .models import UserProfile, Job, JobApplication
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views import View
+from datetime import datetime
 from .forms import EditCompanyProfileForm
 from django.utils.dateparse import parse_date
 from django.core.validators import URLValidator
@@ -310,10 +312,11 @@ def search_jobs(request):
     job_type = request.GET.get('job_type', '')
     experience_level = request.GET.get('experience_level', '')
     posted_date = request.GET.get('posted_date', '')
-
+    last_date = request.GET.get('last_date', '')
 
     jobs = Job.objects.all()
 
+    # Apply search filters
     if q:
         jobs = jobs.filter(title__icontains=q)
     if company:
@@ -330,17 +333,28 @@ def search_jobs(request):
         jobs = jobs.filter(job_type__iexact=job_type)
     if experience_level:
         jobs = jobs.filter(experience_level__iexact=experience_level)
+
+    # Filter by posted_date if provided
     if posted_date:
         try:
-         from datetime import datetime
-         posted_date_obj = datetime.strptime(posted_date, '%Y-%m-%d').date()
-         jobs = jobs.filter(date_posted__date=posted_date_obj)
+            posted_date_obj = datetime.strptime(posted_date, '%Y-%m-%d').date()
+            jobs = jobs.filter(date_posted__date=posted_date_obj)
         except ValueError:
-         posted_date = ''
+            posted_date = ''
+
+    # Filter by last_date if provided
+    if last_date:
+        try:
+            last_date_obj = datetime.strptime(last_date, '%Y-%m-%d').date()  # Convert the string to a date
+            jobs = jobs.filter(last_date_to_apply=last_date_obj)  # Filter using the correct field
+        except ValueError:
+            last_date = ''
+
+    # Handle saved jobs for authenticated users
     saved_job_ids = []
     if request.user.is_authenticated:
         saved_job_ids = SavedJob.objects.filter(user=request.user).values_list('job_id', flat=True)
-    
+
     context = {
         'jobs': jobs,
         'q': q,
