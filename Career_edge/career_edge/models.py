@@ -94,6 +94,7 @@ class JobApplication(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     experience = models.CharField(max_length=50, default="0") 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    is_seen_by_provider = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.name} - {self.job.title}'

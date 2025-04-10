@@ -303,6 +303,7 @@
     
     <!-- Main content with job listings -->
     <main>
+        
         {% if jobs %}
         <div class="job-grid">
             {% for job in jobs %}
@@ -363,7 +364,7 @@
                 // Convert the last date string to a Date object
                 const jobLastDate = new Date(lastDate);
                 
-                if (jobLastDate < new Date(today)) {
+                if (jobLastDate <= new Date(today)) {
                     // If the last date has passed, highlight the job listing as "Application Closed"
                     lastDateElement.parentElement.innerHTML += '<p class="job-detail" style="color: red;"><strong>Application Closed</strong></p>';
                 }

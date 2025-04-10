@@ -303,7 +303,11 @@
                     <p><strong>Last Date to Apply:</strong> {{ bookmark.job.last_date_to_apply }}</p>
                     
                     <div class="button-container">
-                        <a href="{% url 'apply_for_job' bookmark.job.id %}" class="apply-btn">Apply Now</a>
+                        {% if job.last_date_to_apply|date:"Y-m-d" >= today|date:"Y-m-d" %}
+                <a href="{% url 'apply_for_job' bookmark.job.id %}" class="apply-btn">Apply</a>
+            {% else %}
+                <button class="apply-btn" disabled style="background-color: #ccc; cursor: not-allowed;">Closed</button>
+            {% endif %}
                         <a href="{% url 'toggle_bookmark' bookmark.job.id %}" class="remove-btn">Remove</a>
                         <a href="{% url 'job_details' bookmark.job.id %}" class="apply-btn" style="background-color: #007bff;">View Details</a>
                     </div>

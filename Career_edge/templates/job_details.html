@@ -162,7 +162,11 @@
     
         <p><strong>Posted By:</strong> {{ job.provider.username }}</p>
     
-        <a class="apply" href="{% url 'apply_for_job' job.id %}">Apply</a>
+        {% if job.last_date_to_apply|date:"Y-m-d" >= today|date:"Y-m-d" %}
+                <a href="{% url 'apply_for_job' job.id %}" class="apply-btn">Apply</a>
+            {% else %}
+                <button class="apply-btn" disabled style="background-color: #ccc; cursor: not-allowed;">Closed</button>
+            {% endif %}
     </div>
     
     <footer>

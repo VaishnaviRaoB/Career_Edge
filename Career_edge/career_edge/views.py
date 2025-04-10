@@ -6,7 +6,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views import View
+from datetime import date
 from datetime import datetime
+from django.utils import timezone
 from .forms import EditCompanyProfileForm
 from django.utils.dateparse import parse_date
 from django.core.validators import URLValidator
@@ -171,13 +173,14 @@ def edit_company_profile(request):
 @login_required
 def seeker_dashboard(request):
     jobs = Job.objects.all()
-    
+    today = timezone.now().date()
     # Get IDs of jobs saved by the current user
     saved_job_ids = SavedJob.objects.filter(user=request.user).values_list('job_id', flat=True)
     
     return render(request, 'seeker_dashboard.html', {
         'jobs': jobs,
-        'saved_job_ids': saved_job_ids
+        'saved_job_ids': saved_job_ids,
+        'today': today,
     })
 # Provider dashboard view
 @login_required
@@ -265,6 +268,19 @@ def view_job_applications(request, job_id):
             applications = applications.filter(created_at__date=parsed_date)
     if status_query:
         applications = applications.filter(status=status_query)
+        
+    # 👇 Unseen application popup
+    unseen_applications = JobApplication.objects.filter(job=job, is_seen_by_provider=False)
+    unseen_ids = list(unseen_applications.values_list('id', flat=True))
+    unseen_count = len(unseen_ids)
+# 👇 Add this above the return
+    new_applications = unseen_count  # Directly use this instead of messages
+
+# Already marks them as seen
+    unseen_applications.update(is_seen_by_provider=True)
+    # if unseen_count:
+    #    messages.success(request, f"You have {unseen_count} new application(s).")
+    #    unseen_applications.update(is_seen_by_provider=True)
 
     return render(request, 'view_job_applications.html', {
         'job': job,
@@ -274,6 +290,8 @@ def view_job_applications(request, job_id):
         'date_query': date_query,
         'status_choices': JobApplication.STATUS_CHOICES,
         'STATUS_CHOICES': JobApplication.STATUS_CHOICES,
+        'unseen_ids': unseen_ids,
+        'new_applications': new_applications,
     })
 @require_POST
 @login_required
@@ -334,13 +352,14 @@ class AddJobView(View):
 @login_required
 def job_details(request, job_id):
     job = get_object_or_404(Job, id=job_id)
-    
+    today = timezone.now().date()
     # Check if this job is saved by the current user
     is_saved = SavedJob.objects.filter(user=request.user, job=job).exists()
     
     return render(request, 'job_details.html', {
         'job': job,
-        'is_saved': is_saved
+        'is_saved': is_saved,
+        'today': today,
     })
 def extract_min_salary(salary_str):
     if salary_str:
@@ -456,6 +475,7 @@ def toggle_bookmark(request, job_id):
 @login_required
 def saved_jobs(request):
     bookmarks = SavedJob.objects.filter(user=request.user).order_by('-saved_at')
+    today = timezone.now().date()
     # Handle search query
     search_query = request.GET.get('q', '')
     if search_query:
@@ -467,7 +487,8 @@ def saved_jobs(request):
     
     return render(request, 'saved_jobs.html', {
         'bookmarks': bookmarks,
-        'search_query': search_query
+        'search_query': search_query,
+        'today':today
     })
 
 @login_required
