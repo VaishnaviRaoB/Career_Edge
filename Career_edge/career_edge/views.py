@@ -87,7 +87,7 @@ def user_register_seeker(request):
         if user:
             login(request, user)
             return redirect('seeker_dashboard')
-        
+        return redirect('user_login')
 
     return render(request, 'register_seeker.html') 
 
@@ -107,7 +107,7 @@ def seeker_profile(request):
             user_profile=user_profile,
             defaults={
                 'full_name': request.user.username,
-                'skills': 'Not provided yet'
+                'skills': ''
             }
         )
         
@@ -490,9 +490,13 @@ def edit_job(request, job_id):
 
 @login_required
 def recommended_jobs(request):
+    # Check if seeker has filled skills
+    job_seeker = JobSeeker.objects.get(user_profile__user=request.user)
+    if not job_seeker.skills or not any(skill.strip() for skill in job_seeker.skills.split(',')):
+      return render(request, 'recommended_jobs.html', {
+         'error': 'No skills found in your profile.'
+    })
     try:
-        # Get the current job seeker profile
-        job_seeker = JobSeeker.objects.get(user_profile__user=request.user)
         
         # Initialize an empty query
         query = Q()
@@ -559,3 +563,4 @@ def recommended_jobs(request):
     except JobSeeker.DoesNotExist:
         # Handle case where job seeker profile doesn't exist
         return render(request, 'recommended_jobs.html', {'error': 'Please complete your profile to get job recommendations'})
+    

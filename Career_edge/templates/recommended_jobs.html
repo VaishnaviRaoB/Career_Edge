@@ -303,11 +303,11 @@
         {% if error %}
             <div class="profile-reminder">
                 <p><i class="fas fa-info-circle"></i> {{ error }}</p>
-                <p>Visit your <a href="{% url 'seeker_profile' %}">profile page</a> to add your skills and experience.</p>
+                <p>Visit your <a href="{% url 'seeker_profile' %}">profile page</a> to add your skills </p>
             </div>
         {% else %}
             <div class="recommendation-explanation">
-                <p>These jobs are recommended based on your profile information including skills, experience level{% if job_seeker.address %}, and location{% endif %}.</p>
+                <p>These jobs are recommended based on your profile information including skills{% if job_seeker.address %}and location{% endif %}.</p>
                 <p>Update your <a href="{% url 'seeker_profile' %}">profile</a> anytime to get better recommendations.</p>
             </div>
 
@@ -371,7 +371,7 @@
                 <div class="no-jobs">
                     <i class="fas fa-search"></i>
                     <p>No matching jobs found based on your profile.</p>
-                    <p>Try updating your skills and experience in your profile to get more recommendations.</p>
+                    <p>Try updating your skills in your profile to get more recommendations.</p>
                     <a href="{% url 'seeker_profile' %}" class="apply-btn">Update Profile</a>
                 </div>
             {% endif %}

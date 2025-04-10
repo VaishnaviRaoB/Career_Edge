@@ -25,7 +25,7 @@ class JobSeeker(models.Model):
     address = models.TextField(blank=True, null=True)
     education = models.TextField(blank=True, null=True)
     experience_years = models.IntegerField(null=True, blank=True)
-    skills = models.TextField(blank=True)
+    skills = models.TextField(blank=True,null=True)
     resume = models.FileField(upload_to='resumes/', blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     linkedin = models.URLField(blank=True, null=True)
@@ -105,3 +105,5 @@ class SavedJob(models.Model):
         
     def __str__(self):
         return f"{self.user.username} - {self.job.title}"
+
+
