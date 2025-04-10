@@ -1,0 +1,374 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Job</title>
+    <style>
+        /* Overall page layout */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff; /* Light blue background */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header styles */
+        header {
+            background-color: #ffffff; /* White background */
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 6rem;
+            margin-right: 3rem;
+            margin-left: 2rem;
+            height: 3rem;
+        }
+
+        .navigation ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .navigation ul li {
+            margin-right: 15px;
+            background-color: #f0f8ff;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .navigation ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .navigation ul li a:hover {
+            color: #555;
+        }
+
+        /* Main content */
+        main {
+            flex: 1;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="url"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .submit-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .cancel-button {
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+
+        .cancel-button:hover {
+            background-color: #d32f2f;
+        }
+
+        .current-logo {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .current-logo img {
+            max-width: 100px;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #ffffff;
+            padding: 15px;
+            text-align: center;
+            margin-top: auto;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
+        
+        /* Notification styles */
+        .messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .alert {
+            background-color: #333;
+            color: white;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: slideIn 0.5s ease;
+        }
+
+        .alert-success {
+            background-color: #4CAF50;
+        }
+
+        .alert-error {
+            background-color: #f44336;
+        }
+
+        .alert-warning {
+            background-color: #ff9800;
+        }
+
+        .alert-info {
+            background-color: #2196F3;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with navigation -->
+    <header>
+        <div class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="Logo">
+        </div>
+        <nav class="navigation">
+            <ul>
+                <li><a href="{% url 'provider_dashboard' %}">Home</a></li>
+                <li><a href="{% url 'view_jobs' %}">My Jobs</a></li>
+                <li><a href="{% url 'about' %}">About Us</a></li>
+                <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                <li><a href="{% url 'user_logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <!-- Notification messages -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    <script>
+        // Auto-hide messages after 5 seconds
+        setTimeout(function() {
+            const messageElements = document.querySelectorAll('.messages .alert');
+            messageElements.forEach(function(element) {
+                element.style.display = 'none';
+            });
+        }, 5000);
+    </script>
+    {% endif %}
+    
+    <!-- Main content with job edit form -->
+    <main>
+        <div class="form-container">
+            <h1>Edit Job Listing</h1>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="id_title">Job Title:</label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <p class="help-text error">{{ form.title.errors }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_description">Job Description:</label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <p class="help-text error">{{ form.description.errors }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_company">Company Website:</label>
+                    {{ form.company }}
+                    {% if form.company.errors %}
+                        <p class="help-text error">{{ form.company.errors }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_location">Location:</label>
+                    {{ form.location }}
+                    {% if form.location.errors %}
+                        <p class="help-text error">{{ form.location.errors }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_job_type">Job Type:</label>
+                    {{ form.job_type }}
+                    {% if form.job_type.errors %}
+                        <p class="help-text error">{{ form.job_type.errors }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_experience_level">Experience Level:</label>
+                    {{ form.experience_level }}
+                    {% if form.experience_level.errors %}
+                        <p class="help-text error">{{ form.experience_level.errors }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_skills">Required Skills:</label>
+                    {{ form.skills }}
+                    <p class="help-text">Enter skills separated by commas</p>
+                    {% if form.skills.errors %}
+                        <p class="help-text error">{{ form.skills.errors }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_salary">Salary:</label>
+                    {{ form.salary }}
+                    {% if form.salary.errors %}
+                        <p class="help-text error">{{ form.salary.errors }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_last_date_to_apply">Last Date to Apply:</label>
+                    {{ form.last_date_to_apply }}
+                    {% if form.last_date_to_apply.errors %}
+                        <p class="help-text error">{{ form.last_date_to_apply.errors }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_logo">Company Logo:</label>
+                    {% if job.logo %}
+                        <div class="current-logo">
+                            <p>Current logo:</p>
+                            <img src="{{ job.logo.url }}" alt="Current Company Logo">
+                        </div>
+                    {% endif %}
+                    {{ form.logo }}
+                    <p class="help-text">Leave blank to keep the current logo</p>
+                    {% if form.logo.errors %}
+                        <p class="help-text error">{{ form.logo.errors }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="button-group">
+                    <a href="{% url 'view_jobs' %}" class="cancel-button">Cancel</a>
+                    <button type="submit" class="submit-button">Update Job</button>
+                </div>
+            </form>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Job Portal. All rights reserved.</p>
+    </footer>
+</body>
+</html>

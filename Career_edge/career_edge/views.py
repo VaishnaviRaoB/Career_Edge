@@ -425,3 +425,21 @@ def saved_jobs(request):
         'bookmarks': bookmarks,
         'search_query': search_query
     })
+
+@login_required
+def edit_job(request, job_id):
+    # Get the job object or return 404 if not found
+    job = get_object_or_404(Job, id=job_id, provider=request.user)
+    
+    if request.method == 'POST':
+        # Create a form instance with POST data and files (for logo)
+        form = JobForm(request.POST, request.FILES, instance=job)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Job updated successfully!')
+            return redirect('view_jobs')
+    else:
+        # Create a form pre-filled with the job data
+        form = JobForm(instance=job)
+    
+    return render(request, 'edit_job.html', {'form': form, 'job': job})

@@ -323,7 +323,7 @@
                 <p class="job-detail"><strong>Last Date to Apply:</strong> <span class="job-last-date">{{ job.last_date_to_apply|date:"F d, Y" }}</span></p>
                 <div class="action-buttons">
                     <a href="{% url 'view_job_applications' job.id %}" class="view-button">View Applications</a>
-    
+                    <a href="{% url 'edit_job' job.id %}" class="view-button" style="background-color: #4CAF50;">Edit</a>
                     <form action="{% url 'delete_job' job.id %}" method="post" style="display: inline;">
                         {% csrf_token %}
                         <button type="submit" class="delete-button" onclick="return confirm('Are you sure you want to delete this job listing?')">Delete</button>
