@@ -62,7 +62,9 @@ class Job(models.Model):
     date_posted = models.DateTimeField(default=timezone.now)
     logo = models.ImageField(upload_to='job_logos/', blank=True, null=True)
     last_date_to_apply = models.DateField(null=True, blank=True)
-     
+    
+    def application_count(self):
+        return self.jobapplication_set.count()
     def __str__(self):
         return self.title
 

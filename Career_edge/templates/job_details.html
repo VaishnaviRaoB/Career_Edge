@@ -158,6 +158,7 @@
     
         <p><strong>Date Posted:</strong> {{ job.date_posted|date:"F d, Y" }}</p>
         <p><strong>Last Date to Apply:</strong> {{ job.last_date_to_apply }}</p>
+        <p><strong>Total Applications:</strong> <span class="application-badge">{{ job.jobapplication_set.count }}</span></p>
     
         <p><strong>Posted By:</strong> {{ job.provider.username }}</p>
     

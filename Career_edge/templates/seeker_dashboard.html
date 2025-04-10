@@ -257,7 +257,15 @@
     background-color: #4CAF50;
     color: white;
 }
-
+.application-badge {
+        display: inline-block;
+        background-color: #e0e0e0;
+        color: #333;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+    }
 .bookmark-btn {
     background-color: #f0f0f0;
     color: #333;
@@ -372,6 +380,7 @@
                         📍 {{ job.location }}
                     {% endif %}</p>
                     <p><strong>Last Date to Apply:</strong> {{ job.last_date_to_apply }}</p>
+                    <p><strong>Total Applications:</strong> <span class="application-badge">{{ job.jobapplication_set.count }}</span></p>
                     <div class="button-container">
                         <a href="{% url 'apply_for_job' job.id %}" class="apply-btn">Apply</a>
                         
