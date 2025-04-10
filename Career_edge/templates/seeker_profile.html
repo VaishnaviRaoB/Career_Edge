@@ -3,26 +3,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My Profile - Job Seeker</title>
+    <title>My Profile - Career Edge</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f8ff;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+        /* Global Styles */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #1abc9c;
+            --light-bg: #f5f7fa;
+            --dark-text: #333;
+            --light-text: #fff;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+            --danger-color: #e74c3c;
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
         header {
-            background-color: #ffffff;
-            padding: 10px;
+            background-color: var(--primary-color);
+            padding: 15px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
@@ -30,47 +54,85 @@
             align-items: center;
         }
 
-        .logo span {
-            font-size: 24px;
-            margin-right: 20px;
-            color: #333;
+        .logo img {
+            height: 40px;
+            margin-right: 15px;
+        }
+
+        .logo-text {
+            color: var(--light-text);
+            font-size: 22px;
+            font-weight: 600;
         }
 
         nav ul {
             list-style-type: none;
-            padding: 0;
-            margin: 0;
             display: flex;
+            flex-wrap: wrap;
         }
 
         nav ul li {
-            margin-right: 10px;
-            background-color: #f0f8ff;
-            padding: 5px 10px;
-            border-radius: 5px;
+            margin: 0 5px;
         }
 
         nav ul li a {
             text-decoration: none;
-            color: #333;
+            color: var(--light-text);
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            display: block;
         }
 
-        nav ul li a:hover {
-            text-decoration: underline;
+        nav ul li a:hover, nav ul li a.active {
+            background-color: var(--secondary-color);
         }
 
+        /* Main section */
         main {
             flex: 1;
-            padding: 20px;
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
         }
 
+        /* Message Box Styles */
+        .messages-container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto 20px;
+        }
+
+        .message-box {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+
+        .message-box.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .message-box.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .message-box.info {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        /* Profile Container */
         .profile-container {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: var(--light-text);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
             padding: 30px;
             width: 100%;
             max-width: 800px;
@@ -80,6 +142,8 @@
             display: flex;
             align-items: center;
             margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
         }
 
         .profile-picture {
@@ -87,58 +151,83 @@
             height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #f0f8ff;
+            border: 3px solid var(--secondary-color);
             margin-right: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .profile-default-picture {
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            background-color: #e0e0e0;
+            background-color: var(--light-bg);
             display: flex;
             justify-content: center;
             align-items: center;
             margin-right: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .profile-default-picture i {
             font-size: 50px;
-            color: #999;
+            color: var(--primary-color);
         }
 
         .profile-title h1 {
             margin: 0;
-            color: #333;
+            color: var(--primary-color);
+            font-size: 28px;
         }
 
         .profile-title p {
             margin: 5px 0 0;
-            color: #777;
+            color: var(--secondary-color);
+            font-size: 16px;
         }
 
         .profile-form {
             margin-top: 20px;
         }
 
+        /* Profile Sections */
+        .profile-section {
+            margin-bottom: 30px;
+        }
+
+        .profile-section h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 22px;
+            position: relative;
+        }
+
+        /* Form Styling */
         .form-group {
             margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
         }
 
         .form-control {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             font-size: 16px;
-            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
+            outline: none;
         }
 
         textarea.form-control {
@@ -146,79 +235,9 @@
             resize: vertical;
         }
 
-        .submit-btn {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-
-        .submit-btn:hover {
-            background-color: #45a049;
-        }
-
-        .profile-section {
-            margin-bottom: 30px;
-        }
-
-        .profile-section h2 {
-            color: #333;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        footer {
-            background-color: #ffffff;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .logo1 {
-            width: 5rem;
-            height: 3rem;
-            margin-left: 2rem;
-            margin-right: 2rem;
-        }
-
-        /* Message Box Styles */
-        .messages-container {
-            max-width: 800px;
-            width: 100%;
-            margin: 1rem auto;
-        }
-
-        .message-box {
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            color: #155724;
-            border: 1px solid;
-        }
-
-        .message-box.success {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-        }
-
-        .message-box.error {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
-        }
-
-        .message-box.info {
-            background-color: #cce5ff;
-            border-color: #b8daff;
-        }
-
         .help-text {
             color: #777;
-            font-size: 12px;
+            font-size: 13px;
             margin-top: 5px;
         }
 
@@ -236,25 +255,8 @@
             padding: 0 10px;
             box-sizing: border-box;
         }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .form-column {
-                flex: 0 0 100%;
-                max-width: 100%;
-            }
-            
-            .profile-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .profile-picture, .profile-default-picture {
-                margin-right: 0;
-                margin-bottom: 20px;
-            }
-        }
 
+        /* File Input Styling */
         .file-input-container {
             position: relative;
             overflow: hidden;
@@ -262,14 +264,17 @@
         }
 
         .file-input-label {
-            background-color: #f0f0f0;
-            color: #333;
-            padding: 8px 12px;
-            border-radius: 5px;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
             cursor: pointer;
             display: inline-block;
-            margin-top: 5px;
-            border: 1px solid #ddd;
+            transition: var(--transition);
+        }
+
+        .file-input-label:hover {
+            background-color: #2980b9;
         }
 
         .file-input-container input[type="file"] {
@@ -287,26 +292,112 @@
         }
 
         .current-file {
-            margin-top: 5px;
+            margin-top: 10px;
             font-size: 14px;
-            color: #4CAF50;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .current-file i {
+            margin-right: 5px;
+        }
+
+        .current-file a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 5px;
+        }
+
+        .current-file a:hover {
+            text-decoration: underline;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: block;
+            margin: 20px auto 0;
+            min-width: 200px;
+        }
+
+        .submit-btn:hover {
+            background-color: #16a085;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            padding: 20px;
+            text-align: center;
+            color: var(--light-text);
+            margin-top: auto;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            nav ul {
+                justify-content: center;
+                margin: 10px 0;
+            }
+
+            nav ul li {
+                margin-bottom: 5px;
+            }
+            
+            .form-column {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-picture, .profile-default-picture {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
         }
     </style>
 </head>
 <body>
     <header>
         <div class="logo">
-            <img src="{% static 'images/logo.png' %}" alt="Welcome Image" class="logo1">
-            <nav>
-                <ul>
-                    <li><a href="{% url 'seeker_dashboard' %}">Home</a></li>
-                    <li><a href="{% url 'saved_jobs' %}">Saved Jobs</a></li>
-                    <li><a href="{% url 'my_applications' %}">My Applications</a></li>
-                    <li><a href="{% url 'recommended_jobs' %}">Recommended Jobs</a></li>
-                    <li><a href="{% url 'user_logout' %}">Logout</a></li>
-                </ul>
-            </nav>
+            <img src="{% static 'images/logo.png' %}" alt="Career Edge Logo">
+            <span class="logo-text">Career Edge</span>
         </div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'seeker_dashboard' %}">Home</a></li>
+                <li><a href="{% url 'saved_jobs' %}">Saved Jobs</a></li>
+                <li><a href="{% url 'my_applications' %}">My Applications</a></li>
+                <li><a href="{% url 'recommended_jobs' %}">Recommended</a></li>
+                <li><a href="{% url 'seeker_profile' %}" class="active">Profile</a></li>
+                <li><a href="{% url 'user_logout' %}">Logout</a></li>
+            </ul>
+        </nav>
     </header>
 
     {% if messages %}
@@ -339,7 +430,7 @@
                 {% csrf_token %}
 
                 <div class="profile-section">
-                    <h2>Personal Information</h2>
+                    <h2><i class="fas fa-user-circle"></i> Personal Information</h2>
                     
                     <div class="form-row">
                         <div class="form-column">
@@ -380,6 +471,7 @@
                     <div class="form-group">
                         <label for="id_location_preferences">Location Preferences</label>
                         <input type="text" name="location_preferences" value="{{ form.location_preferences.value|default:'' }}" class="form-control" id="id_location_preferences">
+                        <p class="help-text">Enter cities or regions where you'd like to work, separated by commas (e.g., Mumbai, Delhi, Remote)</p>
                     </div>
                     <div class="form-group">
                         <label for="id_linkedin">LinkedIn Profile URL</label>
@@ -388,7 +480,7 @@
                 </div>
 
                 <div class="profile-section">
-                    <h2>Profile Photo</h2>
+                    <h2><i class="fas fa-camera"></i> Profile Photo</h2>
                     <div class="form-group">
                         <div class="file-input-container">
                             <label for="id_profile_picture" class="file-input-label">
@@ -407,7 +499,7 @@
                 </div>
 
                 <div class="profile-section">
-                    <h2>Professional Information</h2>
+                    <h2><i class="fas fa-briefcase"></i> Professional Information</h2>
                     
                     <div class="form-group">
                         <label for="id_experience_years">Years of Experience</label>
@@ -422,7 +514,7 @@
                     <div class="form-group">
                         <label for="id_skills">Skills</label>
                         <textarea name="skills" class="form-control" id="id_skills" placeholder="Enter your skills separated by commas (e.g., Python, JavaScript, Project Management)">{{ form.skills.value|default:'' }}</textarea>
-                        <p class="help-text">List skills relevant to the jobs you're seeking</p>
+                        <p class="help-text">List skills relevant to the jobs you're seeking. These will be used for job recommendations.</p>
                     </div>
                     
                     <div class="form-group">
@@ -432,7 +524,7 @@
                 </div>
 
                 <div class="profile-section">
-                    <h2>Resume</h2>
+                    <h2><i class="fas fa-file-alt"></i> Resume</h2>
                     <div class="form-group">
                         <div class="file-input-container">
                             <label for="id_resume" class="file-input-label">
@@ -450,13 +542,13 @@
                     </div>
                 </div>
 
-                <button type="submit" class="submit-btn">Save Profile</button>
+                <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Save Profile</button>
             </form>
         </div>
     </main>
 
     <footer>
-        <p>&copy; 2025 Job Portal. All rights reserved.</p>
+        <p>&copy; 2025 Career Edge. All rights reserved.</p>
     </footer>
 
     <script>
@@ -464,7 +556,9 @@
         setTimeout(function() {
             const messageElements = document.querySelectorAll('.message-box');
             messageElements.forEach(function(element) {
-                element.style.display = 'none';
+                element.style.opacity = '0';
+                element.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => element.style.display = 'none', 500);
             });
         }, 5000);
 

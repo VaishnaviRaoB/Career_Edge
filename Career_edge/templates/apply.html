@@ -1,30 +1,52 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apply for Job - {{ job.title }}</title>
+    <title>Apply for {{ job.title }} - Career Edge</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        /* Overall page layout */
-        body {
-            font-family: Arial, sans-serif;
+        /* Global Styles */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #1abc9c;
+            --light-bg: #f5f7fa;
+            --dark-text: #333;
+            --light-text: #fff;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f0f8ff; /* Light blue background */
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            min-height: 100vh;
         }
 
         /* Header styles */
         header {
-            background-color: #ffffff; /* White background */
-            padding: 10px;
+            background-color: var(--primary-color);
+            padding: 15px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
@@ -32,145 +54,333 @@
             align-items: center;
         }
 
-        .logo span {
-            font-size: 24px;
-            margin-right: 20px;
-            color: #333; /* Dark text color */
+        .logo img {
+            height: 40px;
+            margin-right: 15px;
+        }
+
+        .logo-text {
+            color: var(--light-text);
+            font-size: 22px;
+            font-weight: 600;
         }
 
         nav ul {
             list-style-type: none;
-            padding: 0;
-            margin: 0;
             display: flex;
+            flex-wrap: wrap;
         }
 
         nav ul li {
-            margin-right: 10px;
-            background-color: #f0f8ff; /* Light blue background */
-            padding: 5px 10px; /* Adjust padding as needed */
-            border-radius: 5px; /* Rounded corners */
+            margin: 0 5px;
         }
 
         nav ul li a {
             text-decoration: none;
-            color: #333;
+            color: var(--light-text);
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            display: block;
         }
 
-        nav ul li a:hover {
-            text-decoration: underline;
+        nav ul li a:hover, nav ul li a.active {
+            background-color: var(--secondary-color);
         }
 
         /* Main section */
         main {
-            flex: 1; /* Expand main section to fill remaining space */
-            padding: 20px;
-        }
-
-        main section {
-            background-color: #fff; /* White background */
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            WIDTH:25%;
-            position: relative;
-            left: 30rem;
-        }
-
-        main section h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        form {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            max-width: 300px; /* Set maximum width for the form */
-            margin: auto; /* Center the form horizontally */
+            align-items: center;
+            padding: 30px 20px;
         }
 
-        label {
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        input[type="file"] {
+        /* Application Form Container */
+        .application-container {
+            max-width: 800px;
             width: 100%;
-            padding: 10px;
+            margin: 0 auto;
+            background-color: var(--light-text);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+
+        .application-header {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            padding: 20px 30px;
+        }
+
+        .application-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .job-summary {
+            display: flex;
+            margin-top: 10px;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .job-summary span {
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .job-summary i {
+            margin-right: 5px;
+        }
+
+        .application-content {
+            padding: 30px;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+        }
+
+        .form-section h3 {
+            color: var(--primary-color);
+            font-size: 18px;
             margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box; /* Ensures padding and border are included in width */
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-color);
         }
 
-        button[type="submit"] {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
+        .form-row {
+            margin-bottom: 20px;
+        }
+
+        .form-row label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .form-row input, 
+        .form-row textarea,
+        .form-row select {
             width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            font-size: 16px;
+            transition: border-color 0.3s;
         }
 
-        button[type="submit"]:hover {
-            background-color: #555;
+        .form-row input:focus, 
+        .form-row textarea:focus,
+        .form-row select:focus {
+            border-color: var(--secondary-color);
+            outline: none;
         }
-        .logo1{
-            width: 5rem;
-            height: 3rem;
-            margin-left: 2rem;
-            margin-right: 2rem;
+
+        .form-row input[type="file"] {
+            padding: 10px;
+            background-color: #f9f9f9;
         }
-        
+
+        .form-hint {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            padding: 10px 30px 30px;
+        }
+
+        .submit-btn, .cancel-btn {
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            flex: 2;
+        }
+
+        .submit-btn:hover {
+            background-color: #16a085;
+        }
+
+        .cancel-btn {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .cancel-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            padding: 20px;
+            text-align: center;
+            color: var(--light-text);
+            margin-top: auto;
+        }
+
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            nav ul {
+                justify-content: center;
+                margin: 10px 0;
+            }
+
+            nav ul li {
+                margin-bottom: 5px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .submit-btn, .cancel-btn {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="logo">
-            <img src="/static/images/logo.png" alt="Welcome Image" class="logo1">
-
-            <nav>
-                <ul>
-                    <li><a href="{% url 'seeker_dashboard' %}">Home</a></li>
-                    <li><a href="{% url 'about' %}">About Us</a></li>
-                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
-                    <li><a href="{% url 'user_logout' %}">Logout</a></li>
-                </ul>
-            </nav>
+            <img src="{% static 'images/logo.png' %}" alt="Career Edge Logo">
+            <span class="logo-text">Career Edge</span>
         </div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'seeker_dashboard' %}">Home</a></li>
+                <li><a href="{% url 'saved_jobs' %}">Saved Jobs</a></li>
+                <li><a href="{% url 'my_applications' %}">My Applications</a></li>
+                <li><a href="{% url 'recommended_jobs' %}">Recommended</a></li>
+                <li><a href="{% url 'seeker_profile' %}">Profile</a></li>
+                <li><a href="{% url 'user_logout' %}">Logout</a></li>
+            </ul>
+        </nav>
     </header>
+
     <main>
-        
-        <section>
-            <h1>Apply for {{ job.title }}</h1>
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required><br>
-                
-                <label for="email">Email:</label>
-                <input type="text" id="email" name="email" required><br>
-                
-                <label for="phone">Phone Number:</label>
-                <input type="text" id="phone" name="phone" required><br>
-                
-                <label for="skills">Skills:</label>
-                <input type="text" id="skills" name="skills" required><br>
-                
-                <label for="qualification">Qualification:</label>
-                <input type="text" id="qualification" name="qualification" required><br>
-                <label for="experience">Experience (in years):</label>
-<input type="text" id="experience" name="experience" required><br>
-                <label for="resume">Resume (PDF only):</label>
-                <input type="file" id="resume" name="resume" accept=".pdf" required><br>
-                
-                <button type="submit">Apply</button>
-            </form>
-        </section>
+        <div class="application-container">
+            <div class="application-header">
+                <h1>Apply for {{ job.title }}</h1>
+                <div class="job-summary">
+                    <span><i class="fas fa-building"></i> {{ job.company }}</span>
+                    <span><i class="fas fa-map-marker-alt"></i> {{ job.location }}</span>
+                    <span><i class="fas fa-calendar-alt"></i> Last Date: {{ job.last_date_to_apply }}</span>
+                </div>
+            </div>
+
+            <div class="application-content">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="form-section">
+                        <h3>Personal Information</h3>
+                        <div class="form-grid">
+                            <div class="form-row">
+                                <label for="name">Full Name</label>
+                                <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                            </div>
+                            <div class="form-row">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" required placeholder="Enter your email address">
+                            </div>
+                            <div class="form-row">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" required placeholder="Enter your phone number">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Professional Information</h3>
+                        <div class="form-grid">
+                            <div class="form-row">
+                                <label for="skills">Skills</label>
+                                <input type="text" id="skills" name="skills" required placeholder="E.g., JavaScript, React, UI/UX">
+                                <p class="form-hint">Separate multiple skills with commas</p>
+                            </div>
+                            <div class="form-row">
+                                <label for="qualification">Highest Qualification</label>
+                                <input type="text" id="qualification" name="qualification" required placeholder="E.g., Bachelor's in Computer Science">
+                            </div>
+                            <div class="form-row">
+                                <label for="experience">Experience (in years)</label>
+                                <input type="number" id="experience" name="experience" required min="0" placeholder="Enter years of experience">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Resume</h3>
+                        <div class="form-row">
+                            <label for="resume">Upload Resume (PDF only)</label>
+                            <input type="file" id="resume" name="resume" accept=".pdf" required>
+                            <p class="form-hint">Maximum file size: 5MB</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-paper-plane"></i> Submit Application
+                        </button>
+                        <a href="{% url 'job_details' job.id %}" class="cancel-btn">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </main>
+
+    <footer>
+        <p>&copy; 2025 Career Edge. All rights reserved.</p>
+    </footer>
 </body>
 </html>

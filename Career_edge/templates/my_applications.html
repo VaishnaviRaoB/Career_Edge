@@ -2,25 +2,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My Applications</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Applications - Career Edge</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f8ff;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+        /* Global Styles */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #1abc9c;
+            --light-bg: #f5f7fa;
+            --dark-text: #333;
+            --light-text: #fff;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+            --danger-color: #e74c3c;
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
         header {
-            background-color: #ffffff;
-            padding: 10px;
+            background-color: var(--primary-color);
+            padding: 15px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
@@ -28,86 +54,242 @@
             align-items: center;
         }
 
-        .logo span {
-            font-size: 24px;
-            margin-right: 20px;
-            color: #333;
+        .logo img {
+            height: 40px;
+            margin-right: 15px;
+        }
+
+        .logo-text {
+            color: var(--light-text);
+            font-size: 22px;
+            font-weight: 600;
         }
 
         nav ul {
             list-style-type: none;
-            padding: 0;
-            margin: 0;
             display: flex;
+            flex-wrap: wrap;
         }
 
         nav ul li {
-            margin-right: 10px;
-            background-color: #f0f8ff;
-            padding: 5px 10px;
-            border-radius: 5px;
+            margin: 0 5px;
         }
 
         nav ul li a {
             text-decoration: none;
-            color: #333;
+            color: var(--light-text);
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            display: block;
         }
 
-        nav ul li a:hover {
-            text-decoration: underline;
+        nav ul li a:hover, nav ul li a.active {
+            background-color: var(--secondary-color);
         }
 
+        /* Main section */
         main {
             flex: 1;
-            padding: 20px;
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
             flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
         }
 
-        main section {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            max-width: 800px;
+        /* Message Box Styles */
+        .messages-container {
+            max-width: 1000px;
             width: 100%;
-            align-self: center;
+            margin: 0 auto 20px;
         }
 
-        main section h2 {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-
-        .application-box {
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 10px;
+        .message-box {
             padding: 15px;
             margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            color: #155724;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .application-box h3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            font-size: 18px;
-            color: #333;
+        .message-box.success {
+            background-color: #d4edda;
         }
 
-        .application-box p {
-            margin: 5px 0;
-            color: #555;
+        .message-box.error,
+        .message-box.warning {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .message-box.info {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        /* Content Container */
+        .content-container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-header h2 {
+            color: var(--primary-color);
+            font-size: 24px;
+            position: relative;
+        }
+
+        .page-header h2:after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent-color);
+        }
+
+        /* Search Container */
+        .search-container {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-form input[type="text"],
+        .search-form select {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+        }
+
+        .search-form button {
+            padding: 0 20px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .search-form button:hover {
+            background-color: var(--primary-color);
+        }
+
+        .clear-search {
+            padding: 12px 20px;
+            background-color: #999;
+            color: white;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .clear-search:hover {
+            background-color: #777;
+        }
+
+        /* Applications List */
+        .applications-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .application-card {
+            background-color: var(--light-text);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .application-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .application-header {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .job-title-info {
+            flex: 1;
+        }
+
+        .job-title {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .job-company {
+            margin-top: 5px;
+            font-size: 15px;
+            opacity: 0.9;
+        }
+
+        .applied-date {
+            font-size: 13px;
+            opacity: 0.8;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .application-details {
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .application-detail-group {
+            width: 50%;
+            margin-bottom: 12px;
+        }
+
+        .application-detail-label {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .application-detail-value {
+            display: block;
         }
 
         .status-badge {
             display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 6px 12px;
+            border-radius: var(--border-radius);
             font-size: 14px;
-            font-weight: bold;
+            font-weight: 600;
             color: white;
         }
 
@@ -127,186 +309,179 @@
             background-color: #dc3545;
         }
 
+        /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 40px 0;
-            color: #888;
+            padding: 50px 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
         }
 
         .empty-state p {
             font-size: 18px;
+            color: #888;
             margin-bottom: 20px;
         }
 
         .empty-state a {
             display: inline-block;
-            padding: 10px 20px;
-            background-color: #333;
-            color: #fff;
+            padding: 12px 25px;
+            background-color: var(--accent-color);
+            color: white;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
         }
 
+        .empty-state a:hover {
+            background-color: #16a085;
+        }
+
+        /* Footer */
         footer {
-            background-color: #ffffff;
-            padding: 10px;
+            background-color: var(--primary-color);
+            padding: 20px;
             text-align: center;
+            color: var(--light-text);
+            margin-top: auto;
         }
 
-        .logo1 {
-            width: 5rem;
-            height: 3rem;
-            margin-left: 2rem;
-            margin-right: 2rem;
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            nav ul {
+                justify-content: center;
+                margin: 10px 0;
+            }
+
+            nav ul li {
+                margin-bottom: 5px;
+            }
+            
+            .application-detail-group {
+                width: 100%;
+            }
+            
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .clear-search {
+                text-align: center;
+            }
         }
-
-        /* Message Box Styles */
-        .messages-container {
-            max-width: 800px;
-            width: 100%;
-            margin: 1rem auto;
-        }
-
-        .message-box {
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            color: #155724;
-            border: 1px solid;
-        }
-
-        .message-box.success {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-        }
-
-        .message-box.error,
-        .message-box.warning {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
-        }
-
-        .message-box.info {
-            background-color: #cce5ff;
-            border-color: #b8daff;
-        }
-        .search-container {
-    margin-bottom: 20px;
-    width: 100%;
-}
-
-.search-form {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.search-form input[type="text"] {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-.search-form button {
-    padding: 10px 15px;
-    background-color: #333;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.search-form button:hover {
-    background-color: #555;
-}
-
-.clear-search {
-    display: inline-block;
-    padding: 10px 15px;
-    background-color: #f0f0f0;
-    color: #333;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-.clear-search:hover {
-    background-color: #e0e0e0;
-}
     </style>
 </head>
 <body>
-<header>
-    <div class="logo">
-        <img src="/static/images/logo.png" alt="Welcome Image" class="logo1">
+    <header>
+        <div class="logo">
+            <img src="/static/images/logo.png" alt="Career Edge Logo">
+            <span class="logo-text">Career Edge</span>
+        </div>
         <nav>
             <ul>
                 <li><a href="{% url 'seeker_dashboard' %}">Home</a></li>
                 <li><a href="{% url 'saved_jobs' %}">Saved Jobs</a></li>
-                <li><a href="{% url 'recommended_jobs' %}">Recommended Jobs</a></li>
+                <li><a href="{% url 'my_applications' %}" class="active">My Applications</a></li>
+                <li><a href="{% url 'recommended_jobs' %}">Recommended</a></li>
+                <li><a href="{% url 'seeker_profile' %}">Profile</a></li>
                 <li><a href="{% url 'user_logout' %}">Logout</a></li>
             </ul>
         </nav>
-    </div>
-</header>
+    </header>
 
-<main>
-    {% if messages %}
-    <div class="messages-container">
-        {% for message in messages %}
-            <div class="message-box {{ message.tags }}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    <section>
-        <h2>My Job Applications</h2>
- <!-- Search Bar -->
- <div class="search-container">
-    <form method="get" action="{% url 'my_applications' %}" class="search-form">
-        <input type="text" name="q" placeholder="Search by job title, company or location..." value="{{ search_query }}">
-        <!-- Status Filter -->
-        <select name="status">
-            <option value="">All Statuses</option>
-            {% for value, label in status_choices %}
-                <option value="{{ value }}" {% if value == status_query %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Search</button>
-        {% if search_query %}
-            <a href="{% url 'my_applications' %}" class="clear-search">Clear</a>
-        {% endif %}
-    </form>
-</div>
-        {% if applications %}
-            {% for application in applications %}
-                <div class="application-box">
-                    <h3>{{ application.job.title }}</h3>
-                    <p><strong>Company:</strong> {{ application.job.company }}</p>
-                    <p><strong>Applied on:</strong> {{ application.created_at|date:"F d, Y" }}</p>
-                    <p>
-                        <strong>Status:</strong> 
-                        {% if application.status == 'pending' %}
-                        <span class="status-badge status-pending">Pending</span>
-                        {% elif application.status == 'shortlisted' %}
-                        <span class="status-badge status-shortlisted">Shortlisted</span>
-                        {% elif application.status == 'interview' %}
-                        <span class="status-badge status-interview">Interview Scheduled</span>
-                        {% elif application.status == 'rejected' %}
-                        <span class="status-badge status-rejected">Rejected</span>
-                        {% endif %}
-                    </p>
-                    <p><strong>Location:</strong> {{ application.job.location }}</p>
-                    <p><strong>Job Type:</strong> {{ application.job.job_type }}</p>
-                    <p><strong>Salary:</strong> {{ application.job.salary }}</p>
+    <main>
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="message-box {{ message.tags }}">
+                    {{ message }}
                 </div>
             {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="content-container">
+            <div class="page-header">
+                <h2>My Job Applications</h2>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-container">
+                <form method="get" action="{% url 'my_applications' %}" class="search-form">
+                    <input type="text" name="q" placeholder="Search by job title, company or location..." value="{{ search_query }}">
+                    <!-- Status Filter -->
+                    <select name="status">
+                        <option value="">All Statuses</option>
+                        {% for value, label in status_choices %}
+                            <option value="{{ value }}" {% if value == status_query %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Search</button>
+                    {% if search_query %}
+                        <a href="{% url 'my_applications' %}" class="clear-search">Clear</a>
+                    {% endif %}
+                </form>
+            </div>
+
+            <!-- Applications List -->
+            {% if applications %}
+            <div class="applications-list">
+                {% for application in applications %}
+                <div class="application-card">
+                    <div class="application-header">
+                        <div class="job-title-info">
+                            <h3 class="job-title">{{ application.job.title }}</h3>
+                            <p class="job-company">{{ application.job.company }}</p>
+                            <p class="applied-date">Applied on {{ application.created_at|date:"F d, Y" }}</p>
+                        </div>
+                    </div>
+                    <div class="application-details">
+                        <div class="application-detail-group">
+                            <span class="application-detail-label">Status:</span>
+                            <span class="application-detail-value">
+                                {% if application.status == 'pending' %}
+                                <span class="status-badge status-pending">Pending</span>
+                                {% elif application.status == 'shortlisted' %}
+                                <span class="status-badge status-shortlisted">Shortlisted</span>
+                                {% elif application.status == 'interview' %}
+                                <span class="status-badge status-interview">Interview Scheduled</span>
+                                {% elif application.status == 'rejected' %}
+                                <span class="status-badge status-rejected">Rejected</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="application-detail-group">
+                            <span class="application-detail-label">Location:</span>
+                            <span class="application-detail-value">
+                                {% if "remote" in application.job.location|lower %}
+                                    🌐 Remote
+                                {% else %}
+                                    📍 {{ application.job.location }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="application-detail-group">
+                            <span class="application-detail-label">Job Type:</span>
+                            <span class="application-detail-value">{{ application.job.job_type }}</span>
+                        </div>
+                        <div class="application-detail-group">
+                            <span class="application-detail-label">Salary:</span>
+                            <span class="application-detail-value">₹{{ application.job.salary }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
             {% else %}
             <div class="empty-state">
                 {% if search_query %}
@@ -317,21 +492,22 @@
                     <a href="{% url 'seeker_dashboard' %}">Find Jobs</a>
                 {% endif %}
             </div>
-        {% endif %}
-    </section>
-</main>
+            {% endif %}
+        </div>
+    </main>
 
-<footer>
-    <p>&copy; 2025 Job Portal. All rights reserved.</p>
-</footer>
-<script>
-    setTimeout(() => {
-        const messages = document.querySelectorAll('.message-box');
-        messages.forEach(msg => {
-            msg.classList.add('fade-out');
-            setTimeout(() => msg.remove(), 1000);
-        });
-    }, 1000); // Show for 3 seconds
-</script>
+    <footer>
+        <p>&copy; 2025 Career Edge. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        setTimeout(() => {
+            const messages = document.querySelectorAll('.message-box');
+            messages.forEach(msg => {
+                msg.classList.add('fade-out');
+                setTimeout(() => msg.remove(), 1000);
+            });
+        }, 3000); // Show for 3 seconds
+    </script>
 </body>
 </html>
