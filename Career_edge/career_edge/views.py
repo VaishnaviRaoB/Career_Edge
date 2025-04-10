@@ -349,7 +349,7 @@ def search_jobs(request):
     experience_level = request.GET.get('experience_level', '')
     posted_date = request.GET.get('posted_date', '')
     last_date = request.GET.get('last_date', '')
-
+    remote_only = request.GET.get('remote') 
     jobs = Job.objects.all()
 
     # Apply search filters
@@ -369,6 +369,9 @@ def search_jobs(request):
         jobs = jobs.filter(job_type__iexact=job_type)
     if experience_level:
         jobs = jobs.filter(experience_level__iexact=experience_level)
+     
+    if remote_only:
+        jobs = jobs.filter(location__icontains='remote')
 
     # Filter by posted_date if provided
     if posted_date:

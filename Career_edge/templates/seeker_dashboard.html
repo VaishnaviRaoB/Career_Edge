@@ -334,6 +334,10 @@
                 </select>
                 <label for="last_date">Last Date to Apply:</label>
     <input type="date" name="last_date" value="{{ last_date }}">
+    <label>
+        <input type="checkbox" name="remote" {% if request.GET.remote %}checked{% endif %}>
+        Remote Only
+    </label>
                 <button type="submit">Filter</button>
                 <a href="{% url 'search_jobs' %}" style="padding: 10px 20px; background-color: #999; color: white; border-radius: 5px; text-decoration: none;">Clear Filters</a>
             </form>
@@ -361,7 +365,11 @@
                     <p><strong>Salary:</strong> ₹{{ job.salary }}</p>
                     <p><strong>Experience Required:</strong> {{ job.experience_level }}</p>
                     <p><strong>Job Type:</strong> {{ job.job_type }}</p>
-                    <p><strong>Location:</strong> {{ job.location }}</p>
+                    <p><strong>Location:</strong> {% if "remote" in job.location|lower %}
+                        🌐 Remote
+                    {% else %}
+                        📍 {{ job.location }}
+                    {% endif %}</p>
                     <p><strong>Last Date to Apply:</strong> {{ job.last_date_to_apply }}</p>
                     <div class="button-container">
                         <a href="{% url 'apply_for_job' job.id %}" class="apply-btn">Apply</a>
