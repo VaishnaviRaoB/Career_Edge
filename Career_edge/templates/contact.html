@@ -3,24 +3,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Contact Us - Job Portal</title>
-    <!-- Include any additional CSS or stylesheets here -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Career Edge</title>
+    {% load static %}
     <style>
-        /* Overall page layout */
-        body {
-            font-family: Arial, sans-serif;
+        /* Global Styles */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #1abc9c;
+            --light-bg: #f5f7fa;
+            --dark-text: #333;
+            --light-text: #fff;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 6px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f0f8ff; /* Light blue background */
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
         }
 
         /* Header styles */
         header {
-            background-color: #ffffff; /* White background */
-            padding: 10px;
+            background-color: var(--primary-color);
+            padding: 15px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
@@ -28,91 +51,166 @@
             align-items: center;
         }
 
-        .logo span {
-            font-size: 24px;
-            margin-right: 20px;
+        .logo1 {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            object-fit: contain;
         }
 
         .navigation ul {
             list-style-type: none;
-            margin: 0;
-            padding: 0;
             display: flex;
         }
 
         .navigation ul li {
-            margin-right: 10px;
-            background-color: #f0f8ff; /* Light blue background */
-            padding: 5px 10px; /* Adjust padding as needed */
-            border-radius: 5px; /* Rounded corners */
+            margin: 0 10px;
+            position: relative;
         }
 
         .navigation ul li a {
             text-decoration: none;
-            color: #333;
+            color: var(--light-text);
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .navigation ul li a:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .login-button {
+            padding: 10px 20px;
+            background-color: var(--accent-color);
+            color: var(--light-text);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .login-button:hover {
+            background-color: #16a085;
+            transform: translateY(-2px);
         }
 
         /* Main content section */
         main {
-            padding: 20px;
-            margin-top: 20px; /* Margin to separate header and main content */
-            text-align: center; /* Center align content */
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
         }
 
-
-        /* Contact information section */
+        /* Contact section styles */
         .contact-section {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #fff; /* White background */
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a box shadow */
-            max-width: 800px; /* Adjust max-width as needed */
-            margin-left: auto; /* Center the box horizontally */
-            margin-right: auto; /* Center the box horizontally */
-            text-align: left; /* Left align text */
+            background-color: var(--light-text);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: var(--box-shadow);
         }
 
         .contact-section h2 {
             font-size: 28px;
-            color: #333;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .contact-section h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent-color);
         }
 
         .contact-section p {
-            font-size: 18px;
-            line-height: 1.6;
-            color: #666;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 15px;
         }
 
         .contact-info {
             list-style-type: none;
-            padding: 0;
+            margin-top: 20px;
         }
 
         .contact-info li {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
         }
-        .logo1{
-            width: 5rem;
-            height: 3rem;
-            margin-left: 2rem;
-            margin-right: 2rem;
+
+        .contact-info li:before {
+            content: '•';
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .contact-info a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .contact-info a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            .navigation ul {
+                margin-bottom: 15px;
+            }
+
+            .contact-section {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navigation ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .navigation ul li {
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <header>
         <div class="logo">
-            <img src="/static/images/logo.png" alt="Welcome Image" class="logo1">
-
+            <img src="{% static 'images/logo.png' %}" alt="Career Edge Logo" class="logo1">
             <nav class="navigation">
                 <ul>
                     <li><a href="{% url 'home' %}">Home</a></li>
                     <li><a href="{% url 'about' %}">About Us</a></li>
-                    <li><a href="{% url 'user_login' %}">Login</a></li>
+                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
                 </ul>
             </nav>
         </div>
+        <a href="{% url 'user_login' %}" class="login-button">Login</a>
     </header>
 
     <!-- Main content section -->
@@ -121,12 +219,11 @@
             <h2>Contact Information</h2>
             <p>Feel free to reach out to us through any of the following channels:</p>
             <ul class="contact-info">
-                <li>Email: <a href="mailto:contact@jobportal.com">contact@jobportal.com</a></li>
+                <li>Email: <a href="mailto:contact@careeredge.com">contact@careeredge.com</a></li>
                 <li>Phone: +1234567890</li>
                 <li>Address: 123 Job Portal St, Cityville, Country</li>
             </ul>
         </div>
     </main>
-
 </body>
 </html>

@@ -4,27 +4,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Job</title>
+    <title>Edit Job - Career Edge</title>
     <style>
-        /* Overall page layout */
-        body {
-            font-family: Arial, sans-serif;
+        /* Global Styles */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #1abc9c;
+            --light-bg: #f5f7fa;
+            --dark-text: #333;
+            --light-text: #fff;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 6px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f0f8ff; /* Light blue background */
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
         }
 
         /* Header styles */
         header {
-            background-color: #ffffff; /* White background */
-            padding: 10px;
+            background-color: var(--primary-color);
+            padding: 15px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
@@ -33,66 +54,82 @@
         }
 
         .logo img {
-            width: 6rem;
-            margin-right: 3rem;
-            margin-left: 2rem;
-            height: 3rem;
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            object-fit: contain;
         }
 
-        .navigation ul {
+        nav ul {
             list-style-type: none;
-            margin: 0;
-            padding: 0;
             display: flex;
         }
 
-        .navigation ul li {
-            margin-right: 15px;
-            background-color: #f0f8ff;
-            padding: 5px 10px;
-            border-radius: 5px;
+        nav ul li {
+            margin: 0 10px;
+            position: relative;
         }
 
-        .navigation ul li a {
+        nav ul li a {
             text-decoration: none;
-            color: #333;
+            color: var(--light-text);
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
         }
 
-        .navigation ul li a:hover {
-            color: #555;
+        nav ul li a:hover {
+            background-color: var(--secondary-color);
         }
 
         /* Main content */
         main {
             flex: 1;
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
         }
 
         .form-container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background-color: var(--light-text);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 800px;
         }
 
-        h1 {
+        .form-title {
+            color: var(--primary-color);
+            margin-bottom: 30px;
             text-align: center;
-            margin-bottom: 20px;
-            color: #333;
+            font-size: 28px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .form-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent-color);
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 25px;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #333;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
         }
 
         input[type="text"],
@@ -101,11 +138,21 @@
         textarea,
         select {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: var(--border-radius);
             font-size: 16px;
-            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        input[type="date"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
         }
 
         textarea {
@@ -116,60 +163,66 @@
         .button-group {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
+            margin-top: 30px;
         }
 
         .submit-button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
+            padding: 12px 25px;
+            background-color: var(--accent-color);
+            color: var(--light-text);
             border: none;
-            border-radius: 4px;
+            border-radius: var(--border-radius);
             cursor: pointer;
             font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
         }
 
         .cancel-button {
-            padding: 10px 20px;
-            background-color: #f44336;
-            color: white;
+            padding: 12px 25px;
+            background-color: #e74c3c;
+            color: var(--light-text);
             border: none;
-            border-radius: 4px;
+            border-radius: var(--border-radius);
             cursor: pointer;
             font-size: 16px;
             text-decoration: none;
             display: inline-block;
             text-align: center;
+            font-weight: 600;
+            transition: var(--transition);
         }
 
         .submit-button:hover {
-            background-color: #45a049;
+            background-color: #16a085;
+            transform: translateY(-2px);
         }
 
         .cancel-button:hover {
-            background-color: #d32f2f;
+            background-color: #c0392b;
+            transform: translateY(-2px);
         }
 
         .current-logo {
             margin-top: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .current-logo img {
             max-width: 100px;
             height: auto;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: var(--border-radius);
             padding: 5px;
         }
 
         /* Footer styles */
         footer {
-            background-color: #ffffff;
+            background-color: var(--primary-color);
             padding: 15px;
             text-align: center;
+            color: var(--light-text);
             margin-top: auto;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
         }
         
         /* Notification styles */
@@ -182,30 +235,30 @@
         }
 
         .alert {
-            background-color: #333;
-            color: white;
+            background-color: var(--primary-color);
+            color: var(--light-text);
             padding: 12px 15px;
             margin: 10px 0;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
             position: relative;
             animation: slideIn 0.5s ease;
         }
 
         .alert-success {
-            background-color: #4CAF50;
+            background-color: var(--accent-color);
         }
 
         .alert-error {
-            background-color: #f44336;
+            background-color: #e74c3c;
         }
 
         .alert-warning {
-            background-color: #ff9800;
+            background-color: #f39c12;
         }
 
         .alert-info {
-            background-color: #2196F3;
+            background-color: var(--secondary-color);
         }
 
         @keyframes slideIn {
@@ -220,9 +273,53 @@
         }
 
         .help-text {
-            font-size: 12px;
-            color: #666;
+            font-size: 13px;
+            color: #7f8c8d;
             margin-top: 5px;
+        }
+
+        .help-text.error {
+            color: #e74c3c;
+        }
+
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            nav ul {
+                margin-bottom: 15px;
+            }
+
+            .form-container {
+                padding: 25px;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .submit-button, .cancel-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            nav ul li {
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
@@ -230,17 +327,16 @@
     <!-- Header with navigation -->
     <header>
         <div class="logo">
-            <img src="{% static 'images/logo.png' %}" alt="Logo">
+            <img src="{% static 'images/logo.png' %}" alt="Career Edge Logo">
+            <nav>
+                <ul>
+                    <li><a href="{% url 'view_jobs' %}">Back</a></li>
+                    <li><a href="{% url 'provider_dashboard' %}">Home</a></li>
+                    <li><a href="{% url 'edit_company_profile' %}">Edit Profile</a></li>
+                    <li><a href="{% url 'user_logout' %}">Logout</a></li>
+                </ul>
+            </nav>
         </div>
-        <nav class="navigation">
-            <ul>
-                <li><a href="{% url 'provider_dashboard' %}">Home</a></li>
-                <li><a href="{% url 'view_jobs' %}">My Jobs</a></li>
-                <li><a href="{% url 'about' %}">About Us</a></li>
-                <li><a href="{% url 'contact' %}">Contact Us</a></li>
-                <li><a href="{% url 'user_logout' %}">Logout</a></li>
-            </ul>
-        </nav>
     </header>
     
     <!-- Notification messages -->
@@ -266,7 +362,7 @@
     <!-- Main content with job edit form -->
     <main>
         <div class="form-container">
-            <h1>Edit Job Listing</h1>
+            <h1 class="form-title">Edit Job Listing</h1>
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 
@@ -368,7 +464,7 @@
     
     <!-- Footer -->
     <footer>
-        <p>&copy; 2025 Job Portal. All rights reserved.</p>
+        <p>&copy; 2025 Career Edge. All rights reserved.</p>
     </footer>
 </body>
 </html>

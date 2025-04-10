@@ -3,22 +3,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Provider Profile</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}"> <!-- If you want to separate CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provider Profile - Career Edge</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f8ff;
-            margin: 0;
+        /* Global Styles */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #1abc9c;
+            --light-bg: #f5f7fa;
+            --dark-text: #333;
+            --light-text: #fff;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 6px;
+            --transition: all 0.3s ease;
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
         header {
-            background-color: #ffffff;
-            padding: 10px;
+            background-color: var(--primary-color);
+            padding: 15px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
@@ -26,180 +53,256 @@
             align-items: center;
         }
 
-        .logo1 {
-            width: 5rem;
-            height: 3rem;
-            margin-left: 2rem;
-            margin-right: 2rem;
+        .logo img {
+            width: 40px; 
+            height: 40px; 
+            margin-right: 15px;
+            object-fit: contain;
         }
 
         nav ul {
             list-style-type: none;
             display: flex;
-            margin: 0;
-            padding: 0;
         }
 
         nav ul li {
-            margin-right: 10px;
-            background-color: #f0f8ff;
-            padding: 5px 10px;
-            border-radius: 5px;
+            margin: 0 10px;
+            position: relative;
         }
 
         nav ul li a {
             text-decoration: none;
-            color: #333;
+            color: var(--light-text);
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
         }
 
         nav ul li a:hover {
-            text-decoration: underline;
+            background-color: var(--secondary-color);
         }
 
+        /* Main section */
         main {
-            padding: 2rem;
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 40px 20px;
         }
 
         .form-container {
-            background-color: white;
-            max-width: 500px;
+            background-color: var(--light-text);
+            max-width: 550px;
             width: 100%;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
         }
 
         h2 {
-            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 25px;
             text-align: center;
+            font-size: 24px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent-color);
         }
 
         form label {
             display: block;
-            font-weight: bold;
-            margin-top: 1rem;
+            font-weight: 500;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            color: var(--dark-text);
         }
 
         form input, form textarea {
             width: 100%;
-            padding: 10px;
-            margin-top: 0.3rem;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
         }
-        .message {
-    padding: 1rem;
-    border-radius: 5px;
-    margin-bottom: 1rem;
-    font-weight: bold;
-    text-align: center;
-}
 
-.message.success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
+        form input:focus, form textarea:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        form textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
 
         form button {
-            margin-top: 1.5rem;
-            padding: 10px 20px;
-            background-color: #333;
-            color: white;
+            margin-top: 25px;
+            padding: 12px 0;
+            background-color: var(--accent-color);
+            color: var(--light-text);
             border: none;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             cursor: pointer;
             width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
         }
 
         form button:hover {
-            background-color: #555;
-        }
-        .success-message {
-        background-color: #d4edda;
-        color: #155724;
-        padding: 10px 20px;
-        border-radius: 5px;
-        margin-bottom: 15px;
-        text-align: center;
-        font-weight: bold;
-        border: 1px solid #c3e6cb;
-    }
-        img.preview {
-            max-width: 100px;
-            margin-top: 1rem;
+            background-color: #16a085;
+            transform: translateY(-2px);
         }
 
-        footer {
-            background-color: #ffffff;
-            padding: 10px;
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
             text-align: center;
+            font-weight: 500;
+            border: 1px solid #c3e6cb;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Profile image preview styling */
+        .profile-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .profile-preview {
+            margin-top: 10px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .profile-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: var(--primary-color);
+            padding: 15px;
+            text-align: center;
+            color: var(--light-text);
             margin-top: auto;
         }
 
-        footer p {
-            margin: 0;
-            color: #666;
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            nav ul {
+                margin-bottom: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            nav ul li {
+                margin-bottom: 10px;
+            }
+
+            .form-container {
+                padding: 20px;
+                width: 90%;
+            }
         }
     </style>
 </head>
 <body>
     <header>
         <div class="logo">
-            <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo1">
+            <img src="{% static 'images/logo.png' %}" alt="Career Edge Logo">
             <nav>
                 <ul>
                     <li><a href="{% url 'provider_dashboard' %}">Home</a></li>
-                    <li><a href="{% url 'about' %}">About Us</a></li>
-                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                    <li><a href="{% url 'edit_company_profile' %}">Edit Profile</a></li>
                     <li><a href="{% url 'user_logout' %}">Logout</a></li>
                 </ul>
             </nav>
         </div>
     </header>
+    
     {% if updated %}
     <div id="update-message" class="success-message">
         Company profile updated successfully!
     </div>
-{% endif %}
+    {% endif %}
+    
     <main>
         <div class="form-container">
-            <h2>Edit Profile</h2>
+            <h2>Edit Company Profile</h2>
             <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
+                {% csrf_token %}
 
-    <label for="{{ form.company_name.id_for_label }}">Company Name:</label>
-    {{ form.company_name }}
+                <label for="{{ form.company_name.id_for_label }}">Company Name</label>
+                {{ form.company_name }}
 
-    <label for="{{ form.company_description.id_for_label }}">Company Description:</label>
-    {{ form.company_description }}
-    <label for="{{ form.contact_email.id_for_label }}">Contact Email:</label>
-    {{ form.contact_email }}
-    
+                <label for="{{ form.company_description.id_for_label }}">Company Description</label>
+                {{ form.company_description }}
+                
+                <label for="{{ form.contact_email.id_for_label }}">Contact Email</label>
+                {{ form.contact_email }}
+                
+                <label for="{{ form.website.id_for_label }}">Website</label>
+                {{ form.website }}
 
-    <label for="{{ form.website.id_for_label }}">Website:</label>
-    {{ form.website }}
+                <label for="{{ form.logo.id_for_label }}">Profile Image</label>
+                <div class="profile-upload">
+                    {{ form.logo }}
+                    {% if form.instance.logo %}
+                    <div class="profile-preview">
+                        <img src="{{ form.instance.logo.url }}" alt="Profile Image">
+                    </div>
+                    {% endif %}
+                </div>
 
-    <label for="{{ form.logo.id_for_label }}">Upload Logo:</label>
-    {{ form.logo }}
-
-
-                {% if form.instance.logo %}
-                    <label>Current Logo:</label>
-                    <img src="{{ form.instance.logo.url }}" class="preview" alt="Current Logo">
-                {% endif %}
-
-                <button type="submit">Update</button>
+                <button type="submit">Update Profile</button>
             </form>
         </div>
     </main>
 
     <footer>
-        <p>&copy; 2023 Job Portal. All rights reserved.</p>
+        <p>&copy; 2025 Career Edge. All rights reserved.</p>
     </footer>
+    
     <script>
         window.onload = function () {
             const message = document.getElementById("update-message");

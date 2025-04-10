@@ -3,32 +3,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Job Portal Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Edge - Job Portal Home</title>
     <style>
-        /* Overall page layout */
-        html, body {
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden; /* disables scrolling */
-}
-        body {
-            font-family: Arial, sans-serif;
+        /* Global Styles */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #1abc9c;
+            --light-bg: #f5f7fa;
+            --dark-text: #333;
+            --light-text: #fff;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 6px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f0f8ff; /* Light blue background */
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            overflow: hidden; /* Remove vertical scroll */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
         }
 
         /* Header styles */
         header {
-            background-color: #ffffff; /* White background */
-            padding: 10px;
+            background-color: var(--primary-color);
+            padding: 15px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
@@ -36,114 +55,198 @@
             align-items: center;
         }
 
-        .logo span {
-            font-size: 24px;
-            margin-right: 20px;
+        .logo1 {
+            width: 40px; 
+            height: 40px; 
+            margin-right: 15px;
+            object-fit: contain;
         }
 
         .navigation ul {
             list-style-type: none;
-            margin: 0;
-            padding: 0;
             display: flex;
         }
 
         .navigation ul li {
-            margin-right: 10px;
-            background-color: #f0f8ff; /* Light blue background */
-            padding: 5px 10px; /* Adjust padding as needed */
-            border-radius: 5px; /* Rounded corners */
+            margin: 0 10px;
+            position: relative;
         }
 
         .navigation ul li a {
             text-decoration: none;
-            color: #333;
+            color: var(--light-text);
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .navigation ul li a:hover {
+            background-color: var(--secondary-color);
         }
 
         .login-button {
             padding: 10px 20px;
-            background-color: #333;
-            color: #fff;
+            background-color: var(--accent-color);
+            color: var(--light-text);
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: var(--transition);
         }
 
         .login-button:hover {
-            background-color: #555;
+            background-color: #16a085;
+            transform: translateY(-2px);
+        }
+
+        /* Main content layout */
+        .main-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            gap: 40px;
+        }
+
+        .content-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .content-right {
+            flex: 1;
+            display: flex;
+            justify-content: center;
         }
 
         /* Welcome message */
         .welcome-message {
-            text-align: center; /* Align text to the center */
-            margin-top: 10px; /* Slightly up from the center */
-            margin-bottom: 20px; /* Add some space below */
-            font-size: 20px;
-            padding: 15px; /* Adjusted padding for a more compact box */
-            border-radius: 10px;
-            background-color: #ffffff; /* White background for the box */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a box shadow */
-            width: 25%; /* Set width of the box */
-            margin-left: 20rem; /* Push box towards the left */
-            position: relative;
-            right:10rem;
-            font-weight: bolder;
-            top:10rem;
+            background-color: var(--light-text);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 500px;
         }
 
-        /* Registration links */
+        .welcome-message p {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* Registration section */
+        .registration-section {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .no-account-statement {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: var(--dark-text);
+        }
+
         .registration-links {
-            text-align: center;
-            margin-top: 10px; /* Adjusted margin-top */
+            display: flex;
+            gap: 15px;
         }
 
         .registration-links a {
             display: inline-block;
-            padding: 8px 16px; /* Adjusted padding for smaller buttons */
-            background-color: #333;
-            color: #fff;
+            padding: 12px 24px;
+            background-color: var(--secondary-color);
+            color: var(--light-text);
             text-decoration: none;
-            border-radius: 5px;
-            font-size: 12px; /* Smaller font size for the links */
-            position: relative;
-            right: 25rem;
-            bottom:14rem;
-            top:10rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: var(--transition);
         }
 
         .registration-links a:hover {
-            background-color: #555;
+            background-color: #2980b9;
+            transform: translateY(-2px);
         }
 
-        /* Statement for users without an account */
-        .no-account-statement {
-            text-align: center;
-            font-size: 16px;
-            color: #333;
-            position: relative;
-            right: 25rem;
-            bottom:7rem;
-            top:10rem;
-        }
-        .logo1{
-            width: 5rem;
-            height: 3rem;
-            margin-left: 2rem;
-            margin-right: 2rem;
-        }
+        /* Hero image */
         .Homeimg {
-            position: relative;
-            left: 50rem; /* Adjust position as needed */
-            height: 40rem;
-            width: 30rem;
-            bottom: 15rem;
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .main-content {
+                flex-direction: column;
+                padding: 30px 20px;
+            }
+
+            .content-left {
+                align-items: center;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            .content-right {
+                width: 100%;
+            }
+
+            .Homeimg {
+                max-width: 80%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            .navigation ul {
+                margin-bottom: 15px;
+            }
+
+            .welcome-message p {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navigation ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .navigation ul li {
+                margin-bottom: 10px;
+            }
+
+            .registration-links {
+                flex-direction: column;
+            }
+
+            .welcome-message p {
+                font-size: 20px;
+            }
         }
     </style>
 </head>
 <body>
     <header>
         <div class="logo">
-            <img src="/static/images/logo.png" alt="Welcome Image" class="logo1">
-
+            <img src="{% static 'images/logo.png' %}" alt="Career Edge Logo" class="logo1">
             <nav class="navigation">
                 <ul>
                     <li><a href="{% url 'home' %}">Home</a></li>
@@ -155,23 +258,31 @@
         <a href="{% url 'user_login' %}" class="login-button">Login</a>
     </header>
 
-    <!-- Welcome message -->
-    <div class="welcome-message">
-        <p>Welcome to Career Edge!</p>
-    </div>
+    <div class="main-content">
+        <div class="content-left">
+            <!-- Welcome message -->
+            <div class="welcome-message">
+                <p>Welcome to Career Edge!</p>
+            </div>
 
-    <!-- Statement for users without an account -->
-    <div class="no-account-statement">
-        <p>If you don't have an account yet, register now:</p>
-    </div>
+            <!-- Registration section -->
+            <div class="registration-section">
+                <!-- Statement for users without an account -->
+                <div class="no-account-statement">
+                    <p>If you don't have an account yet, register now:</p>
+                </div>
 
-    <!-- Registration links -->
-    <div class="registration-links">
-        <a href="{% url 'user_register_seeker' %}">Register as Job Seeker</a>
-        <a href="{% url 'user_register_provider' %}">Register as Job Provider</a>
+                <!-- Registration links -->
+                <div class="registration-links">
+                    <a href="{% url 'user_register_seeker' %}">Register as Job Seeker</a>
+                    <a href="{% url 'user_register_provider' %}">Register as Job Provider</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-right">
+            <img src="{% static 'images/Homeimg.png' %}" alt="Welcome Image" class="Homeimg">
+        </div>
     </div>
-   
-        <img src="/static/images/Homeimg.png" alt="Welcome Image" class="Homeimg">
-    
 </body>
 </html>

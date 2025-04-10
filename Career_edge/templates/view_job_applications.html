@@ -3,108 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Applications for {{ job.title }}</title>
+    <title>Job Applications for {{ job.title }} - Career Edge</title>
+    {% load static %}
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7fa;
+        /* Global Styles */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #1abc9c;
+            --light-bg: #f5f7fa;
+            --dark-text: #333;
+            --light-text: #fff;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 6px;
+            --transition: all 0.3s ease;
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
         header {
-            background-color: #fff;
-            padding: 15px 30px;
+            background-color: var(--primary-color);
+            padding: 15px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #ddd;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .logo1 {
-            width: 5rem;
-            height: auto;
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            object-fit: contain;
         }
 
         nav ul {
+            list-style-type: none;
             display: flex;
-            list-style: none;
-            gap: 15px;
-            margin: 0;
-            padding: 0;
+        }
+
+        nav ul li {
+            margin: 0 10px;
+            position: relative;
         }
 
         nav ul li a {
             text-decoration: none;
-            color: #333;
+            color: var(--light-text);
             font-weight: 500;
-            padding: 8px 12px;
-            border-radius: 5px;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
         }
 
         nav ul li a:hover {
-            background-color: #e0e0e0;
+            background-color: var(--secondary-color);
         }
 
+        /* Main content */
         main {
-            padding: 40px 5%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
             max-width: 1200px;
-            margin: auto;
+            margin: 0 auto;
+            width: 100%;
         }
 
-        h1 {
+        .page-title {
+            color: var(--primary-color);
+            margin-bottom: 40px;
             text-align: center;
-            margin-bottom: 30px;
-            color: #003366;
+            font-size: 28px;
+            position: relative;
+            padding-bottom: 10px;
         }
 
-        form {
+        .page-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent-color);
+        }
+
+        /* Filter form */
+        .filter-form {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 15px;
             margin-bottom: 25px;
+            width: 100%;
         }
 
-        form input[type="text"],
-        form input[type="date"],
-        form select {
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
+        .filter-form input[type="text"],
+        .filter-form input[type="date"],
+        .filter-form select {
+            padding: 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ddd;
             font-size: 14px;
-            width: 200px;
+            flex: 1;
+            min-width: 200px;
+            max-width: 250px;
         }
 
-        form button,
+        .filter-form button,
         .email-link {
-            padding: 10px 16px;
+            padding: 12px 20px;
             border: none;
-            border-radius: 6px;
+            border-radius: var(--border-radius);
             cursor: pointer;
-            font-weight: 500;
+            font-weight: 600;
             font-size: 14px;
+            transition: var(--transition);
         }
 
-        form button {
-            background-color: #003366;
-            color: white;
+        .filter-form button {
+            background-color: var(--secondary-color);
+            color: var(--light-text);
         }
 
-        form button:hover {
-            background-color: #0055aa;
+        .filter-form button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
         }
 
         .email-link {
-            background-color: #888;
-            color: white;
+            background-color: #7f8c8d;
+            color: var(--light-text);
             text-decoration: none;
             display: inline-block;
+            text-align: center;
         }
 
         .email-link:hover {
-            background-color: #666;
+            background-color: #636e72;
+            transform: translateY(-2px);
         }
 
         .application-count {
@@ -112,76 +176,101 @@
             margin: 20px 0;
             font-size: 16px;
             font-weight: bold;
-            color: #003366;
+            color: var(--primary-color);
         }
 
-        ul {
+        /* Applications list */
+        .applications-list {
             list-style: none;
             padding: 0;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
             gap: 25px;
+            width: 100%;
         }
 
-        li {
-            background-color: #fff;
-            border-radius: 12px;
+        .application-item {
+            background-color: var(--light-text);
+            border-radius: var(--border-radius);
             padding: 25px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
-            transition: transform 0.2s;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            position: relative;
         }
 
-        li:hover {
+        .application-item:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
         }
 
-        li h3 {
-            margin: 0 0 10px;
-            color: #003366;
+        .application-item h3 {
+            margin: 0 0 15px;
+            color: var(--primary-color);
             font-size: 18px;
         }
 
-        li p {
-            margin: 6px 0;
+        .application-item p {
+            margin: 8px 0;
             font-size: 14px;
             color: #444;
         }
 
+        .unseen {
+            background-color: #e6f7ff;
+            border-left: 5px solid var(--secondary-color);
+            transition: background-color 1s ease;
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 12px;
+            height: 12px;
+            background: #e74c3c;
+            border-radius: 50%;
+        }
+
+        /* Status form */
         .status-form {
-            margin-top: 15px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
         }
 
         .status-form label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #003366;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
         }
 
         .status-form select {
             width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ddd;
+            font-size: 14px;
         }
 
         .status-form button {
-            background-color: #28a745;
-            color: white;
+            background-color: var(--accent-color);
+            color: var(--light-text);
+            padding: 10px 15px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            width: 100%;
         }
-        .unseen {
-    background-color: #e6f7ff; /* Light blue highlight */
-    border-left: 5px solid #1890ff;
-    transition: background-color 1s ease;
-}
+
         .status-form button:hover {
-            background-color: #218838;
+            background-color: #16a085;
         }
-        .highlight-new {
-    background-color: #e6f7ff; /* light blue */
-    border-left: 5px solid #1890ff;
-}
+
+        /* Action links */
         .action-links {
             display: flex;
             flex-wrap: wrap;
@@ -189,40 +278,92 @@
             margin-top: 15px;
         }
 
-        footer {
-            background-color: #fff;
+        .action-links a {
+            flex: 1;
+            padding: 10px 15px;
+            background-color: var(--secondary-color);
+            color: var(--light-text);
+            text-decoration: none;
+            border-radius: var(--border-radius);
             text-align: center;
-            padding: 15px 0;
+            font-weight: 500;
             font-size: 14px;
-            color: #777;
-            border-top: 1px solid #ddd;
-            margin-top: 60px;
+            transition: var(--transition);
         }
-        @keyframes fadeOut {
-    0% { opacity: 1; }
-    80% { opacity: 1; }
-    100% { opacity: 0; display: none; }
-}
 
+        .action-links a:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .action-links a:last-child {
+            background-color: #7f8c8d;
+        }
+
+        .action-links a:last-child:hover {
+            background-color: #636e72;
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: var(--primary-color);
+            padding: 15px;
+            text-align: center;
+            color: var(--light-text);
+            margin-top: auto;
+        }
+
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-bottom: 10px;
+            }
+
+            .filter-form {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .filter-form input,
+            .filter-form select,
+            .filter-form button,
+            .filter-form .email-link {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
     <header>
-        <img src="/static/images/logo.png" alt="Logo" class="logo1">
-        <nav>
-            <ul>
-                <li><a href="{% url 'provider_dashboard' %}">Home</a></li>
-                <li><a href="{% url 'about' %}">About Us</a></li>
-                <li><a href="{% url 'contact' %}">Contact Us</a></li>
-                <li><a href="{% url 'user_logout' %}">Logout</a></li>
-            </ul>
-        </nav>
+        <div class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="Career Edge Logo">
+            <nav>
+                <ul>
+                    <li><a href="{% url 'view_jobs' %}">Back</a></li>
+                    <li><a href="{% url 'provider_dashboard' %}">Home</a></li>
+                    <li><a href="{% url 'edit_company_profile' %}">Edit Profile</a></li>
+                    <li><a href="{% url 'user_logout' %}">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
     <main>
-        <h1>Job Applications for {{ job.title }}</h1>
+        <h1 class="page-title">Job Applications for {{ job.title }}</h1>
        
-        <form method="get">
+        <form method="get" class="filter-form">
             <input type="text" name="skill" placeholder="Filter by Skill" value="{{ skill_query }}">
             <input type="text" name="qualification" placeholder="Filter by Qualification" value="{{ qualification_query }}">
             <input type="date" name="date" value="{{ date_query }}">
@@ -240,46 +381,49 @@
             {{ applications.count }} application{{ applications.count|pluralize }} found
         </div>
 
-        <ul>
+        <ul class="applications-list">
             {% for application in applications %}
-            <li class="{% if application.id in unseen_ids %}unseen{% endif %}" style="position: relative;">
+            <li class="application-item {% if application.id in unseen_ids %}unseen{% endif %}">
                 {% if not application.is_seen_by_provider %}
-                    <span style="position: absolute; top: 10px; right: 10px; width: 12px; height: 12px; background: red; border-radius: 50%; display: inline-block;"></span>
+                    <span class="notification-dot"></span>
                 {% endif %}
-                    <h3>{{ application.name }}</h3>
-                    <p><strong>Username:</strong> {{ application.applicant.username }}</p>
-                    <p><strong>Skills:</strong> {{ application.skills }}</p>
-                    <p><strong>Qualification:</strong> {{ application.qualifications }}</p>
-                    <p><strong>Email:</strong> {{ application.email }}</p>
-                    <p><strong>Phone:</strong> {{ application.phone }}</p>
-                    <p><strong>Experience:</strong> {{ application.experience }}</p>
-                    <p><strong>Applied On:</strong> {{ application.created_at|date:"d M Y, h:i A" }}</p>
-                    <p><strong>Status:</strong> {{ application.get_status_display }}</p>
+                <h3>{{ application.name }}</h3>
+                <p><strong>Username:</strong> {{ application.applicant.username }}</p>
+                <p><strong>Skills:</strong> {{ application.skills }}</p>
+                <p><strong>Qualification:</strong> {{ application.qualifications }}</p>
+                <p><strong>Email:</strong> {{ application.email }}</p>
+                <p><strong>Phone:</strong> {{ application.phone }}</p>
+                <p><strong>Experience:</strong> {{ application.experience }}</p>
+                <p><strong>Applied On:</strong> {{ application.created_at|date:"d M Y, h:i A" }}</p>
+                <p><strong>Status:</strong> {{ application.get_status_display }}</p>
 
-                    <form method="post" action="{% url 'update_application_status' application.id %}" class="status-form">
-                        {% csrf_token %}
-                        <label for="status_{{ application.id }}">Change Status:</label>
-                        <select name="status" id="status_{{ application.id }}">
-                            {% for key, label in application.STATUS_CHOICES %}
-                                <option value="{{ key }}" {% if application.status == key %}selected{% endif %}>{{ label }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="submit">Update Status</button>
-                    </form>
+                <form method="post" action="{% url 'update_application_status' application.id %}" class="status-form">
+                    {% csrf_token %}
+                    <label for="status_{{ application.id }}">Change Status:</label>
+                    <select name="status" id="status_{{ application.id }}">
+                        {% for key, label in application.STATUS_CHOICES %}
+                            <option value="{{ key }}" {% if application.status == key %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Update Status</button>
+                </form>
 
-                    <div class="action-links">
-                        <a href="{{ application.resume.url }}" download class="email-link">Download Resume</a>
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ application.email }}" target="_blank" class="email-link">Email via Gmail</a>
-                    </div>
-                </li>
+                <div class="action-links">
+                    <a href="{{ application.resume.url }}" download>Download Resume</a>
+                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ application.email }}" target="_blank">Email via Gmail</a>
+                </div>
+            </li>
             {% empty %}
-                <li>No applications found.</li>
+            <li class="application-item">
+                <h3>No applications found.</h3>
+                <p>There are currently no applications for this job posting.</p>
+            </li>
             {% endfor %}
         </ul>
     </main>
 
     <footer>
-        <p>&copy; 2023 Job Portal. All rights reserved.</p>
+        <p>&copy; 2025 Career Edge. All rights reserved.</p>
     </footer>
 
 </body>

@@ -3,76 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Job Listing</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <title>Add Job Listing - Career Edge</title>
+    {% load static %}
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #1abc9c;
+            --light-bg: #f5f7fa;
+            --dark-text: #333;
+            --light-text: #fff;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 6px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f8ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-            margin: 0;
         }
 
-        h1 {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        header, footer {
-            background-color: #ffffff;
-            padding: 10px;
-            text-align: center;
-        }
-
-        main {
-            flex: 1;
+        header {
+            background-color: var(--primary-color);
+            padding: 15px 5%;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            padding: 20px;
-        }
-
-        form {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 600px;
-        }
-
-        form label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        form input[type="text"],
-        form textarea,
-        form input[type="url"],
-        form button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-
-        form button {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-
-        form button:hover {
-            background-color: #555;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
@@ -81,65 +52,210 @@
         }
 
         .logo img {
-            width: 5rem;
-            height: 3rem;
-            margin-left: 2rem;
-            margin-right: 2rem;
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            object-fit: contain;
         }
 
         .navigation ul {
             list-style-type: none;
-            margin: 0;
-            padding: 0;
             display: flex;
         }
 
         .navigation ul li {
-            margin-right: 10px;
-            background-color: #f0f8ff;
-            padding: 5px 10px;
-            border-radius: 5px;
+            margin: 0 10px;
+            position: relative;
         }
 
         .navigation ul li a {
             text-decoration: none;
-            color: #333;
+            color: var(--light-text);
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
         }
 
-        .login-button {
-            padding: 10px 20px;
-            background-color: #333;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
+        .navigation ul li a:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .page-title {
+            color: var(--primary-color);
+            margin: 30px 0 20px;
+            text-align: center;
+            font-size: 28px;
             position: relative;
-            left: 20rem;
+            padding-bottom: 10px;
         }
 
-        .login-button:hover {
-            background-color: #555;
+        .page-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent-color);
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 20px 40px;
+        }
+
+        form {
+            background-color: var(--light-text);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 650px;
+        }
+
+        form label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--dark-text);
+        }
+
+        form input[type="text"],
+        form input[type="url"],
+        form input[type="email"],
+        form input[type="number"],
+        form input[type="date"],
+        form textarea,
+        form select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        /* Larger input for Last Date to Apply */
+        input[name="last_date_to_apply"] {
+            font-size: 18px;
+            padding: 16px;
+        }
+
+        form input:focus,
+        form textarea:focus,
+        form select:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        form textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        form button {
+            background-color: var(--accent-color);
+            color: var(--light-text);
+            border: none;
+            padding: 12px 0;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        form button:hover {
+            background-color: #16a085;
+            transform: translateY(-2px);
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 650px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .text-danger {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: -15px;
+            margin-bottom: 15px;
+        }
+
+        footer {
+            background-color: var(--primary-color);
+            padding: 15px;
+            text-align: center;
+            color: var(--light-text);
+            margin-top: auto;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            .navigation ul {
+                margin-bottom: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .navigation ul li {
+                margin-bottom: 10px;
+            }
+
+            form {
+                padding: 20px;
+                width: 90%;
+            }
+
+            .logo img {
+                width: 60px;
+                height: 60px;
+            }
         }
     </style>
 </head>
 <body>
-    
     <header>
         <div class="logo">
-            <img src="/static/images/logo.png" alt="Welcome Image" class="logo1">
+            <img src="{% static 'images/logo.png' %}" alt="Career Edge Logo">
             <nav class="navigation">
                 <ul>
                     <li><a href="{% url 'provider_dashboard' %}">Home</a></li>
-                    <li><a href="{% url 'about' %}">About Us</a></li>
-                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                    <li><a href="{% url 'edit_company_profile' %}">Edit Profile</a></li>
                     <li><a href="{% url 'user_logout' %}">Logout</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <h1>Add Job Listing</h1>
+    <h1 class="page-title">Add Job Listing</h1>
 
-    <main class="container mt-4">
+    <main>
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-success" role="alert">
@@ -151,22 +267,22 @@
         <form method="POST" enctype="multipart/form-data" novalidate> 
             {% csrf_token %}
             {% for field in form %}
-                <div class="mb-3">
+                <div class="form-group">
                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                     {{ field }}
                     {% if field.errors %}
-                        <div class="text-danger small">
+                        <div class="text-danger">
                             {{ field.errors|striptags }}
                         </div>
                     {% endif %}
                 </div>
             {% endfor %}
-            <button type="submit" class="btn btn-dark">Add Job</button>
+            <button type="submit">Add Job</button>
         </form>
     </main>
 
     <footer>
-        <p>&copy; 2025 Job Portal. All rights reserved.</p>
+        <p>&copy; 2025 Career Edge. All rights reserved.</p>
     </footer>
 </body>
 </html>
