@@ -213,7 +213,7 @@ def view_job_applications(request, job_id):
     skill_query = request.GET.get('skill', '')
     qualification_query = request.GET.get('qualification', '')
     date_query = request.GET.get('date', '')
-
+    status_query = request.GET.get('status', '')
     if skill_query:
         applications = applications.filter(skills__icontains=skill_query)
     if qualification_query:
@@ -222,6 +222,8 @@ def view_job_applications(request, job_id):
         parsed_date = parse_date(date_query)
         if parsed_date:
             applications = applications.filter(created_at__date=parsed_date)
+    if status_query:
+        applications = applications.filter(status=status_query)
 
     return render(request, 'view_job_applications.html', {
         'job': job,
@@ -229,6 +231,7 @@ def view_job_applications(request, job_id):
         'skill_query': skill_query,
         'qualification_query': qualification_query,
         'date_query': date_query,
+        'status_choices': JobApplication.STATUS_CHOICES,
         'STATUS_CHOICES': JobApplication.STATUS_CHOICES,
     })
 @require_POST
@@ -374,16 +377,20 @@ def my_applications(request):
     applications = JobApplication.objects.filter(applicant=request.user).order_by('-created_at')
      # Handle search query
     search_query = request.GET.get('q', '')
+    status_query = request.GET.get('status', '')
     if search_query:
         applications = applications.filter(
             models.Q(job__title__icontains=search_query) |
             models.Q(job__company__icontains=search_query) |
             models.Q(job__location__icontains=search_query)
         )
-    
+    if status_query:
+        applications = applications.filter(status=status_query)
     return render(request, 'my_applications.html', {
         'applications': applications,
-        'search_query': search_query
+        'search_query': search_query,
+        'status_query': status_query,
+        'status_choices': JobApplication.STATUS_CHOICES,
     })
 
 

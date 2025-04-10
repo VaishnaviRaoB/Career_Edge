@@ -271,6 +271,13 @@
  <div class="search-container">
     <form method="get" action="{% url 'my_applications' %}" class="search-form">
         <input type="text" name="q" placeholder="Search by job title, company or location..." value="{{ search_query }}">
+        <!-- Status Filter -->
+        <select name="status">
+            <option value="">All Statuses</option>
+            {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if value == status_query %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
         <button type="submit">Search</button>
         {% if search_query %}
             <a href="{% url 'my_applications' %}" class="clear-search">Clear</a>
