@@ -2,7 +2,7 @@
 
 from django import forms
 from django.contrib.auth.models import User
-from .models import Job, JobApplication, UserProfile, JobProvider
+from .models import Job, JobApplication, UserProfile, JobProvider, JobSeeker
 
 from django import forms
 from .models import Job# forms.py
@@ -73,6 +73,7 @@ class UserRegistrationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
 class SeekerRegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
     confirm_password = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
@@ -131,3 +132,16 @@ class EditCompanyProfileForm(forms.ModelForm):
     class Meta:
         model = JobProvider
         fields = ['company_name', 'company_description', 'contact_email', 'website', 'logo']
+    
+class JobSeekerProfileForm(forms.ModelForm):
+    class Meta:
+        model = JobSeeker
+        fields = ['full_name', 'email', 'phone', 'address', 'education', 
+                  'experience_years', 'skills', 'resume', 'profile_picture', 
+                  'linkedin', 'about_me', 'date_of_birth']
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+            'skills': forms.Textarea(attrs={'placeholder': 'Enter your skills separated by commas (e.g., Python, JavaScript, Project Management)'}),
+            'education': forms.Textarea(attrs={'placeholder': 'Describe your education background'}),
+            'about_me': forms.Textarea(attrs={'placeholder': 'Write a short bio about yourself'}),
+        }

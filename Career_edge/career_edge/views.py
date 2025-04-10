@@ -12,7 +12,7 @@ from django.utils.dateparse import parse_date
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 from .models import UserProfile, JobSeeker, JobProvider,SavedJob
-from .forms import JobForm
+from .forms import JobForm,JobSeekerProfileForm
 import re
 from django.db.models import Q
 from django.db import models
@@ -79,7 +79,7 @@ def user_register_seeker(request):
         JobSeeker.objects.create(
     user_profile=profile,
     full_name=username,  # default placeholder
-    skills='Not provided yet',   # default placeholder
+    skills='',   # default placeholder
     experience_years=None        # okay to leave empty
 )
 
@@ -87,7 +87,40 @@ def user_register_seeker(request):
 
     return render(request, 'register_seeker.html')
 
-
+@login_required
+def seeker_profile(request):
+    try:
+        # Get the user's profile
+        user_profile = UserProfile.objects.get(user=request.user)
+        
+        # Check if the user is a seeker
+        if user_profile.role != 'seeker':
+            messages.error(request, "Access denied. This page is for job seekers only.")
+            return redirect('user_login')
+        
+        # Get or create the job seeker profile
+        job_seeker, created = JobSeeker.objects.get_or_create(
+            user_profile=user_profile,
+            defaults={
+                'full_name': request.user.username,
+                'skills': 'Not provided yet'
+            }
+        )
+        
+        if request.method == 'POST':
+            form = JobSeekerProfileForm(request.POST, request.FILES, instance=job_seeker)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Your profile has been updated successfully!")
+                return redirect('seeker_profile')
+        else:
+            form = JobSeekerProfileForm(instance=job_seeker)
+        
+        return render(request, 'seeker_profile.html', {'form': form, 'job_seeker': job_seeker})
+    
+    except Exception as e:
+        messages.error(request, f"An error occurred: {str(e)}")
+        return redirect('seeker_dashboard')
 def user_register_provider(request):
     if request.method == 'POST':
         username = request.POST.get('username')

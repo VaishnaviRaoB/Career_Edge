@@ -20,8 +20,17 @@ class UserProfile(models.Model):
 class JobSeeker(models.Model):
     user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=100)
+    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField(max_length=15, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    education = models.TextField(blank=True, null=True)
     experience_years = models.IntegerField(null=True, blank=True)
-    skills = models.TextField()
+    skills = models.TextField(blank=True)
+    resume = models.FileField(upload_to='resumes/', blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    linkedin = models.URLField(blank=True, null=True)
+    about_me = models.TextField(blank=True, null=True)
+    date_of_birth = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return self.full_name

@@ -31,6 +31,7 @@ urlpatterns = [
     path('job/bookmark/<int:job_id>/', views.toggle_bookmark, name='toggle_bookmark'),
 path('saved-jobs/', views.saved_jobs, name='saved_jobs'),
 path('jobs/edit/<int:job_id>/', views.edit_job, name='edit_job'),
+path('seeker/profile/', views.seeker_profile, name='seeker_profile'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
