@@ -136,7 +136,7 @@ class EditCompanyProfileForm(forms.ModelForm):
 class JobSeekerProfileForm(forms.ModelForm):
     class Meta:
         model = JobSeeker
-        fields = ['full_name', 'email', 'phone', 'address', 'education', 
+        fields = ['full_name', 'email', 'phone', 'address','location_preferences', 'education', 
                   'experience_years', 'skills', 'resume', 'profile_picture', 
                   'linkedin', 'about_me', 'date_of_birth']
         widgets = {

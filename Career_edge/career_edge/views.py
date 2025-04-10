@@ -488,79 +488,109 @@ def edit_job(request, job_id):
     
     return render(request, 'edit_job.html', {'form': form, 'job': job})
 
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.shortcuts import render
+from .models import Job, JobSeeker
+
 @login_required
 def recommended_jobs(request):
-    # Check if seeker has filled skills
-    job_seeker = JobSeeker.objects.get(user_profile__user=request.user)
-    if not job_seeker.skills or not any(skill.strip() for skill in job_seeker.skills.split(',')):
-      return render(request, 'recommended_jobs.html', {
-         'error': 'No skills found in your profile.'
-    })
     try:
-        
-        # Initialize an empty query
-        query = Q()
-        
-        # Extract skills from job seeker profile and create a list
-        seeker_skills = []
-        if job_seeker.skills:
-            # Split by commas and clean up each skill
-            seeker_skills = [skill.strip().lower() for skill in job_seeker.skills.split(',')]
-        
-        # Get experience level based on years of experience
+        # Get JobSeeker profile
+        job_seeker = JobSeeker.objects.get(user_profile__user=request.user)
+
+        # Extract and clean skills
+        seeker_skills = [skill.strip().lower() for skill in job_seeker.skills.split(',') if skill.strip()] if job_seeker.skills else []
+
+        # Extract and clean location preferences
+        seeker_locations = []
+        if job_seeker.location_preferences:
+            seeker_locations = [loc.strip().lower() for loc in job_seeker.location_preferences.split(',') if loc.strip()]
+
+        # Add location keywords from address (fallback)
+        if job_seeker.address:
+            address_words = job_seeker.address.lower().split()
+            for word in address_words:
+                if len(word) > 3 and word.lower() not in seeker_locations:
+                    seeker_locations.append(word.lower())
+
+        # If both skills and locations are empty, show error
+        if not seeker_skills and not seeker_locations:
+            return render(request, 'recommended_jobs.html', {
+                'error': 'No skills or location preferences found in your profile.',
+                'job_seeker': job_seeker
+            })
+
+        # Determine experience level
         experience_level = "Fresher"
         if job_seeker.experience_years:
             if job_seeker.experience_years >= 5:
                 experience_level = "Senior"
             elif job_seeker.experience_years >= 2:
                 experience_level = "Mid-level"
+
+        # Get all jobs
+        all_jobs = Job.objects.all()
         
-        # Build query for matching jobs
-        # Match by skills
-        if seeker_skills:
-            for skill in seeker_skills:
-                # Look for jobs that require this skill
-                query |= Q(skills__icontains=skill)
+        # Filter manually to ensure proper matching
+        recommended_jobs = []
         
-        # Match by experience level
-        query |= Q(experience_level=experience_level)
-        
-        # Match by location if available
-        if job_seeker.address:
-            # Extract city names from address (simplified approach)
-            address_words = job_seeker.address.lower().split()
-            for word in address_words:
-                if len(word) > 3:  # Avoid matching small words
-                    query |= Q(location__icontains=word)
-        
-        # Get recommended jobs based on the built query
-        recommended_jobs = Job.objects.filter(query).distinct()
-        
-        # Get IDs of jobs that the user has already saved
+        for job in all_jobs:
+            # Check for skill matches
+            job_skills = [skill.strip().lower() for skill in job.skills.split(',')] if job.skills else []
+            has_skill_match = False
+            matched_skills = []
+            
+            for seeker_skill in seeker_skills:
+                for job_skill in job_skills:
+                    if seeker_skill in job_skill or job_skill in seeker_skill:
+                        has_skill_match = True
+                        if seeker_skill not in matched_skills:
+                            matched_skills.append(seeker_skill)
+            
+            # Check for location matches
+            job_location_lower = job.location.lower() if job.location else ""
+            has_location_match = False
+            matched_locations = []
+            
+            for location in seeker_locations:
+                if location in job_location_lower:
+                    has_location_match = True
+                    matched_locations.append(location)
+            
+            # Check for experience level match
+            has_exp_match = (job.experience_level == experience_level)
+            
+            # Only include job if it matches at least ONE criteria
+            # AND it has at least one matched skill or location
+            if (has_skill_match or has_location_match or has_exp_match) and (matched_skills or matched_locations):
+                recommended_jobs.append({
+                    'job': job,
+                    'matched_skills': matched_skills,
+                    'matched_locations': matched_locations
+                })
+
+        # If no matches at all
+        if not recommended_jobs:
+            return render(request, 'recommended_jobs.html', {
+                'error': 'No matching jobs found based on your skills or location preferences.',
+                'job_seeker': job_seeker
+            })
+
+        # Get saved job IDs
         saved_job_ids = []
         if hasattr(job_seeker, 'saved_jobs'):
             saved_job_ids = job_seeker.saved_jobs.values_list('id', flat=True)
-        
-        # Pre-process job data to identify matched skills for each job
-        jobs_with_matches = []
-        for job in recommended_jobs:
-            job_skills = [skill.strip().lower() for skill in job.skills.split(',')] if job.skills else []
-            matched_skills = [skill for skill in job_skills if skill in seeker_skills]
-            
-            jobs_with_matches.append({
-                'job': job,
-                'matched_skills': matched_skills
-            })
-        
+
         context = {
-            'jobs_with_matches': jobs_with_matches,
+            'jobs_with_matches': recommended_jobs,
             'saved_job_ids': saved_job_ids,
             'job_seeker': job_seeker
         }
-        
+
         return render(request, 'recommended_jobs.html', context)
-    
+
     except JobSeeker.DoesNotExist:
-        # Handle case where job seeker profile doesn't exist
-        return render(request, 'recommended_jobs.html', {'error': 'Please complete your profile to get job recommendations'})
-    
+        return render(request, 'recommended_jobs.html', {
+            'error': 'Please complete your profile to get job recommendations.'
+        })

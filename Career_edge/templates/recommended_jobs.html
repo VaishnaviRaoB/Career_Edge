@@ -222,6 +222,11 @@
             font-weight: bold;
         }
 
+        .matched-locations {
+            color: #2196F3;
+            font-weight: bold;
+        }
+
         .no-jobs {
             text-align: center;
             padding: 30px;
@@ -258,15 +263,54 @@
             margin-bottom: 10px;
         }
 
+        .location-match-indicator {
+            background-color: #e3f2fd;
+            border: 1px solid #b3e5fc;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .match-indicator i, .location-match-indicator i {
+            margin-right: 5px;
+        }
+
         .match-indicator i {
             color: #4CAF50;
-            margin-right: 5px;
+        }
+
+        .location-match-indicator i {
+            color: #2196F3;
         }
 
         .match-reason {
             font-size: 14px;
             color: #555;
             margin-top: 5px;
+        }
+
+        .profile-details {
+            background-color: #f1f8e9;
+            border: 1px solid #dcedc8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .profile-details h3 {
+            margin-top: 0;
+            color: #558b2f;
+            font-size: 16px;
+        }
+
+        .profile-detail-item {
+            margin-bottom: 8px;
+        }
+
+        .profile-detail-label {
+            font-weight: bold;
+            color: #558b2f;
         }
     </style>
 </head>
@@ -303,17 +347,20 @@
         {% if error %}
             <div class="profile-reminder">
                 <p><i class="fas fa-info-circle"></i> {{ error }}</p>
-                <p>Visit your <a href="{% url 'seeker_profile' %}">profile page</a> to add your skills </p>
+                <p>Visit your <a href="{% url 'seeker_profile' %}">profile page</a> to add your skills and location preferences</p>
             </div>
         {% else %}
             <div class="recommendation-explanation">
-                <p>These jobs are recommended based on your profile information including skills{% if job_seeker.address %}and location{% endif %}.</p>
-                <p>Update your <a href="{% url 'seeker_profile' %}">profile</a> anytime to get better recommendations.</p>
+                <p>These jobs are recommended based on your profile information:</p>
             </div>
+            
+            {% if job_seeker %}
+            
+            {% endif %}
 
             {% if jobs_with_matches %}
                 {% for job_data in jobs_with_matches %}
-                    {% with job=job_data.job matched_skills=job_data.matched_skills %}
+                    {% with job=job_data.job matched_skills=job_data.matched_skills matched_locations=job_data.matched_locations %}
                     <a href="{% url 'job_details' job.id %}" class="job-box-link">
                         <div class="job-box">
                             <!-- Company Logo -->
@@ -340,11 +387,23 @@
                             
                             {% if matched_skills %}
                                 <div class="match-indicator">
-                                    <p><i class="fas fa-check-circle"></i> <strong>Match!</strong> You have {{ matched_skills|length }} matching skills for this job</p>
+                                    <p><i class="fas fa-check-circle"></i> <strong>Skill Match!</strong> You have {{ matched_skills|length }} matching skills for this job</p>
                                     <p class="match-reason">
                                         <strong>Your matching skills:</strong> 
                                         {% for skill in matched_skills %}
                                             <span class="matched-skills">{{ skill }}</span>{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </p>
+                                </div>
+                            {% endif %}
+                            
+                            {% if matched_locations %}
+                                <div class="location-match-indicator">
+                                    <p><i class="fas fa-map-marker-alt"></i> <strong>Location Match!</strong> This job is in your preferred location</p>
+                                    <p class="match-reason">
+                                        <strong>Matching location terms:</strong> 
+                                        {% for location in matched_locations %}
+                                            <span class="matched-locations">{{ location }}</span>{% if not forloop.last %}, {% endif %}
                                         {% endfor %}
                                     </p>
                                 </div>
@@ -371,7 +430,7 @@
                 <div class="no-jobs">
                     <i class="fas fa-search"></i>
                     <p>No matching jobs found based on your profile.</p>
-                    <p>Try updating your skills in your profile to get more recommendations.</p>
+                    <p>Try updating your skills or location preferences in your profile to get more recommendations.</p>
                     <a href="{% url 'seeker_profile' %}" class="apply-btn">Update Profile</a>
                 </div>
             {% endif %}

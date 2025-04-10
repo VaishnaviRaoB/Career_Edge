@@ -23,6 +23,7 @@ class JobSeeker(models.Model):
     email = models.EmailField(blank=True, null=True)
     phone = models.CharField(max_length=15, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
+    location_preferences = models.CharField(max_length=255, null=True, blank=True)
     education = models.TextField(blank=True, null=True)
     experience_years = models.IntegerField(null=True, blank=True)
     skills = models.TextField(blank=True,null=True)

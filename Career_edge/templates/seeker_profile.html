@@ -377,7 +377,10 @@
                         <label for="id_address">Address</label>
                         <textarea name="address" class="form-control" id="id_address">{{ form.address.value|default:'' }}</textarea>
                     </div>
-
+                    <div class="form-group">
+                        <label for="id_location_preferences">Location Preferences</label>
+                        <input type="text" name="location_preferences" value="{{ form.location_preferences.value|default:'' }}" class="form-control" id="id_location_preferences">
+                    </div>
                     <div class="form-group">
                         <label for="id_linkedin">LinkedIn Profile URL</label>
                         <input type="url" name="linkedin" value="{{ form.linkedin.value|default:'' }}" class="form-control" id="id_linkedin">
