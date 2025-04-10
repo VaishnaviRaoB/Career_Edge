@@ -476,3 +476,75 @@ def edit_job(request, job_id):
         form = JobForm(instance=job)
     
     return render(request, 'edit_job.html', {'form': form, 'job': job})
+
+@login_required
+def recommended_jobs(request):
+    try:
+        # Get the current job seeker profile
+        job_seeker = JobSeeker.objects.get(user_profile__user=request.user)
+        
+        # Initialize an empty query
+        query = Q()
+        
+        # Extract skills from job seeker profile and create a list
+        seeker_skills = []
+        if job_seeker.skills:
+            # Split by commas and clean up each skill
+            seeker_skills = [skill.strip().lower() for skill in job_seeker.skills.split(',')]
+        
+        # Get experience level based on years of experience
+        experience_level = "Fresher"
+        if job_seeker.experience_years:
+            if job_seeker.experience_years >= 5:
+                experience_level = "Senior"
+            elif job_seeker.experience_years >= 2:
+                experience_level = "Mid-level"
+        
+        # Build query for matching jobs
+        # Match by skills
+        if seeker_skills:
+            for skill in seeker_skills:
+                # Look for jobs that require this skill
+                query |= Q(skills__icontains=skill)
+        
+        # Match by experience level
+        query |= Q(experience_level=experience_level)
+        
+        # Match by location if available
+        if job_seeker.address:
+            # Extract city names from address (simplified approach)
+            address_words = job_seeker.address.lower().split()
+            for word in address_words:
+                if len(word) > 3:  # Avoid matching small words
+                    query |= Q(location__icontains=word)
+        
+        # Get recommended jobs based on the built query
+        recommended_jobs = Job.objects.filter(query).distinct()
+        
+        # Get IDs of jobs that the user has already saved
+        saved_job_ids = []
+        if hasattr(job_seeker, 'saved_jobs'):
+            saved_job_ids = job_seeker.saved_jobs.values_list('id', flat=True)
+        
+        # Pre-process job data to identify matched skills for each job
+        jobs_with_matches = []
+        for job in recommended_jobs:
+            job_skills = [skill.strip().lower() for skill in job.skills.split(',')] if job.skills else []
+            matched_skills = [skill for skill in job_skills if skill in seeker_skills]
+            
+            jobs_with_matches.append({
+                'job': job,
+                'matched_skills': matched_skills
+            })
+        
+        context = {
+            'jobs_with_matches': jobs_with_matches,
+            'saved_job_ids': saved_job_ids,
+            'job_seeker': job_seeker
+        }
+        
+        return render(request, 'recommended_jobs.html', context)
+    
+    except JobSeeker.DoesNotExist:
+        # Handle case where job seeker profile doesn't exist
+        return render(request, 'recommended_jobs.html', {'error': 'Please complete your profile to get job recommendations'})

@@ -1,0 +1,397 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Recommended Jobs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            font-size: 24px;
+            margin-right: 20px;
+            color: #333;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-right: 10px;
+            background-color: #f0f8ff;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        main section {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            max-width: 800px;
+            width: 100%;
+            align-self: center;
+        }
+
+        main section h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #4169E1;
+        }
+
+        .job-box-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .job-box {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        .job-box:hover {
+            background-color: #e0e0e0;
+        }
+
+        .job-box h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .job-box p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .apply-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            transition: background-color 0.3s;
+        }
+
+        .apply-btn:hover {
+            background-color: #3d8b40;
+        }
+
+        .bookmark-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            margin-left: 10px;
+        }
+
+        .bookmark-btn.bookmarked {
+            background-color: #ffeb3b;
+            color: #333;
+        }
+
+        .bookmark-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .bookmark-btn.bookmarked:hover {
+            background-color: #ffd700;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        footer {
+            background-color: #ffffff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .logo1 {
+            width: 5rem;
+            height: 3rem;
+            margin-left: 2rem;
+            margin-right: 2rem;
+        }
+
+        /* Message Box Styles */
+        .messages-container {
+            max-width: 800px;
+            width: 100%;
+            margin: 1rem auto;
+        }
+
+        .message-box {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            color: #155724;
+            border: 1px solid;
+        }
+
+        .message-box.success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .message-box.error,
+        .message-box.warning {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .message-box.info {
+            background-color: #cce5ff;
+            border-color: #b8daff;
+        }
+
+        .recommendation-explanation {
+            background-color: #f8f9fa;
+            border-left: 4px solid #4169E1;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .matched-skills {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .no-jobs {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+
+        .no-jobs i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+
+        .profile-reminder {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #856404;
+            text-align: center;
+        }
+
+        .profile-reminder a {
+            color: #004085;
+            text-decoration: underline;
+        }
+
+        .match-indicator {
+            background-color: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .match-indicator i {
+            color: #4CAF50;
+            margin-right: 5px;
+        }
+
+        .match-reason {
+            font-size: 14px;
+            color: #555;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        <img src="{% static 'images/logo.png' %}" alt="Welcome Image" class="logo1">
+        <nav>
+            <ul>
+                <li><a href="{% url 'seeker_dashboard' %}">Home</a></li>
+                <li><a href="{% url 'recommended_jobs' %}" style="font-weight: bold; color: #4169E1;">Recommended</a></li>
+                <li><a href="{% url 'saved_jobs' %}">Saved Jobs</a></li>
+                <li><a href="{% url 'my_applications' %}">My Applications</a></li>
+                <li><a href="{% url 'user_logout' %}">Logout</a></li>
+                <li><a href="{% url 'seeker_profile' %}">Profile</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="message-box {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <section>
+        <h2><i class="fas fa-star"></i> Your Personalized Job Recommendations</h2>
+        
+        {% if error %}
+            <div class="profile-reminder">
+                <p><i class="fas fa-info-circle"></i> {{ error }}</p>
+                <p>Visit your <a href="{% url 'seeker_profile' %}">profile page</a> to add your skills and experience.</p>
+            </div>
+        {% else %}
+            <div class="recommendation-explanation">
+                <p>These jobs are recommended based on your profile information including skills, experience level{% if job_seeker.address %}, and location{% endif %}.</p>
+                <p>Update your <a href="{% url 'seeker_profile' %}">profile</a> anytime to get better recommendations.</p>
+            </div>
+
+            {% if jobs_with_matches %}
+                {% for job_data in jobs_with_matches %}
+                    {% with job=job_data.job matched_skills=job_data.matched_skills %}
+                    <a href="{% url 'job_details' job.id %}" class="job-box-link">
+                        <div class="job-box">
+                            <!-- Company Logo -->
+                            <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 25px;">
+                                <div style="background: white; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid #ddd;">
+                                    {% if job.logo %}
+                                        <img src="{{ job.logo.url }}" alt="Company Logo" style="width: 120px; height: auto; object-fit: contain;" />
+                                    {% else %}
+                                        <img src="{% static 'images/dummy-logo.png' %}" alt="Dummy Logo" style="width: 120px; height: auto; object-fit: contain;" />
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <h3>{{ job.title }}</h3>
+                            <p><strong>Company:</strong> {{ job.company }}</p>
+                            <p><strong>Salary:</strong> ₹{{ job.salary }}</p>
+                            <p><strong>Experience Required:</strong> {{ job.experience_level }}</p>
+                            <p><strong>Job Type:</strong> {{ job.job_type }}</p>
+                            <p><strong>Location:</strong> {{ job.location }}</p>
+                            <p><strong>Last Date to Apply:</strong> {{ job.last_date_to_apply }}</p>
+                            
+                            {% if job.skills %}
+                                <p><strong>Required Skills:</strong> {{ job.skills }}</p>
+                            {% endif %}
+                            
+                            {% if matched_skills %}
+                                <div class="match-indicator">
+                                    <p><i class="fas fa-check-circle"></i> <strong>Match!</strong> You have {{ matched_skills|length }} matching skills for this job</p>
+                                    <p class="match-reason">
+                                        <strong>Your matching skills:</strong> 
+                                        {% for skill in matched_skills %}
+                                            <span class="matched-skills">{{ skill }}</span>{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </p>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="button-container">
+                                <a href="{% url 'apply_for_job' job.id %}" class="apply-btn">Apply</a>
+                                
+                                {% if job.id in saved_job_ids %}
+                                    <a href="{% url 'toggle_bookmark' job.id %}" class="bookmark-btn bookmarked">
+                                        <i class="fas fa-bookmark"></i> Saved
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'toggle_bookmark' job.id %}" class="bookmark-btn">
+                                        <i class="far fa-bookmark"></i> Save Job
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                    {% endwith %}
+                {% endfor %}
+            {% else %}
+                <div class="no-jobs">
+                    <i class="fas fa-search"></i>
+                    <p>No matching jobs found based on your profile.</p>
+                    <p>Try updating your skills and experience in your profile to get more recommendations.</p>
+                    <a href="{% url 'seeker_profile' %}" class="apply-btn">Update Profile</a>
+                </div>
+            {% endif %}
+        {% endif %}
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2025 Job Portal. All rights reserved.</p>
+</footer>
+
+<script>
+    // Auto-hide messages after 5 seconds
+    setTimeout(function() {
+        const messageElements = document.querySelectorAll('.message-box');
+        messageElements.forEach(function(element) {
+            element.style.display = 'none';
+        });
+    }, 5000);
+</script>
+</body>
+</html>
