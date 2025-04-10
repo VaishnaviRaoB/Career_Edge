@@ -82,10 +82,14 @@ def user_register_seeker(request):
     skills='',   # default placeholder
     experience_years=None        # okay to leave empty
 )
+ # Auto-login after successful registration
+        user = authenticate(username=username, password=password)
+        if user:
+            login(request, user)
+            return redirect('seeker_dashboard')
+        
 
-        return redirect('user_login')
-
-    return render(request, 'register_seeker.html')
+    return render(request, 'register_seeker.html') 
 
 @login_required
 def seeker_profile(request):
@@ -140,8 +144,12 @@ def user_register_provider(request):
         user = User.objects.create_user(username=username, password=password)
         profile = UserProfile.objects.create(user=user, role='provider')
         JobProvider.objects.create(user_profile=profile)
+        user = authenticate(username=username, password=password)
+        if user:
+            login(request, user)
+            return redirect('provider_dashboard')
 
-        return redirect('user_login')
+        return redirect('provider_dashboard')
 
     return render(request, 'register_provider.html')
 from django.contrib import messages
