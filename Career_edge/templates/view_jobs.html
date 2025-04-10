@@ -227,6 +227,14 @@
         .alert-info {
             background-color: #2196F3;
         }
+        .job-desc {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    line-clamp: 3;
+    overflow: hidden;
+}
+
+
 
         @keyframes slideIn {
             from {
@@ -306,7 +314,7 @@
                 {% endif %}
                 
                 <h3 class="job-title">{{ job.title }}</h3>
-                <p class="job-detail"><strong>Description:</strong> {{ job.description }}</p>
+                <p class="job-detail job-desc"><strong>Description:</strong> {{ job.description|slice:":10" }}...</p>
                 <p class="job-detail"><strong>Company Website:</strong> <a href="{{ job.company }}" target="_blank">{{ job.company }}</a></p>
                 <p class="job-detail"><strong>Location:</strong> {{ job.location }}</p>
                 <p class="job-detail"><strong>Experience Required:</strong> {{ job.experience_level }}</p>
