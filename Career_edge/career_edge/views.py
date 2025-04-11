@@ -218,11 +218,9 @@ def provider_dashboard(request):
 @login_required
 def view_jobs(request):
     query = request.GET.get('q', '')
-    # Get jobs for the current provider only
     jobs = Job.objects.filter(provider=request.user).order_by('-date_posted')
-
+    
     if query:
-        # Apply the search filter
         jobs = jobs.filter(
             Q(title__icontains=query) | 
             Q(location__icontains=query) |
@@ -233,6 +231,10 @@ def view_jobs(request):
     # Find jobs with new applications and add the count directly to job objects
     total_new_apps = 0
     
+    # Get current time and calculate 24 hours ago
+    now = timezone.now()
+    recent_threshold = now - timedelta(hours=24)
+    
     for job in jobs:
         # Count unseen applications for each job
         new_apps_count = JobApplication.objects.filter(
@@ -242,6 +244,9 @@ def view_jobs(request):
         
         # Add the count as an attribute to the job object
         job.new_apps_count = new_apps_count
+        
+        # Flag if the job is newly posted (within the last 24 hours)
+        job.is_new = job.date_posted >= recent_threshold
         
         if new_apps_count > 0:
             total_new_apps += new_apps_count

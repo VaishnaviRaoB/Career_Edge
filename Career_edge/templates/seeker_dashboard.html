@@ -346,7 +346,25 @@
             font-size: 15px;
             opacity: 0.9;
         }
+        .job-card.new-job {
+    border: 2px solid #3498db;
+    position: relative;
+    overflow: visible;
+}
 
+.new-job-badge {
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    background-color: #3498db;
+    color: white;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
         .logo-container {
             padding: 8px;
             border-radius: 8px;
@@ -621,7 +639,7 @@ a:hover {
                 {% if jobs %}
                 <div class="jobs-list">
                     {% for job in jobs %}
-                    <div class="job-card">
+                    <div class="job-card ">
                         <div class="job-header">
                             <div class="job-title-info">
                                 <h3 class="job-title">{{ job.title }}</h3>
@@ -706,13 +724,23 @@ a:hover {
     </footer>
     
     <script>
-        setTimeout(() => {
-            const messages = document.querySelectorAll('.message-box');
-            messages.forEach(msg => {
-                msg.classList.add('fade-out');
-                setTimeout(() => msg.remove(), 1000);
-            });
-        }, 3000); // Show for 3 seconds
+        // Auto-hide messages after 5 seconds
+    setTimeout(function() {
+        const messages = document.querySelectorAll('.message-box');
+        messages.forEach(function(element) {
+            element.style.opacity = '0';
+            element.style.transition = 'opacity 1s ease';
+            setTimeout(() => element.remove(), 1000);
+        });
+    }, 5000);
+    
+    // Highlight new jobs with a subtle animation
+    document.addEventListener('DOMContentLoaded', function() {
+        const newJobs = document.querySelectorAll('.new-job');
+        newJobs.forEach(function(element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    });
     </script>
 </body>
 </html>
