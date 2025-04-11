@@ -227,10 +227,30 @@ def view_jobs(request):
             Q(description__icontains=query) |
             Q(company__icontains=query)
         )
+    
+    # Find jobs with new applications and add the count directly to job objects
+    total_new_apps = 0
+    
+    for job in jobs:
+        # Count unseen applications for each job
+        new_apps_count = JobApplication.objects.filter(
+            job=job, 
+            is_seen_by_provider=False
+        ).count()
+        
+        # Add the count as an attribute to the job object
+        job.new_apps_count = new_apps_count
+        
+        if new_apps_count > 0:
+            total_new_apps += new_apps_count
+    
+    # Add notification if there are new applications
+    if total_new_apps > 0:
+        messages.success(request, f"You have {total_new_apps} new application(s) across your job postings!")
 
     return render(request, 'view_jobs.html', {
         'jobs': jobs,
-        'query': query
+        'query': query,
     })
 # Apply for a job view
 @login_required
@@ -353,10 +373,30 @@ class ViewJobsView(View):
                 Q(description__icontains=query) |
                 Q(company__icontains=query)
             )
+        
+        # Find jobs with new applications and add the count directly to job objects
+        total_new_apps = 0
+        
+        for job in jobs:
+            # Count unseen applications for each job
+            new_apps_count = JobApplication.objects.filter(
+                job=job, 
+                is_seen_by_provider=False
+            ).count()
+            
+            # Add the count as an attribute to the job object
+            job.new_apps_count = new_apps_count
+            
+            if new_apps_count > 0:
+                total_new_apps += new_apps_count
+        
+        # Add notification if there are new applications
+        if total_new_apps > 0:
+            messages.success(request, f"You have {total_new_apps} new application(s) across your job postings!")
             
         return render(request, 'view_jobs.html', {
             'jobs': jobs,
-            'query': query
+            'query': query,
         })
 class ProviderDashboardView(View):
     def get(self, request):
