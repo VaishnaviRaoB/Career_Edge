@@ -15,6 +15,8 @@ from django.core.exceptions import ValidationError
 from .models import UserProfile, JobSeeker, JobProvider,SavedJob
 from .forms import JobForm,JobSeekerProfileForm
 import re
+from django.http import HttpResponse
+import xlwt
 from django.db.models import Q
 from django.db import models
 from django.views.decorators.http import require_POST
@@ -638,10 +640,17 @@ def recommended_jobs(request):
         # Get all jobs
         all_jobs = Job.objects.all().order_by('-date_posted')
         
+        # Get jobs that the user has already applied for
+        applied_job_ids = JobApplication.objects.filter(applicant=request.user).values_list('job_id', flat=True)
+        
         # Filter manually to ensure proper matching
         recommended_jobs = []
         
         for job in all_jobs:
+            # Skip jobs that the user has already applied for
+            if job.id in applied_job_ids:
+                continue
+                
             # Check for skill matches
             job_skills = [skill.strip().lower() for skill in job.skills.split(',')] if job.skills else []
             has_skill_match = False
@@ -700,3 +709,55 @@ def recommended_jobs(request):
         return render(request, 'recommended_jobs.html', {
             'error': 'Please complete your profile to get job recommendations.'
         })
+
+@login_required
+def export_job_applications(request, job_id):
+    job = get_object_or_404(Job, id=job_id)
+    applications = JobApplication.objects.filter(job=job).order_by('-created_at')
+    
+    # Create a workbook and add a worksheet
+    workbook = xlwt.Workbook(encoding='utf-8')
+    worksheet = workbook.add_sheet(f'Applications - {job.title}')
+    
+    # Sheet header with job information
+    title_style = xlwt.easyxf('font: bold on, height 280; align: wrap on, vert centre, horiz center')
+    worksheet.write_merge(0, 0, 0, 10, f'Job Applications for: {job.title}', title_style)
+    
+    # Add date
+    date_style = xlwt.easyxf('font: height 180; align: wrap on, vert centre, horiz right')
+    worksheet.write_merge(1, 1, 8, 10, f'Generated on: {datetime.now().strftime("%d %b %Y, %H:%M")}', date_style)
+    
+    # Column headers
+    header_style = xlwt.easyxf('font: bold on, color white, height 200; pattern: pattern solid, fore_colour dark_blue; align: wrap on, vert centre, horiz center')
+    columns = ['Name', 'Username', 'Email', 'Phone', 'Skills', 'Qualification', 'Experience', 'Status', 'Applied On', 'Resume Link', 'Notes']
+    
+    for col_num, column_title in enumerate(columns):
+        worksheet.write(3, col_num, column_title, header_style)
+        # Set column width
+        worksheet.col(col_num).width = 5500
+    
+    # Sheet body, remaining rows
+    row_num = 4
+    font_style = xlwt.easyxf('align: wrap on, vert centre')
+    date_format = xlwt.easyxf('align: wrap on, vert centre', num_format_str='DD-MM-YYYY')
+    
+    for application in applications:
+        worksheet.write(row_num, 0, application.name, font_style)
+        worksheet.write(row_num, 1, application.applicant.username, font_style)
+        worksheet.write(row_num, 2, application.email, font_style)
+        worksheet.write(row_num, 3, application.phone, font_style)
+        worksheet.write(row_num, 4, application.skills, font_style)
+        worksheet.write(row_num, 5, application.qualifications, font_style)
+        worksheet.write(row_num, 6, application.experience, font_style)
+        worksheet.write(row_num, 7, application.get_status_display(), font_style)
+        worksheet.write(row_num, 8, application.created_at.strftime("%d %b %Y, %H:%M"), font_style)
+        worksheet.write(row_num, 9, request.build_absolute_uri(application.resume.url), font_style)
+        worksheet.write(row_num, 10, "", font_style)  # Empty column for notes
+        row_num += 1
+    
+    # Create HTTP response
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = f'attachment; filename="{job.title}_applications_{datetime.now().strftime("%Y%m%d")}.xls"'
+    workbook.save(response)
+    
+    return response

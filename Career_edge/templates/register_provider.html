@@ -173,7 +173,20 @@
             margin-bottom: 15px;
             font-size: 14px;
         }
+        .login-button {
+            padding: 10px 20px;
+            background-color: var(--accent-color);
+            color: var(--light-text);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: var(--transition);
+        }
 
+        .login-button:hover {
+            background-color: #16a085;
+            transform: translateY(-2px);
+        }
         /* Footer styles */
         footer {
             background-color: var(--primary-color);
@@ -228,6 +241,7 @@
                 </ul>
             </nav>
         </div>
+        <a href="{% url 'user_login' %}" class="login-button">Login</a>
     </header>
     
     <main>

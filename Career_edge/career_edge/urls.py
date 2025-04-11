@@ -33,6 +33,7 @@ path('saved-jobs/', views.saved_jobs, name='saved_jobs'),
 path('jobs/edit/<int:job_id>/', views.edit_job, name='edit_job'),
 path('seeker/profile/', views.seeker_profile, name='seeker_profile'),
 path('recommended-jobs/', views.recommended_jobs, name='recommended_jobs'),
+path('export-applications/<int:job_id>/', views.export_job_applications, name='export_job_applications'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

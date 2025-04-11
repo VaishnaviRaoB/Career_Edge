@@ -436,6 +436,7 @@
             </select>
             <button type="submit">Filter</button>
             <a href="?" class="email-link">Clear</a>
+            <a href="{% url 'export_job_applications' job.id %}" class="email-link" style="background-color: #27ae60;">Download Excel</a>
         </form>
 
         <div class="application-count">
