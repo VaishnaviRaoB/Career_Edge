@@ -6,9 +6,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views import View
-from datetime import date
-from datetime import datetime
 from django.utils import timezone
+from datetime import datetime, timedelta, date
 from .forms import EditCompanyProfileForm
 from django.utils.dateparse import parse_date
 from django.core.validators import URLValidator
@@ -157,19 +156,43 @@ def user_register_provider(request):
 
     return render(request, 'register_provider.html')
 
+@login_required
 def edit_company_profile(request):
-    provider = JobProvider.objects.get(user_profile__user=request.user)
-    updated = False
-
-    if request.method == 'POST':
-        form = EditCompanyProfileForm(request.POST, request.FILES, instance=provider)
-        if form.is_valid():
-            form.save()
-            updated = True  # Set flag to show message
-    else:
-        form = EditCompanyProfileForm(instance=provider)
-
-    return render(request, 'edit_company_profile.html', {'form': form, 'updated': updated})
+    try:
+        # Get the user's profile
+        user_profile = UserProfile.objects.get(user=request.user)
+        
+        # Check if the user is a provider
+        if user_profile.role != 'provider':
+            messages.error(request, "Access denied. This page is for job providers only.")
+            return redirect('user_login')
+        
+        # Get the job provider profile
+        provider = JobProvider.objects.get(user_profile=user_profile)
+        
+        if request.method == 'POST':
+            form = EditCompanyProfileForm(request.POST, request.FILES, instance=provider)
+            if form.is_valid():
+                # Handle the company logo upload properly
+                if 'company_logo' in request.FILES:
+                    provider.company_logo = request.FILES['company_logo']
+                form.save()
+                messages.success(request, "Your company profile has been updated successfully!")
+                return redirect('edit_company_profile')
+        else:
+            form = EditCompanyProfileForm(instance=provider)
+        
+        return render(request, 'edit_company_profile.html', {'form': form, 'provider': provider})
+    
+    except UserProfile.DoesNotExist:
+        messages.error(request, "User profile not found.")
+        return redirect('provider_dashboard')
+    except JobProvider.DoesNotExist:
+        messages.error(request, "Provider profile not found.")
+        return redirect('provider_dashboard')
+    except Exception as e:
+        messages.error(request, f"An error occurred: {str(e)}")
+        return redirect('provider_dashboard')
 # Seeker dashboard view
 @login_required
 def seeker_dashboard(request):
@@ -378,10 +401,14 @@ def search_jobs(request):
     job_type = request.GET.get('job_type', '')
     experience_level = request.GET.get('experience_level', '')
     posted_date = request.GET.get('posted_date', '')
-    last_date = request.GET.get('last_date', '')
-    remote_only = request.GET.get('remote') 
+    last_date_range = request.GET.get('last_date_range', '')
+    remote_only = request.GET.get('remote')
+    sort_by = request.GET.get('sort_by', 'newest')  # Default to newest first
+    
+    today = date.today()
+    
     jobs = Job.objects.all()
-
+    
     # Apply search filters
     if q:
         jobs = jobs.filter(title__icontains=q)
@@ -399,10 +426,10 @@ def search_jobs(request):
         jobs = jobs.filter(job_type__iexact=job_type)
     if experience_level:
         jobs = jobs.filter(experience_level__iexact=experience_level)
-     
+    
     if remote_only:
         jobs = jobs.filter(location__icontains='remote')
-
+    
     # Filter by posted_date if provided
     if posted_date:
         try:
@@ -410,20 +437,33 @@ def search_jobs(request):
             jobs = jobs.filter(date_posted__date=posted_date_obj)
         except ValueError:
             posted_date = ''
-
-    # Filter by last_date if provided
-    if last_date:
+    
+    # Filter by last_date_range if provided - jobs that close within X days
+    if last_date_range:
         try:
-            last_date_obj = datetime.strptime(last_date, '%Y-%m-%d').date()  # Convert the string to a date
-            jobs = jobs.filter(last_date_to_apply=last_date_obj)  # Filter using the correct field
+            days = int(last_date_range)
+            cutoff = today + timedelta(days=days)
+            # Filter for jobs where last_date_to_apply is between today and cutoff
+            jobs = jobs.filter(
+                last_date_to_apply__gte=today,  # Greater than or equal to today
+                last_date_to_apply__lte=cutoff  # Less than or equal to cutoff (today + X days)
+            )
         except ValueError:
-            last_date = ''
-
+            pass
+    
+    # Apply sorting
+    if sort_by == 'newest':
+        jobs = jobs.order_by('-date_posted')  # Newest first (descending order)
+    elif sort_by == 'oldest':
+        jobs = jobs.order_by('date_posted')  # Oldest first
+    elif sort_by == 'closing_soon':
+        jobs = jobs.order_by('last_date_to_apply')  # Closing soon first
+    
     # Handle saved jobs for authenticated users
     saved_job_ids = []
     if request.user.is_authenticated:
         saved_job_ids = SavedJob.objects.filter(user=request.user).values_list('job_id', flat=True)
-
+    
     context = {
         'jobs': jobs,
         'q': q,
@@ -432,7 +472,8 @@ def search_jobs(request):
         'min_salary': min_salary,
         'job_type': job_type,
         'experience_level': experience_level,
-        'posted_date': posted_date,
+        'sort_by': sort_by,  # Add sort_by to context
+        'today': today,
         'saved_job_ids': saved_job_ids,
     }
     return render(request, 'seeker_dashboard.html', context)

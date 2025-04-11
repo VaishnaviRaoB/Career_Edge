@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Provider Profile - Career Edge</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         /* Global Styles */
         :root {
@@ -15,8 +16,9 @@
             --dark-text: #333;
             --light-text: #fff;
             --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --border-radius: 6px;
+            --border-radius: 8px;
             --transition: all 0.3s ease;
+            --danger-color: #e74c3c;
         }
 
         * {
@@ -54,20 +56,24 @@
         }
 
         .logo img {
-            width: 40px; 
-            height: 40px; 
+            height: 40px;
             margin-right: 15px;
-            object-fit: contain;
+        }
+
+        .logo-text {
+            color: var(--light-text);
+            font-size: 22px;
+            font-weight: 600;
         }
 
         nav ul {
             list-style-type: none;
             display: flex;
+            flex-wrap: wrap;
         }
 
         nav ul li {
-            margin: 0 10px;
-            position: relative;
+            margin: 0 5px;
         }
 
         nav ul li a {
@@ -77,9 +83,10 @@
             padding: 8px 15px;
             border-radius: var(--border-radius);
             transition: var(--transition);
+            display: block;
         }
 
-        nav ul li a:hover {
+        nav ul li a:hover, nav ul li a.active {
             background-color: var(--secondary-color);
         }
 
@@ -87,49 +94,129 @@
         main {
             flex: 1;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            padding: 40px 20px;
+            padding: 30px 20px;
         }
 
-        .form-container {
-            background-color: var(--light-text);
-            max-width: 550px;
+        /* Message Box Styles */
+        .messages-container {
+            max-width: 800px;
             width: 100%;
-            padding: 30px;
+            margin: 0 auto 20px;
+        }
+
+        .message-box {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+
+        .message-box.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .message-box.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .message-box.info {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        /* Profile Container */
+        .profile-container {
+            background-color: var(--light-text);
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
+            padding: 30px;
+            width: 100%;
+            max-width: 800px;
         }
 
-        h2 {
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--secondary-color);
+            margin-right: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-default-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: var(--light-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-default-picture i {
+            font-size: 50px;
             color: var(--primary-color);
-            margin-bottom: 25px;
-            text-align: center;
-            font-size: 24px;
-            position: relative;
+        }
+
+        .profile-title h1 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 28px;
+        }
+
+        .profile-title p {
+            margin: 5px 0 0;
+            color: var(--secondary-color);
+            font-size: 16px;
+        }
+
+        .profile-form {
+            margin-top: 20px;
+        }
+
+        /* Profile Sections */
+        .profile-section {
+            margin-bottom: 30px;
+        }
+
+        .profile-section h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--accent-color);
             padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 22px;
+            position: relative;
         }
 
-        h2:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
-            background-color: var(--accent-color);
+        /* Form Styling */
+        .form-group {
+            margin-bottom: 20px;
         }
 
-        form label {
+        .form-group label {
             display: block;
-            font-weight: 500;
-            margin-top: 15px;
             margin-bottom: 8px;
-            color: var(--dark-text);
+            font-weight: 600;
+            color: var(--primary-color);
         }
 
-        form input, form textarea {
+        .form-control {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
@@ -138,87 +225,113 @@
             transition: var(--transition);
         }
 
-        form input:focus, form textarea:focus {
+        .form-control:focus {
             border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
             outline: none;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
         }
 
-        form textarea {
-            min-height: 120px;
+        textarea.form-control {
+            min-height: 100px;
             resize: vertical;
         }
 
-        form button {
-            margin-top: 25px;
-            padding: 12px 0;
-            background-color: var(--accent-color);
-            color: var(--light-text);
-            border: none;
+        .help-text {
+            color: #777;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        /* File Input Styling */
+        .file-input-container {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-label {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 10px 15px;
             border-radius: var(--border-radius);
             cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-            font-weight: 600;
+            display: inline-block;
             transition: var(--transition);
         }
 
-        form button:hover {
+        .file-input-label:hover {
+            background-color: #2980b9;
+        }
+
+        .file-input-container input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-name {
+            margin-left: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .current-file {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .current-file i {
+            margin-right: 5px;
+        }
+
+        .current-file a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 5px;
+        }
+
+        .current-file a:hover {
+            text-decoration: underline;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: block;
+            margin: 20px auto 0;
+            min-width: 200px;
+        }
+
+        .submit-btn:hover {
             background-color: #16a085;
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .success-message {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: 500;
-            border: 1px solid #c3e6cb;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Profile image preview styling */
-        .profile-upload {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        .profile-preview {
-            margin-top: 10px;
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-
-        .profile-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-        /* Footer styles */
+        /* Footer */
         footer {
             background-color: var(--primary-color);
-            padding: 15px;
+            padding: 20px;
             text-align: center;
             color: var(--light-text);
             margin-top: auto;
         }
 
-        /* Responsive styling */
+        /* Responsive styles */
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
@@ -230,18 +343,22 @@
             }
 
             nav ul {
-                margin-bottom: 15px;
-                flex-wrap: wrap;
                 justify-content: center;
+                margin: 10px 0;
             }
 
             nav ul li {
-                margin-bottom: 10px;
+                margin-bottom: 5px;
             }
-
-            .form-container {
-                padding: 20px;
-                width: 90%;
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-picture, .profile-default-picture {
+                margin-right: 0;
+                margin-bottom: 20px;
             }
         }
     </style>
@@ -250,41 +367,108 @@
     <header>
         <div class="logo">
             <img src="{% static 'images/logo.png' %}" alt="Career Edge Logo">
-            <nav>
-                <ul>
-                    <li><a href="{% url 'provider_dashboard' %}">Home</a></li>
-                    <li><a href="{% url 'edit_company_profile' %}">Edit Profile</a></li>
-                    <li><a href="{% url 'user_logout' %}">Logout</a></li>
-                </ul>
-            </nav>
+            <span class="logo-text">Career Edge</span>
         </div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'provider_dashboard' %}">Home</a></li>
+                <li><a href="{% url 'edit_company_profile' %}" class="active">Edit Profile</a></li>
+                <li><a href="{% url 'user_logout' %}">Logout</a></li>
+            </ul>
+        </nav>
     </header>
     
-    {% if updated %}
-    <div id="update-message" class="success-message">
-        Company profile updated successfully!
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="message-box {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
     </div>
     {% endif %}
     
     <main>
-        <div class="form-container">
-            <h2>Edit Company Profile</h2>
-            <form method="post" enctype="multipart/form-data">
+        <div class="profile-container">
+            <div class="profile-header">
+                {% if provider.company_logo %}
+                    <img src="{{ provider.company_logo.url }}" alt="Company Logo" class="profile-picture">
+                {% else %}
+                    <div class="profile-default-picture">
+                        <i class="fas fa-building"></i>
+                    </div>
+                {% endif %}
+                <div class="profile-title">
+                    <h1>{{ provider.company_name|default:"Your Company" }}</h1>
+                    <p>Employer</p>
+                </div>
+            </div>
+            
+            <form method="post" enctype="multipart/form-data" class="profile-form">
                 {% csrf_token %}
-
-                <label for="{{ form.company_name.id_for_label }}">Company Name</label>
-                {{ form.company_name }}
-
-                <label for="{{ form.company_description.id_for_label }}">Company Description</label>
-                {{ form.company_description }}
                 
-                <label for="{{ form.contact_email.id_for_label }}">Contact Email</label>
-                {{ form.contact_email }}
+                <div class="profile-section">
+                    <h2><i class="fas fa-building"></i> Company Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.company_name.id_for_label }}">Company Name</label>
+                        <input type="text" name="company_name" value="{{ form.company_name.value|default:'' }}" id="{{ form.company_name.id_for_label }}" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.company_description.id_for_label }}">Company Description</label>
+                        <textarea name="company_description" id="{{ form.company_description.id_for_label }}" class="form-control" rows="5">{{ form.company_description.value|default:'' }}</textarea>
+                        <p class="help-text">Describe your company, its mission, values, and work culture</p>
+                    </div>
+                </div>
                 
-                <label for="{{ form.website.id_for_label }}">Website</label>
-                {{ form.website }}
-
-                <button type="submit">Update Profile</button>
+                <div class="profile-section">
+                    <h2><i class="fas fa-camera"></i> Company Logo</h2>
+                    <div class="form-group">
+                        <div class="file-input-container">
+                            <label for="id_company_logo" class="file-input-label">
+                                <i class="fas fa-upload"></i> Choose Company Logo
+                            </label>
+                            <input type="file" name="company_logo" id="id_company_logo" accept="image/*" onchange="updateFileName(this, 'logoFileName')">
+                            <span id="logoFileName" class="file-name"></span>
+                        </div>
+                        {% if provider.company_logo %}
+                            <div class="current-file">
+                                <i class="fas fa-check-circle"></i> Current: Company logo uploaded
+                            </div>
+                        {% endif %}
+                        <p class="help-text">Upload your company logo (JPG, PNG). Max 2MB.</p>
+                    </div>
+                </div>
+                
+                <div class="profile-section">
+                    <h2><i class="fas fa-envelope"></i> Contact Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.contact_email.id_for_label }}">Contact Email</label>
+                        <input type="email" name="contact_email" value="{{ form.contact_email.value|default:'' }}" id="{{ form.contact_email.id_for_label }}" class="form-control">
+                        <p class="help-text">Email address job seekers can contact you at</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.website.id_for_label }}">Website</label>
+                        <input type="url" name="website" value="{{ form.website.value|default:'' }}" id="{{ form.website.id_for_label }}" class="form-control">
+                        <p class="help-text">Your company website URL (e.g., https://example.com)</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_phone">Phone Number</label>
+                        <input type="text" name="phone" value="{{ form.phone.value|default:'' }}" id="id_phone" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_location">Company Location</label>
+                        <input type="text" name="location" value="{{ form.location.value|default:'' }}" id="id_location" class="form-control">
+                        <p class="help-text">Where is your company headquartered?</p>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Update Profile</button>
             </form>
         </div>
     </main>
@@ -294,14 +478,21 @@
     </footer>
     
     <script>
-        window.onload = function () {
-            const message = document.getElementById("update-message");
-            if (message) {
-                setTimeout(() => {
-                    message.style.display = 'none';
-                }, 3000);
-            }
-        };
-    </script>zz
+        // Auto-hide messages after 5 seconds
+        setTimeout(function() {
+            const messageElements = document.querySelectorAll('.message-box');
+            messageElements.forEach(function(element) {
+                element.style.opacity = '0';
+                element.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => element.style.display = 'none', 500);
+            });
+        }, 5000);
+        
+        // Update file name display when file is selected
+        function updateFileName(input, elementId) {
+            const fileName = input.files[0] ? input.files[0].name : '';
+            document.getElementById(elementId).textContent = fileName;
+        }
+    </script>
 </body>
 </html>

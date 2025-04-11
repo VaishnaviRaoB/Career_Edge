@@ -131,7 +131,17 @@ class JobApplicationForm(forms.ModelForm):
 class EditCompanyProfileForm(forms.ModelForm):
     class Meta:
         model = JobProvider
-        fields = ['company_name', 'company_description', 'contact_email', 'website']
+        fields = ['company_name', 'company_description', 'contact_email', 'website','company_logo']
+    def clean_company_logo(self):
+        logo = self.cleaned_data.get('company_logo')
+        if logo:
+            # Validate file size (max 2MB)
+            if logo.size > 2 * 1024 * 1024:
+                raise forms.ValidationError("Image file too large ( > 2MB )")
+            # Validate file type
+            if not logo.name.lower().endswith(('.png', '.jpg', '.jpeg')):
+                raise forms.ValidationError("Unsupported file type. Please upload a JPG or PNG image.")
+        return logo
     
 class JobSeekerProfileForm(forms.ModelForm):
     class Meta:

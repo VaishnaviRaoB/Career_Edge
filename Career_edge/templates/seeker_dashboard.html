@@ -128,7 +128,58 @@
             background-color: #cce5ff;
             color: #004085;
         }
+/*side bar*/
+.sidebar {
+    background-color: var(--light-text);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 25px;
+    position: sticky;
+    top: 90px;
+    max-height: calc(100vh - 150px); /* Adjust this value based on your header/footer size */
+    overflow-y: auto; /* Add scrollbar when content overflows */
+    /* Smooth scrolling for better UX */
+    scroll-behavior: smooth;
+}
 
+/* Customize the scrollbar appearance */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--secondary-color);
+    border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+/* For Firefox */
+.sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--secondary-color) #f1f1f1;
+}
+
+/* Make the filter form more compact */
+.filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Ensure the filter form stays contained */
+.filter-form input,
+.filter-form select {
+    width: 100%;
+    box-sizing: border-box;
+}
         /* Dashboard Content */
         .dashboard-container {
             max-width: 1200px;
@@ -297,7 +348,6 @@
         }
 
         .logo-container {
-            background: white;
             padding: 8px;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
@@ -532,8 +582,23 @@ a:hover {
                     </select>
                     
                     <div>
-                        <label for="last_date">Last Date to Apply:</label>
-                        <input type="date" name="last_date" id="last_date" value="{{ last_date }}">
+                        <label for="last_date_range">Apply Before:</label>
+                        <select name="last_date_range" id="last_date_range">
+                            <option value="">Any Time</option>
+                            <option value="3" {% if request.GET.last_date_range == "3" %}selected{% endif %}>Closing in 3 days</option>
+                            <option value="7" {% if request.GET.last_date_range == "7" %}selected{% endif %}>Closing in 7 days</option>
+                            <option value="14" {% if request.GET.last_date_range == "14" %}selected{% endif %}>Closing in 14 days</option>
+                            <option value="30" {% if request.GET.last_date_range == "30" %}selected{% endif %}>Closing in 30 days</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="sort_by">Sort By:</label>
+                        <select name="sort_by" id="sort_by">
+                            <option value="newest" {% if request.GET.sort_by == "newest" %}selected{% endif %}>Newest First</option>
+                            <option value="oldest" {% if request.GET.sort_by == "oldest" %}selected{% endif %}>Oldest First</option>
+                            <option value="closing_soon" {% if request.GET.sort_by == "closing_soon" %}selected{% endif %}>Closing Soon</option>
+                        </select>
                     </div>
                     
                     <label>
