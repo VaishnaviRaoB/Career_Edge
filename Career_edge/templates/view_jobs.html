@@ -314,7 +314,7 @@
         .job-desc {
             display: -webkit-box;
             -webkit-box-orient: vertical;
-            -webkit-line-clamp: 3;
+            line-clamp: 3;
             overflow: hidden;
         }
 
@@ -437,7 +437,7 @@
                 {% endif %}
                 
                 <h3 class="job-title">{{ job.title }}</h3>
-                <p class="job-detail job-desc"><strong>Description:</strong> {{ job.description|slice:":100" }}...</p>
+                <p class="job-detail job-desc"><strong>Description:</strong> {{ job.description|slice:":20" }}...</p>
                 <p class="job-detail"><strong>Company Website:</strong> <a href="{{ job.company }}" target="_blank">{{ job.company }}</a></p>
                 <p class="job-detail"><strong>Location:</strong> {{ job.location }}</p>
                 <p class="job-detail"><strong>Experience Required:</strong> {{ job.experience_level }}</p>

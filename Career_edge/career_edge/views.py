@@ -173,7 +173,7 @@ def edit_company_profile(request):
 # Seeker dashboard view
 @login_required
 def seeker_dashboard(request):
-    jobs = Job.objects.all()
+    jobs = Job.objects.all().order_by('-date_posted')
     today = timezone.now().date()
     # Get IDs of jobs saved by the current user
     saved_job_ids = SavedJob.objects.filter(user=request.user).values_list('job_id', flat=True)
@@ -194,7 +194,7 @@ def provider_dashboard(request):
 def view_jobs(request):
     query = request.GET.get('q', '')
     # Get jobs for the current provider only
-    jobs = Job.objects.filter(provider=request.user)
+    jobs = Job.objects.filter(provider=request.user).order_by('-date_posted')
 
     if query:
         # Apply the search filter
@@ -269,7 +269,7 @@ def view_job_applications(request, job_id):
             applications = applications.filter(created_at__date=parsed_date)
     if status_query:
         applications = applications.filter(status=status_query)
-        
+    applications = applications.order_by('-created_at')    
     # 👇 Unseen application popup
     unseen_applications = JobApplication.objects.filter(job=job, is_seen_by_provider=False)
     unseen_ids = list(unseen_applications.values_list('id', flat=True))
@@ -320,7 +320,7 @@ from django.db.models import Q
 class ViewJobsView(View):
     def get(self, request):
         query = request.GET.get('q', '')
-        jobs = Job.objects.filter(provider=request.user)
+        jobs = Job.objects.filter(provider=request.user).order_by('-date_posted')
         
         if query:
             jobs = jobs.filter(
@@ -554,7 +554,7 @@ def recommended_jobs(request):
                 experience_level = "Mid-level"
 
         # Get all jobs
-        all_jobs = Job.objects.all()
+        all_jobs = Job.objects.all().order_by('-date_posted')
         
         # Filter manually to ensure proper matching
         recommended_jobs = []
