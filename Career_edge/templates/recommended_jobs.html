@@ -19,6 +19,7 @@
             --border-radius: 8px;
             --transition: all 0.3s ease;
             --danger-color: #e74c3c;
+            --star-color: #f1c40f;
         }
 
         * {
@@ -88,6 +89,22 @@
 
         nav ul li a:hover, nav ul li a.active {
             background-color: var(--secondary-color);
+        }
+        
+        /* Recommended star indicator styles */
+        .recommendation-indicator {
+            display: inline-block;
+            vertical-align: middle;
+            color: var(--star-color);
+            font-size: 14px;
+            margin-left: 5px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
 
         /* Main section */
@@ -454,7 +471,16 @@
                 <li><a href="{% url 'seeker_dashboard' %}">Home</a></li>
                 <li><a href="{% url 'saved_jobs' %}">Saved Jobs</a></li>
                 <li><a href="{% url 'my_applications' %}">My Applications</a></li>
-                <li><a href="{% url 'recommended_jobs' %}" class="active">Recommended</a></li>
+                <li>
+                    <a href="{% url 'recommended_jobs' %}" class="active">
+                        Recommended
+                        {% if jobs_with_matches %}
+                        <span class="recommendation-indicator">
+                            <i class="fas fa-star"></i>
+                        </span>
+                        {% endif %}
+                    </a>
+                </li>
                 <li><a href="{% url 'seeker_profile' %}">Profile</a></li>
                 <li><a href="{% url 'user_logout' %}">Logout</a></li>
             </ul>
