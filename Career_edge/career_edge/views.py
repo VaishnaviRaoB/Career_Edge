@@ -195,18 +195,36 @@ def edit_company_profile(request):
     except Exception as e:
         messages.error(request, f"An error occurred: {str(e)}")
         return redirect('provider_dashboard')
-# Seeker dashboard view
+@login_required
 @login_required
 def seeker_dashboard(request):
     jobs = Job.objects.all().order_by('-date_posted')
     today = timezone.now().date()
+    
     # Get IDs of jobs saved by the current user
     saved_job_ids = SavedJob.objects.filter(user=request.user).values_list('job_id', flat=True)
+    
+    # Get count of unseen application updates
+    unseen_count = JobApplication.objects.filter(
+        applicant=request.user,
+        is_seen_by_seeker=False
+    ).count()
+    
+    # Get count of new jobs (posted in the last 3 days)
+    new_jobs_count = Job.objects.filter(
+        date_posted__gte=timezone.now() - timezone.timedelta(days=3)
+    ).count()
+    
+    # Flag jobs that are new
+    for job in jobs:
+        job.is_recent = job.is_recent()
     
     return render(request, 'seeker_dashboard.html', {
         'jobs': jobs,
         'saved_job_ids': saved_job_ids,
         'today': today,
+        'unseen_count': unseen_count,
+        'new_jobs_count': new_jobs_count,
     })
 # Provider dashboard view
 @login_required
@@ -529,25 +547,59 @@ def search_jobs(request):
 @login_required
 def my_applications(request):
     # Get all applications for the current user
-    applications = JobApplication.objects.filter(applicant=request.user).order_by('-created_at')
-     # Handle search query
+    unseen_applications = JobApplication.objects.filter(
+        applicant=request.user, 
+        is_seen_by_seeker=False
+    ).order_by('-created_at')
+    
+    seen_applications = JobApplication.objects.filter(
+        applicant=request.user, 
+        is_seen_by_seeker=True
+    ).order_by('-created_at')
+    
+    # Count unseen applications for nav badge BEFORE any processing
+    unseen_count = unseen_applications.count()
+    
+    # Combine both querysets using lists to preserve the is_seen_by_seeker value
+    all_applications = list(unseen_applications) + list(seen_applications)
+    
+    # Handle search query
     search_query = request.GET.get('q', '')
     status_query = request.GET.get('status', '')
-    if search_query:
-        applications = applications.filter(
-            models.Q(job__title__icontains=search_query) |
-            models.Q(job__company__icontains=search_query) |
-            models.Q(job__location__icontains=search_query)
-        )
-    if status_query:
-        applications = applications.filter(status=status_query)
+    
+    # Filter applications if search parameters are present
+    if search_query or status_query:
+        filtered_applications = []
+        for app in all_applications:
+            matches_search = (search_query == '' or
+                           search_query.lower() in app.job.title.lower() or
+                           search_query.lower() in app.job.company.lower() or
+                           search_query.lower() in app.job.location.lower())
+            
+            matches_status = (status_query == '' or app.status == status_query)
+            
+            if matches_search and matches_status:
+                filtered_applications.append(app)
+        applications = filtered_applications
+    else:
+        applications = all_applications
+    
+    # Only mark as seen if not searching/filtering
+    if not search_query and not status_query:
+        # Important: Mark applications as seen AFTER we've prepared the list for display
+        # This way the template still sees them as unseen
+        for app in unseen_applications:
+            # Create a copy for database update, but don't modify our display objects
+            app.is_seen_by_seeker = True
+            app.save()
+    
     return render(request, 'my_applications.html', {
         'applications': applications,
         'search_query': search_query,
         'status_query': status_query,
         'status_choices': JobApplication.STATUS_CHOICES,
+        'unseen_count': unseen_count,  # Pass the count we calculated early on
     })
-
 
 @login_required
 def toggle_bookmark(request, job_id):

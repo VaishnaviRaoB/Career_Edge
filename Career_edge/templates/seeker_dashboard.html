@@ -19,6 +19,9 @@
             --border-radius: 8px;
             --transition: all 0.3s ease;
             --star-color: #f1c40f;
+            --notification-color: #e74c3c;
+            --update-bg: #e3f2fd; /* Light blue background for updates */
+            --update-header-bg: #2196f3; /* Darker blue for header of updated cards */
         }
 
         * {
@@ -49,15 +52,52 @@
             top: 0;
             z-index: 100;
         }
-/* Recommended star indicator styles */
-.recommendation-indicator {
+        
+        /* Recommended star indicator styles */
+        .recommendation-indicator {
             display: inline-block;
             vertical-align: middle;
             color: var(--star-color);
             font-size: 14px;
             margin-left: 5px;
-            animation: pulse 1.5s infinite;
         }
+        
+        /* Notification badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--notification-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+        
+        /* Updated nav item with notification */
+        nav ul li a.has-updates {
+            background-color: var(--update-header-bg);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(33, 150, 243, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(33, 150, 243, 0);
+            }
+        }
+        
         .logo {
             display: flex;
             align-items: center;
@@ -82,6 +122,7 @@
 
         nav ul li {
             margin: 0 5px;
+            position: relative;
         }
 
         nav ul li a {
@@ -137,58 +178,58 @@
             background-color: #cce5ff;
             color: #004085;
         }
-/*side bar*/
-.sidebar {
-    background-color: var(--light-text);
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    padding: 25px;
-    position: sticky;
-    top: 90px;
-    max-height: calc(100vh - 150px); /* Adjust this value based on your header/footer size */
-    overflow-y: auto; /* Add scrollbar when content overflows */
-    /* Smooth scrolling for better UX */
-    scroll-behavior: smooth;
-}
+        /*side bar*/
+        .sidebar {
+            background-color: var(--light-text);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            position: sticky;
+            top: 90px;
+            max-height: calc(100vh - 150px); /* Adjust this value based on your header/footer size */
+            overflow-y: auto; /* Add scrollbar when content overflows */
+            /* Smooth scrolling for better UX */
+            scroll-behavior: smooth;
+        }
 
-/* Customize the scrollbar appearance */
-.sidebar::-webkit-scrollbar {
-    width: 6px;
-}
+        /* Customize the scrollbar appearance */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
 
-.sidebar::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-}
+        .sidebar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
 
-.sidebar::-webkit-scrollbar-thumb {
-    background: var(--secondary-color);
-    border-radius: 10px;
-}
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 10px;
+        }
 
-.sidebar::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-color);
-}
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
 
-/* For Firefox */
-.sidebar {
-    scrollbar-width: thin;
-    scrollbar-color: var(--secondary-color) #f1f1f1;
-}
+        /* For Firefox */
+        .sidebar {
+            scrollbar-width: thin;
+            scrollbar-color: var(--secondary-color) #f1f1f1;
+        }
 
-/* Make the filter form more compact */
-.filter-form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
+        /* Make the filter form more compact */
+        .filter-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-/* Ensure the filter form stays contained */
-.filter-form input,
-.filter-form select {
-    width: 100%;
-    box-sizing: border-box;
-}
+        /* Ensure the filter form stays contained */
+        .filter-form input,
+        .filter-form select {
+            width: 100%;
+            box-sizing: border-box;
+        }
         /* Dashboard Content */
         .dashboard-container {
             max-width: 1200px;
@@ -356,24 +397,24 @@
             opacity: 0.9;
         }
         .job-card.new-job {
-    border: 2px solid #3498db;
-    position: relative;
-    overflow: visible;
-}
+            border: 2px solid #3498db;
+            position: relative;
+            overflow: visible;
+        }
 
-.new-job-badge {
-    position: absolute;
-    top: -10px;
-    right: 20px;
-    background-color: #3498db;
-    color: white;
-    padding: 3px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-    z-index: 10;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
+        .new-job-badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background-color: #3498db;
+            color: white;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
         .logo-container {
             padding: 8px;
             border-radius: 8px;
@@ -495,16 +536,16 @@
             color: #888;
             margin-bottom: 20px;
         }
-/* This needs to be added to your CSS */
-a {
-    text-decoration: none;
-    color: black;
-}
+        /* This needs to be added to your CSS */
+        a {
+            text-decoration: none;
+            color: black;
+        }
 
-/* Also add this to ensure no underlines appear on hover */
-a:hover {
-    text-decoration: none;
-}
+        /* Also add this to ensure no underlines appear on hover */
+        a:hover {
+            text-decoration: none;
+        }
         /* Footer */
         footer {
             background-color: var(--primary-color);
@@ -564,7 +605,15 @@ a:hover {
             <ul>
                 <li><a href="{% url 'seeker_dashboard' %}" class="active">Home</a></li>
                 <li><a href="{% url 'saved_jobs' %}">Saved Jobs</a></li>
-                <li><a href="{% url 'my_applications' %}">My Applications</a></li>
+                <li>
+                    <a href="{% url 'my_applications' %}" class="{% if unseen_count > 0 %}has-updates{% endif %}">
+                        My Applications
+                        {% if unseen_count > 0 %}
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">{{ unseen_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
                 <li>
                     <a href="{% url 'recommended_jobs' %}" >
                         Recommended
@@ -587,6 +636,14 @@ a:hover {
                     {{ message }}
                 </div>
             {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if unseen_count > 0 %}
+        <div class="messages-container">
+            <div class="message-box info">
+                <i class="fas fa-bell"></i> You have {{ unseen_count }} new update{% if unseen_count > 1 %}s{% endif %} on your job applications! <a href="{% url 'my_applications' %}" style="color: #004085; text-decoration: underline;">View updates</a>
+            </div>
         </div>
         {% endif %}
 
@@ -741,22 +798,22 @@ a:hover {
     
     <script>
         // Auto-hide messages after 5 seconds
-    setTimeout(function() {
-        const messages = document.querySelectorAll('.message-box');
-        messages.forEach(function(element) {
-            element.style.opacity = '0';
-            element.style.transition = 'opacity 1s ease';
-            setTimeout(() => element.remove(), 1000);
-        });
-    }, 5000);
+        setTimeout(function() {
+            const messages = document.querySelectorAll('.message-box');
+            messages.forEach(function(element) {
+                element.style.opacity = '0';
+                element.style.transition = 'opacity 1s ease';
+                setTimeout(() => element.remove(), 1000);
+            });
+        }, 5000);
     
-    // Highlight new jobs with a subtle animation
-    document.addEventListener('DOMContentLoaded', function() {
-        const newJobs = document.querySelectorAll('.new-job');
-        newJobs.forEach(function(element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Highlight new jobs with a subtle animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const newJobs = document.querySelectorAll('.new-job');
+            newJobs.forEach(function(element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
         });
-    });
     </script>
 </body>
 </html>

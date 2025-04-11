@@ -62,7 +62,11 @@ class Job(models.Model):
     date_posted = models.DateTimeField(default=timezone.now)
     logo = models.ImageField(upload_to='job_logos/', blank=True, null=True)
     last_date_to_apply = models.DateField(null=True, blank=True)
+    is_new = models.BooleanField(default=True)  # New jobs are marked as new by default
     
+    def is_recent(self):
+        # Consider jobs posted within the last 3 days as "new"
+        return (timezone.now() - self.date_posted).days <= 3
     def application_count(self):
         return self.jobapplication_set.count()
     def __str__(self):
@@ -95,7 +99,17 @@ class JobApplication(models.Model):
     experience = models.CharField(max_length=50, default="0") 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     is_seen_by_provider = models.BooleanField(default=False)
-
+    is_seen_by_seeker = models.BooleanField(default=True)
+    def save(self, *args, **kwargs):
+        if self.pk is not None:
+          try:
+            old_instance = JobApplication.objects.get(pk=self.pk)
+            # Set unseen when status changes
+            if old_instance.status != self.status:
+                self.is_seen_by_seeker = False
+          except JobApplication.DoesNotExist:
+            pass
+        super().save(*args, **kwargs)
     def __str__(self):
         return f'{self.name} - {self.job.title}'
 
