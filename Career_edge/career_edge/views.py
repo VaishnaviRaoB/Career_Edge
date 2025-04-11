@@ -196,7 +196,6 @@ def edit_company_profile(request):
         messages.error(request, f"An error occurred: {str(e)}")
         return redirect('provider_dashboard')
 @login_required
-@login_required
 def seeker_dashboard(request):
     jobs = Job.objects.all().order_by('-date_posted')
     today = timezone.now().date()
@@ -205,26 +204,28 @@ def seeker_dashboard(request):
     saved_job_ids = SavedJob.objects.filter(user=request.user).values_list('job_id', flat=True)
     
     # Get count of unseen application updates
+    # Change 'user' to 'applicant' here:
     unseen_count = JobApplication.objects.filter(
         applicant=request.user,
         is_seen_by_seeker=False
     ).count()
-    
-    # Get count of new jobs (posted in the last 3 days)
+    # Check if there are new jobs and user hasn't been notified this session
     new_jobs_count = Job.objects.filter(
         date_posted__gte=timezone.now() - timezone.timedelta(days=3)
     ).count()
     
-    # Flag jobs that are new
-    for job in jobs:
-        job.is_recent = job.is_recent()
-    
+    show_new_jobs_popup = False
+    if new_jobs_count > 0 and not request.session.get('new_jobs_seen', False):
+        show_new_jobs_popup = True
+        request.session['new_jobs_seen'] = True
+
     return render(request, 'seeker_dashboard.html', {
         'jobs': jobs,
         'saved_job_ids': saved_job_ids,
         'today': today,
         'unseen_count': unseen_count,
         'new_jobs_count': new_jobs_count,
+        'show_new_jobs_popup': show_new_jobs_popup,
     })
 # Provider dashboard view
 @login_required
