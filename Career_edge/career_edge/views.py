@@ -88,6 +88,7 @@ def user_register_seeker(request):
         user = authenticate(username=username, password=password)
         if user:
             login(request, user)
+            messages.success(request, 'Registration successful!')
             return redirect('seeker_dashboard')
         return redirect('user_login')
 
@@ -149,12 +150,12 @@ def user_register_provider(request):
         user = authenticate(username=username, password=password)
         if user:
             login(request, user)
+            messages.success(request, 'Registration successful!')
             return redirect('provider_dashboard')
 
         return redirect('provider_dashboard')
 
     return render(request, 'register_provider.html')
-from django.contrib import messages
 
 def edit_company_profile(request):
     provider = JobProvider.objects.get(user_profile__user=request.user)
@@ -301,6 +302,7 @@ def update_application_status(request, application_id):
     if status in dict(JobApplication.STATUS_CHOICES):
         application.status = status
         application.save()
+        messages.success(request, "Application status updated!!")
     return redirect('view_job_applications', job_id=application.job.id)
 # Delete a job view
 @login_required
@@ -346,6 +348,7 @@ class AddJobView(View):
             job = form.save(commit=False)
             job.provider = request.user
             job.save()
+            messages.success(request, 'Job posted successfull!')
             return redirect('view_jobs')  # or change this to 'add_job'
         return render(request, 'add_job.html', {'form': form})
 

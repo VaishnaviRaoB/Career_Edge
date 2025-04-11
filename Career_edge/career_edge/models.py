@@ -43,7 +43,6 @@ class JobProvider(models.Model):
     company_description = models.TextField()
     contact_email = models.EmailField()
     website = models.URLField(blank=True, null=True)
-    logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
 
     def __str__(self):
         return self.company_name

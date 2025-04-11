@@ -131,7 +131,7 @@ class JobApplicationForm(forms.ModelForm):
 class EditCompanyProfileForm(forms.ModelForm):
     class Meta:
         model = JobProvider
-        fields = ['company_name', 'company_description', 'contact_email', 'website', 'logo']
+        fields = ['company_name', 'company_description', 'contact_email', 'website']
     
 class JobSeekerProfileForm(forms.ModelForm):
     class Meta:

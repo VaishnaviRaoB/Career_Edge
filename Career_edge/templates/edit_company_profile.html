@@ -284,16 +284,6 @@
                 <label for="{{ form.website.id_for_label }}">Website</label>
                 {{ form.website }}
 
-                <label for="{{ form.logo.id_for_label }}">Profile Image</label>
-                <div class="profile-upload">
-                    {{ form.logo }}
-                    {% if form.instance.logo %}
-                    <div class="profile-preview">
-                        <img src="{{ form.instance.logo.url }}" alt="Profile Image">
-                    </div>
-                    {% endif %}
-                </div>
-
                 <button type="submit">Update Profile</button>
             </form>
         </div>
@@ -312,6 +302,6 @@
                 }, 3000);
             }
         };
-    </script>
+    </script>zz
 </body>
 </html>
