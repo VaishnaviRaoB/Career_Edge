@@ -15,6 +15,7 @@ from django.core.exceptions import ValidationError
 from .models import UserProfile, JobSeeker, JobProvider,SavedJob
 from .forms import JobForm,JobSeekerProfileForm
 import re
+from django.db.models import Q
 from django.http import HttpResponse
 import xlwt
 from django.db.models import Q
@@ -80,12 +81,12 @@ def user_register_seeker(request):
         user = User.objects.create_user(username=username, password=password)
         profile = UserProfile.objects.create(user=user, role='seeker')
         JobSeeker.objects.create(
-    user_profile=profile,
-    full_name=username,  # default placeholder
-    skills='',   # default placeholder
-    experience_years=None        # okay to leave empty
-)
- # Auto-login after successful registration
+            user_profile=profile,
+            full_name=username,  
+            skills='',  
+            experience_years=None        
+            )
+
         user = authenticate(username=username, password=password)
         if user:
             login(request, user)
@@ -129,6 +130,7 @@ def seeker_profile(request):
     except Exception as e:
         messages.error(request, f"An error occurred: {str(e)}")
         return redirect('seeker_dashboard')
+    
 def user_register_provider(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -195,6 +197,7 @@ def edit_company_profile(request):
     except Exception as e:
         messages.error(request, f"An error occurred: {str(e)}")
         return redirect('provider_dashboard')
+    
 @login_required
 def seeker_dashboard(request):
     jobs = Job.objects.all().order_by('-date_posted')
@@ -319,6 +322,7 @@ def apply_for_job(request, job_id):
 def user_logout(request):
     logout(request)
     return redirect('home')
+
 @login_required
 def view_job_applications(request, job_id):
     job = get_object_or_404(Job, id=job_id)
@@ -364,6 +368,7 @@ def view_job_applications(request, job_id):
         'STATUS_CHOICES': JobApplication.STATUS_CHOICES,
         'unseen_ids': unseen_ids,
     })
+    
 @require_POST
 @login_required
 def update_application_status(request, application_id):
@@ -383,9 +388,6 @@ def delete_job(request, job_id):
         messages.success(request, 'Job listing deleted successfully.')
     return redirect('view_jobs') 
 
-
-# Class-based view for the provider dashboard
-from django.db.models import Q
 
 class ViewJobsView(View):
     def get(self, request):
@@ -424,9 +426,11 @@ class ViewJobsView(View):
             'jobs': jobs,
             'query': query,
         })
+        
 class ProviderDashboardView(View):
     def get(self, request):
-        return render(request, 'provider_dashboard.html')# views.py
+        return render(request, 'provider_dashboard.html')
+    
 class AddJobView(View):
     def get(self, request):
         form = JobForm()

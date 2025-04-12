@@ -1,5 +1,3 @@
-# career_edge/urls.py
-
 from django.contrib import admin
 from django.urls import path
 from . import views
@@ -29,14 +27,12 @@ urlpatterns = [
     path('edit-company-profile/', views.edit_company_profile, name='edit_company_profile'),
     path('my-applications/', views.my_applications, name='my_applications'),
     path('job/bookmark/<int:job_id>/', views.toggle_bookmark, name='toggle_bookmark'),
-path('saved-jobs/', views.saved_jobs, name='saved_jobs'),
-path('jobs/edit/<int:job_id>/', views.edit_job, name='edit_job'),
-path('seeker/profile/', views.seeker_profile, name='seeker_profile'),
-path('recommended-jobs/', views.recommended_jobs, name='recommended_jobs'),
-path('export-applications/<int:job_id>/', views.export_job_applications, name='export_job_applications'),
+    path('saved-jobs/', views.saved_jobs, name='saved_jobs'),
+    path('jobs/edit/<int:job_id>/', views.edit_job, name='edit_job'),
+    path('seeker/profile/', views.seeker_profile, name='seeker_profile'),
+    path('recommended-jobs/', views.recommended_jobs, name='recommended_jobs'),
+    path('export-applications/<int:job_id>/', views.export_job_applications, name='export_job_applications'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-from django.urls import path
-from . import views
 

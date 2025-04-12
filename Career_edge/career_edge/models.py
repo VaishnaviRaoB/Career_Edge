@@ -1,5 +1,3 @@
-# career_edge/models.py
-
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -48,7 +46,7 @@ class JobProvider(models.Model):
     def __str__(self):
         return self.company_name
 
-# models.py
+
 class Job(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -62,10 +60,9 @@ class Job(models.Model):
     date_posted = models.DateTimeField(default=timezone.now)
     logo = models.ImageField(upload_to='job_logos/', blank=True, null=True)
     last_date_to_apply = models.DateField(null=True, blank=True)
-    is_new = models.BooleanField(default=True)  # New jobs are marked as new by default
+    is_new = models.BooleanField(default=True) 
     
     def is_recent(self):
-        # Consider jobs posted within the last 3 days as "new"
         return (timezone.now() - self.date_posted).days <= 3
     def application_count(self):
         return self.jobapplication_set.count()
@@ -100,16 +97,17 @@ class JobApplication(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     is_seen_by_provider = models.BooleanField(default=False)
     is_seen_by_seeker = models.BooleanField(default=True)
+    
     def save(self, *args, **kwargs):
         if self.pk is not None:
           try:
             old_instance = JobApplication.objects.get(pk=self.pk)
-            # Set unseen when status changes
             if old_instance.status != self.status:
                 self.is_seen_by_seeker = False
           except JobApplication.DoesNotExist:
             pass
         super().save(*args, **kwargs)
+        
     def __str__(self):
         return f'{self.name} - {self.job.title}'
 
@@ -119,7 +117,7 @@ class SavedJob(models.Model):
     saved_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
-        unique_together = ('job', 'user')  # Prevents duplicate bookmarks
+        unique_together = ('job', 'user') 
         
     def __str__(self):
         return f"{self.user.username} - {self.job.title}"

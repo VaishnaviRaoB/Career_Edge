@@ -1,11 +1,8 @@
-# career_edge/forms.py
-
 from django import forms
 from django.contrib.auth.models import User
 from .models import Job, JobApplication, UserProfile, JobProvider, JobSeeker
-
 from django import forms
-from .models import Job# forms.py
+from .models import Job
 class JobForm(forms.ModelForm):
     class Meta:
         model = Job
@@ -94,7 +91,6 @@ class SeekerRegistrationForm(forms.ModelForm):
         user.set_password(self.cleaned_data['password'])
         if commit:
             user.save()
-            # Create a UserProfile instance for seeker
             UserProfile.objects.create(user=user, role='seeker')
         return user
 
@@ -119,7 +115,6 @@ class ProviderRegistrationForm(forms.ModelForm):
         user.set_password(self.cleaned_data['password'])
         if commit:
             user.save()
-            # Create a UserProfile instance for provider
             UserProfile.objects.create(user=user, role='provider')
         return user
 
@@ -135,10 +130,8 @@ class EditCompanyProfileForm(forms.ModelForm):
     def clean_company_logo(self):
         logo = self.cleaned_data.get('company_logo')
         if logo:
-            # Validate file size (max 2MB)
             if logo.size > 2 * 1024 * 1024:
                 raise forms.ValidationError("Image file too large ( > 2MB )")
-            # Validate file type
             if not logo.name.lower().endswith(('.png', '.jpg', '.jpeg')):
                 raise forms.ValidationError("Unsupported file type. Please upload a JPG or PNG image.")
         return logo
