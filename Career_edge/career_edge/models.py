@@ -30,6 +30,8 @@ class JobSeeker(models.Model):
     linkedin = models.URLField(blank=True, null=True)
     about_me = models.TextField(blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
+    security_question = models.CharField(max_length=50, blank=True, null=True)
+    security_answer = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.full_name
@@ -42,7 +44,8 @@ class JobProvider(models.Model):
     contact_email = models.EmailField()
     company_logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
     website = models.URLField(blank=True, null=True)
-
+    security_question = models.CharField(max_length=50, blank=True, null=True)
+    security_answer = models.CharField(max_length=255, blank=True, null=True)
     def __str__(self):
         return self.company_name
 

@@ -62,39 +62,6 @@ def validate_password(password):
         re.search(r"[a-zA-Z]", password)
     )
 
-def user_register_seeker(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-
-        if not username or not password:
-            return render(request, 'register_seeker.html', {'error': 'All fields are required.'})
-
-        if not validate_password(password):
-            return render(request, 'register_seeker.html', {
-                'error': 'Password must be at least 8 characters long and include a letter, number, and special character.'
-            })
-
-        if User.objects.filter(username=username).exists():
-            return render(request, 'register_seeker.html', {'error': 'Username already exists.'})
-
-        user = User.objects.create_user(username=username, password=password)
-        profile = UserProfile.objects.create(user=user, role='seeker')
-        JobSeeker.objects.create(
-            user_profile=profile,
-            full_name=username,  
-            skills='',  
-            experience_years=None        
-            )
-
-        user = authenticate(username=username, password=password)
-        if user:
-            login(request, user)
-            messages.success(request, 'Registration successful!')
-            return redirect('seeker_dashboard')
-        return redirect('user_login')
-
-    return render(request, 'register_seeker.html') 
 
 @login_required
 def seeker_profile(request):
@@ -130,13 +97,61 @@ def seeker_profile(request):
     except Exception as e:
         messages.error(request, f"An error occurred: {str(e)}")
         return redirect('seeker_dashboard')
-    
+def user_register_seeker(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        security_question = request.POST.get('security_question')
+        security_answer = request.POST.get('security_answer')
+
+        if not username or not email or not password or not security_question or not security_answer:
+            return render(request, 'register_seeker.html', {'error': 'All fields are required.'})
+
+        if not validate_password(password):
+            return render(request, 'register_seeker.html', {
+                'error': 'Password must be at least 8 characters long and include a letter, number, and special character.'
+            })
+
+        if User.objects.filter(username=username).exists():
+            return render(request, 'register_seeker.html', {'error': 'Username already exists.'})
+            
+        # Instead of checking if email exists in User, check if it exists in JobSeeker
+        existing_seeker = JobSeeker.objects.filter(email=email).exists()
+        
+        if existing_seeker:
+            return render(request, 'register_seeker.html', {'error': 'This email is already registered as a job seeker.'})
+
+        user = User.objects.create_user(username=username, email=email, password=password)
+        profile = UserProfile.objects.create(user=user, role='seeker')
+        JobSeeker.objects.create(
+            user_profile=profile,
+            full_name=username,
+            email=email,
+            skills='',
+            experience_years=None,
+            security_question=security_question,
+            security_answer=security_answer  # For production, consider hashing this
+        )
+
+        user = authenticate(username=username, password=password)
+        if user:
+            login(request, user)
+            messages.success(request, 'Registration successful!')
+            return redirect('seeker_dashboard')
+        return redirect('user_login')
+
+    return render(request, 'register_seeker.html')
+
 def user_register_provider(request):
     if request.method == 'POST':
         username = request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
+        security_question = request.POST.get('security_question')
+        security_answer = request.POST.get('security_answer')
 
-        if not username or not password:
+        if not username or not email or not password or not security_question or not security_answer:
             return render(request, 'register_provider.html', {'error': 'All fields are required.'})
 
         if not validate_password(password):
@@ -146,19 +161,186 @@ def user_register_provider(request):
 
         if User.objects.filter(username=username).exists():
             return render(request, 'register_provider.html', {'error': 'Username already exists.'})
+            
+        # Instead of checking if email exists in User, check if it exists in JobProvider
+        existing_provider = JobProvider.objects.filter(contact_email=email).exists()
+        
+        if existing_provider:
+            return render(request, 'register_provider.html', {'error': 'This email is already registered as a job provider.'})
 
-        user = User.objects.create_user(username=username, password=password)
+        user = User.objects.create_user(username=username, email=email, password=password)
         profile = UserProfile.objects.create(user=user, role='provider')
-        JobProvider.objects.create(user_profile=profile)
+        JobProvider.objects.create(
+            user_profile=profile,
+            company_name=username,  # Default value, can be updated later
+            company_description='',
+            contact_email=email,
+            security_question=security_question,
+            security_answer=security_answer  # For production, consider hashing this
+        )
+
         user = authenticate(username=username, password=password)
         if user:
             login(request, user)
             messages.success(request, 'Registration successful!')
             return redirect('provider_dashboard')
-
-        return redirect('provider_dashboard')
+            
+        return redirect('user_login')
 
     return render(request, 'register_provider.html')
+def forgot_password(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        security_answer = request.POST.get('security_answer')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        # Step 1: Verify username exists
+        if 'username' in request.POST and not security_answer and not new_password:
+            try:
+                user = User.objects.get(username=username)
+                # Find the associated profile and determine if user is a job seeker or provider
+                profile = UserProfile.objects.get(user=user)
+                
+                if profile.role == 'seeker':
+                    try:
+                        seeker = JobSeeker.objects.get(user_profile=profile)
+                        security_question = seeker.security_question
+                        return render(request, 'forgot_password.html', {
+                            'step': 'security',
+                            'username': username,
+                            'security_question': security_question
+                        })
+                    except JobSeeker.DoesNotExist:
+                        return render(request, 'forgot_password.html', {
+                            'step': 'verify',
+                            'error': 'No security question found for this user.'
+                        })
+                        
+                elif profile.role == 'provider':
+                    try:
+                        provider = JobProvider.objects.get(user_profile=profile)
+                        security_question = provider.security_question
+                        return render(request, 'forgot_password.html', {
+                            'step': 'security',
+                            'username': username,
+                            'security_question': security_question
+                        })
+                    except JobProvider.DoesNotExist:
+                        return render(request, 'forgot_password.html', {
+                            'step': 'verify',
+                            'error': 'No security question found for this user.'
+                        })
+                        
+                else:
+                    return render(request, 'forgot_password.html', {
+                        'step': 'verify',
+                        'error': 'User profile type not recognized.'
+                    })
+                    
+            except User.DoesNotExist:
+                return render(request, 'forgot_password.html', {
+                    'step': 'verify',
+                    'error': 'Username does not exist.'
+                })
+                
+        # Step 2: Verify security answer
+        elif username and security_answer and not new_password:
+            try:
+                user = User.objects.get(username=username)
+                profile = UserProfile.objects.get(user=user)
+                
+                if profile.role == 'seeker':
+                    seeker = JobSeeker.objects.get(user_profile=profile)
+                    if seeker.security_answer.lower() == security_answer.lower():
+                        return render(request, 'forgot_password.html', {
+                            'step': 'reset',
+                            'username': username
+                        })
+                    else:
+                        return render(request, 'forgot_password.html', {
+                            'step': 'security',
+                            'username': username,
+                            'security_question': seeker.security_question,
+                            'error': 'Incorrect security answer.'
+                        })
+                        
+                elif profile.role == 'provider':
+                    provider = JobProvider.objects.get(user_profile=profile)
+                    if provider.security_answer.lower() == security_answer.lower():
+                        return render(request, 'forgot_password.html', {
+                            'step': 'reset',
+                            'username': username
+                        })
+                    else:
+                        return render(request, 'forgot_password.html', {
+                            'step': 'security',
+                            'username': username,
+                            'security_question': provider.security_question,
+                            'error': 'Incorrect security answer.'
+                        })
+                        
+            except (User.DoesNotExist, UserProfile.DoesNotExist, JobSeeker.DoesNotExist, JobProvider.DoesNotExist):
+                return render(request, 'forgot_password.html', {
+                    'step': 'verify',
+                    'error': 'User not found.'
+                })
+                
+        # Step 3: Reset password
+        elif username and new_password and confirm_password:
+            if new_password != confirm_password:
+                return render(request, 'forgot_password.html', {
+                    'step': 'reset',
+                    'username': username,
+                    'error': 'Passwords do not match.'
+                })
+                
+            if not validate_password(new_password):
+                return render(request, 'forgot_password.html', {
+                    'step': 'reset',
+                    'username': username,
+                    'error': 'Password must be at least 8 characters long and include a letter, number, and special character.'
+                })
+                
+            try:
+                user = User.objects.get(username=username)
+                user.set_password(new_password)
+                user.save()
+                
+                # Get user profile to determine where to redirect
+                profile = UserProfile.objects.get(user=user)
+                
+                # Log the user in
+                user = authenticate(username=username, password=new_password)
+                if user:
+                    login(request, user)
+                    
+                    # Display success message
+                    messages.success(request, 'Password has been reset successfully. You are now logged in.')
+                    
+                    # Redirect based on user role
+                    if profile.role == 'seeker':
+                        return redirect('seeker_dashboard')
+                    elif profile.role == 'provider':
+                        return redirect('provider_dashboard')
+                    else:
+                        return redirect('home')  # Fallback
+                else:
+                    # This should rarely happen, but just in case authentication fails
+                    return render(request, 'forgot_password.html', {
+                        'step': 'verify',
+                        'success': 'Password has been reset successfully. Please login with your new password.',
+                        'error': 'Automatic login failed. Please try logging in manually.'
+                    })
+                
+            except User.DoesNotExist:
+                return render(request, 'forgot_password.html', {
+                    'step': 'verify',
+                    'error': 'User not found.'
+                })
+    
+    # Default: show the initial form
+    return render(request, 'forgot_password.html', {'step': 'verify'})
 
 @login_required
 def edit_company_profile(request):

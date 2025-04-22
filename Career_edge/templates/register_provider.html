@@ -133,7 +133,9 @@
         }
 
         form input[type="text"],
-        form input[type="password"] {
+        form input[type="password"],
+        form input[type="email"],
+        form select {
             width: 100%;
             padding: 12px;
             margin-bottom: 20px;
@@ -144,10 +146,17 @@
         }
 
         form input[type="text"]:focus,
-        form input[type="password"]:focus {
+        form input[type="password"]:focus,
+        form input[type="email"]:focus,
+        form select:focus {
             border-color: var(--secondary-color);
             outline: none;
             box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        form select {
+            background-color: var(--light-text);
+            appearance: auto;
         }
 
         form button {
@@ -187,6 +196,22 @@
             background-color: #16a085;
             transform: translateY(-2px);
         }
+        
+        /* Password visibility toggle */
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            cursor: pointer;
+            color: var(--primary-color);
+            font-size: 14px;
+            user-select: none;
+        }
+
         /* Footer styles */
         footer {
             background-color: var(--primary-color);
@@ -245,7 +270,6 @@
     </header>
     
     <main>
-        
         <section>
             <h2>Job Provider Registration</h2>
             <form method="post">
@@ -256,13 +280,34 @@
                 
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required placeholder="Choose a username">
+                
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="Enter your company email">
             
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" required 
-                       minlength="8" 
-                       pattern="(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{8,}" 
-                       title="Password must be at least 8 characters long and include a letter, number, and special character."
-                       placeholder="Create a strong password">
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required 
+                           minlength="8" 
+                           pattern="(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{8,}" 
+                           title="Password must be at least 8 characters long and include a letter, number, and special character."
+                           placeholder="Create a strong password">
+                    <span class="password-toggle" onclick="togglePasswordVisibility()">Show</span>
+                </div>
+                
+                <!-- Security Question Section -->
+                <label for="security_question">Security Question</label>
+                <select id="security_question" name="security_question" required>
+                    <option value="" disabled selected>Select a security question</option>
+                    <option value="childhood_friend">What was the name of your childhood best friend?</option>
+                    <option value="first_pet">What was the name of your first pet?</option>
+                    <option value="mother_maiden">What is your mother's maiden name?</option>
+                    <option value="birthplace">In which city were you born?</option>
+                    <option value="elementary_school">What was the name of your elementary school?</option>
+                </select>
+                
+                <label for="security_answer">Security Answer</label>
+                <input type="text" id="security_answer" name="security_answer" required 
+                       placeholder="Your answer" autocomplete="off">
             
                 <button type="submit">Register</button>
             </form>
@@ -272,5 +317,20 @@
     <footer>
         <p>&copy; 2025 Career Edge. All rights reserved.</p>
     </footer>
+
+    <script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleButton = document.querySelector('.password-toggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.textContent = 'Hide';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.textContent = 'Show';
+            }
+        }
+    </script>
 </body>
 </html>
