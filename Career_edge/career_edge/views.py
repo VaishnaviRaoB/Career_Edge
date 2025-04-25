@@ -983,7 +983,7 @@ def export_job_applications(request, job_id):
     
     # Column headers
     header_style = xlwt.easyxf('font: bold on, color white, height 200; pattern: pattern solid, fore_colour dark_blue; align: wrap on, vert centre, horiz center')
-    columns = ['Name', 'Username', 'Email', 'Phone', 'Skills', 'Qualification', 'Experience', 'Status', 'Applied On', 'Resume Link', 'Notes']
+    columns = ['Name', 'Email', 'Phone', 'Skills', 'Qualification', 'Experience', 'Status', 'Applied On', 'Resume Link', 'Notes']
     
     for col_num, column_title in enumerate(columns):
         worksheet.write(3, col_num, column_title, header_style)
@@ -997,16 +997,15 @@ def export_job_applications(request, job_id):
     
     for application in applications:
         worksheet.write(row_num, 0, application.name, font_style)
-        worksheet.write(row_num, 1, application.applicant.username, font_style)
-        worksheet.write(row_num, 2, application.email, font_style)
-        worksheet.write(row_num, 3, application.phone, font_style)
-        worksheet.write(row_num, 4, application.skills, font_style)
-        worksheet.write(row_num, 5, application.qualifications, font_style)
-        worksheet.write(row_num, 6, application.experience, font_style)
-        worksheet.write(row_num, 7, application.get_status_display(), font_style)
-        worksheet.write(row_num, 8, application.created_at.strftime("%d %b %Y, %H:%M"), font_style)
-        worksheet.write(row_num, 9, request.build_absolute_uri(application.resume.url), font_style)
-        worksheet.write(row_num, 10, "", font_style)  # Empty column for notes
+        worksheet.write(row_num, 1, application.email, font_style)
+        worksheet.write(row_num, 2, application.phone, font_style)
+        worksheet.write(row_num, 3, application.skills, font_style)
+        worksheet.write(row_num, 4, application.qualifications, font_style)
+        worksheet.write(row_num, 5, application.experience, font_style)
+        worksheet.write(row_num, 6, application.get_status_display(), font_style)
+        worksheet.write(row_num, 7, application.created_at.strftime("%d %b %Y, %H:%M"), font_style)
+        worksheet.write(row_num, 8, request.build_absolute_uri(application.resume.url), font_style)
+        worksheet.write(row_num, 9, "", font_style)  # Empty column for notes
         row_num += 1
     
     # Create HTTP response

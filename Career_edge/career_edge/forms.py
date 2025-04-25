@@ -126,7 +126,7 @@ class JobApplicationForm(forms.ModelForm):
 class EditCompanyProfileForm(forms.ModelForm):
     class Meta:
         model = JobProvider
-        fields = ['company_name', 'company_description', 'contact_email', 'website','company_logo']    
+        fields = ['company_name', 'company_description', 'contact_email', 'website','company_logo', 'phone', 'location']    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Make all fields except company_name optional
