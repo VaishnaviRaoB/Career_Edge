@@ -357,14 +357,22 @@ def edit_company_profile(request):
         provider = JobProvider.objects.get(user_profile=user_profile)
         
         if request.method == 'POST':
+            # Create a form instance with the POST data, but only for JobProvider fields
+            # This ensures username is not affected
             form = EditCompanyProfileForm(request.POST, request.FILES, instance=provider)
             if form.is_valid():
-                # Handle the company logo upload properly
+                # Save only the JobProvider model changes
+                form.save()
+                
+                # Handle the company logo separately if needed
                 if 'company_logo' in request.FILES:
                     provider.company_logo = request.FILES['company_logo']
-                form.save()
+                    provider.save()
+                    
                 messages.success(request, "Your company profile has been updated successfully!")
                 return redirect('edit_company_profile')
+            else:
+                messages.error(request, "Please correct the errors below.")
         else:
             form = EditCompanyProfileForm(instance=provider)
         

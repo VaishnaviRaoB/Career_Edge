@@ -126,7 +126,14 @@ class JobApplicationForm(forms.ModelForm):
 class EditCompanyProfileForm(forms.ModelForm):
     class Meta:
         model = JobProvider
-        fields = ['company_name', 'company_description', 'contact_email', 'website','company_logo']
+        fields = ['company_name', 'company_description', 'contact_email', 'website','company_logo']    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make all fields except company_name optional
+        self.fields['company_description'].required = False
+        self.fields['contact_email'].required = False
+        self.fields['website'].required = False
+    
     def clean_company_logo(self):
         logo = self.cleaned_data.get('company_logo')
         if logo:
