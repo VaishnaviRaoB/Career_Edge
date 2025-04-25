@@ -1042,3 +1042,30 @@ def delete_account(request):
         return redirect('home')
 
     return redirect('seeker_profile')
+@login_required
+def provider_change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Update the session to prevent logging out
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('edit_company_profile')
+    else:
+        form = PasswordChangeForm(request.user)
+    
+    return render(request, 'provider_change_password.html', {
+        'form': form
+    })
+
+@login_required
+def provider_delete_account(request):
+    if request.method == 'POST':
+        user = request.user  # Save the user object before logout
+        logout(request)      # Log the user out first (clears session)
+        user.delete()        # Now delete the user from DB
+        messages.success(request, "Your account has been successfully deleted.")
+        return redirect('home')
+
+    return redirect('edit_company_profile')

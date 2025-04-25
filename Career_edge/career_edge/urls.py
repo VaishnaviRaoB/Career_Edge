@@ -35,6 +35,8 @@ urlpatterns = [
     path('forgot-password/', views.forgot_password, name='forgot_password'),
     path('profile/change-password/', views.change_password, name='change_password'),
     path('profile/delete-account/', views.delete_account, name='delete_account'),
+    path('provider/change-password/', views.provider_change_password, name='provider_change_password'),
+    path('provider/delete-account/', views.provider_delete_account, name='provider_delete_account'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
