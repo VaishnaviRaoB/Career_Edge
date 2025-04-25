@@ -319,5 +319,19 @@
     <footer>
         <p>&copy; 2025 Career Edge. All rights reserved.</p>
     </footer>
+    <script>
+        // Automatically fade out messages after 5 seconds
+        document.addEventListener("DOMContentLoaded", () => {
+            const messages = document.querySelectorAll(".message");
+            messages.forEach(msg => {
+                setTimeout(() => {
+                    msg.style.transition = "opacity 0.5s ease-out";
+                    msg.style.opacity = "0";
+                    setTimeout(() => msg.remove(), 500); // remove from DOM after fade
+                }, 5000); // 5 seconds
+            });
+        });
+    </script>
+    
 </body>
 </html>

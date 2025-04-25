@@ -178,6 +178,26 @@
             text-decoration: underline;
         }
 
+        .registration-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .registration-links a {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--secondary-color);
+            color: var(--light-text);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .registration-links a:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
         /* Footer styles */
         footer {
             background-color: var(--primary-color);
@@ -230,6 +250,10 @@
                     <li><a href="{% url 'contact' %}">Contact Us</a></li>
                 </ul>
             </nav>
+        </div>
+        <div class="registration-links">
+            <a href="{% url 'user_register_seeker' %}">Register as Job Seeker</a>
+            <a href="{% url 'user_register_provider' %}">Register as Job Provider</a>
         </div>
     </header>
 

@@ -33,6 +33,8 @@ urlpatterns = [
     path('recommended-jobs/', views.recommended_jobs, name='recommended_jobs'),
     path('export-applications/<int:job_id>/', views.export_job_applications, name='export_job_applications'),
     path('forgot-password/', views.forgot_password, name='forgot_password'),
+    path('profile/change-password/', views.change_password, name='change_password'),
+    path('profile/delete-account/', views.delete_account, name='delete_account'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
