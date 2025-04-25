@@ -1035,12 +1035,10 @@ def change_password(request):
 @login_required
 def delete_account(request):
     if request.method == 'POST':
-        # Delete associated job applications
-        # If you have job applications model, add code here
-        
-        # Delete the user
-        request.user.delete()
+        user = request.user  # Save the user object before logout
+        logout(request)      # Log the user out first (clears session)
+        user.delete()        # Now delete the user from DB
+        messages.success(request, "Your account has been successfully deleted.")
         return redirect('home')
-    
-    # If not POST, redirect to profile
+
     return redirect('seeker_profile')

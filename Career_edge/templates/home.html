@@ -173,7 +173,19 @@
             background-color: #2980b9;
             transform: translateY(-2px);
         }
+        .fade-message {
+    transition: opacity 1s ease-in-out;
+}
 
+.alert-message {
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+    box-shadow: var(--box-shadow);
+}
         /* Hero image */
         .Homeimg {
             max-width: 100%;
@@ -257,6 +269,15 @@
         </div>
         <a href="{% url 'user_login' %}" class="login-button">Login</a>
     </header>
+    {% if messages %}
+    <div id="message-container" class="fade-message" style="margin: 20px auto; width: 90%; max-width: 600px;">
+        {% for message in messages %}
+            <div class="alert-message">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 
     <div class="main-content">
         <div class="content-left">
@@ -284,5 +305,17 @@
             <img src="{% static 'images/Homeimg.png' %}" alt="Welcome Image" class="Homeimg">
         </div>
     </div>
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            const messageContainer = document.getElementById('message-container');
+            if (messageContainer) {
+                setTimeout(() => {
+                    messageContainer.style.opacity = '0';
+                    setTimeout(() => messageContainer.remove(), 1000); // remove after fade
+                }, 4000); // delay in milliseconds
+            }
+        });
+    </script>
+    
 </body>
 </html>
