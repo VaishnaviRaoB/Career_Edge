@@ -679,12 +679,6 @@ def search_jobs(request):
         jobs = jobs.filter(company__icontains=company)
     if location:
         jobs = jobs.filter(location__icontains=location)
-    if min_salary:
-        try:
-            min_salary = int(min_salary)
-            jobs = [job for job in jobs if extract_min_salary(job.salary) >= min_salary]
-        except ValueError:
-            min_salary = ''
     if job_type:
         jobs = jobs.filter(job_type__iexact=job_type)
     if experience_level:
@@ -714,13 +708,21 @@ def search_jobs(request):
         except ValueError:
             pass
     
-    # Apply sorting
+    # Apply sorting before converting to list for salary filtering
     if sort_by == 'newest':
         jobs = jobs.order_by('-date_posted')  # Newest first (descending order)
     elif sort_by == 'oldest':
         jobs = jobs.order_by('date_posted')  # Oldest first
     elif sort_by == 'closing_soon':
         jobs = jobs.order_by('last_date_to_apply')  # Closing soon first
+    
+    # Apply salary filtering after ordering (this will convert to a list)
+    if min_salary:
+        try:
+            min_salary_value = int(min_salary)
+            jobs = [job for job in jobs if extract_min_salary(job.salary) >= min_salary_value]
+        except ValueError:
+            min_salary = ''
     
     # Handle saved jobs for authenticated users
     saved_job_ids = []
