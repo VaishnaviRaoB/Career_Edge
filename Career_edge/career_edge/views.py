@@ -965,7 +965,6 @@ def recommended_jobs(request):
         return render(request, 'recommended_jobs.html', {
             'error': 'Please complete your profile to get job recommendations.'
         })
-
 @login_required
 def export_job_applications(request, job_id):
     job = get_object_or_404(Job, id=job_id)
@@ -984,18 +983,20 @@ def export_job_applications(request, job_id):
     worksheet.write_merge(1, 1, 8, 10, f'Generated on: {datetime.now().strftime("%d %b %Y, %H:%M")}', date_style)
     
     # Column headers
-    header_style = xlwt.easyxf('font: bold on, color white, height 200; pattern: pattern solid, fore_colour dark_blue; align: wrap on, vert centre, horiz center')
-    columns = ['Name', 'Email', 'Phone', 'Skills', 'Qualification', 'Experience', 'Status', 'Applied On', 'Resume Link', 'Notes']
+    header_style = xlwt.easyxf(
+        'font: bold on, color white, height 200; '
+        'pattern: pattern solid, fore_colour dark_blue; '
+        'align: wrap on, vert centre, horiz center'
+    )
+    columns = ['Name', 'Email', 'Phone', 'Skills', 'Qualification', 'Experience', 'Status', 'Applied On', 'Resume', 'Notes']
     
     for col_num, column_title in enumerate(columns):
         worksheet.write(3, col_num, column_title, header_style)
-        # Set column width
-        worksheet.col(col_num).width = 5500
+        worksheet.col(col_num).width = 5500  # Set column width
     
-    # Sheet body, remaining rows
+    # Sheet body
     row_num = 4
     font_style = xlwt.easyxf('align: wrap on, vert centre')
-    date_format = xlwt.easyxf('align: wrap on, vert centre', num_format_str='DD-MM-YYYY')
     
     for application in applications:
         worksheet.write(row_num, 0, application.name, font_style)
@@ -1006,7 +1007,16 @@ def export_job_applications(request, job_id):
         worksheet.write(row_num, 5, application.experience, font_style)
         worksheet.write(row_num, 6, application.get_status_display(), font_style)
         worksheet.write(row_num, 7, application.created_at.strftime("%d %b %Y, %H:%M"), font_style)
-        worksheet.write(row_num, 8, request.build_absolute_uri(application.resume.url), font_style)
+        
+        # Create a style for links - blue and underlined
+        link_style = xlwt.easyxf('font: color blue, underline single; align: wrap on, vert centre')
+
+        if application.resume:
+            resume_url = request.build_absolute_uri(application.resume.url)
+            worksheet.write(row_num, 8, xlwt.Formula(f'HYPERLINK("{resume_url}";"View Resume")'), link_style)
+        else:
+            worksheet.write(row_num, 8, "No resume", font_style)
+        
         worksheet.write(row_num, 9, "", font_style)  # Empty column for notes
         row_num += 1
     
@@ -1014,8 +1024,9 @@ def export_job_applications(request, job_id):
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = f'attachment; filename="{job.title}_applications_{datetime.now().strftime("%Y%m%d")}.xls"'
     workbook.save(response)
-    
+
     return response
+
 @login_required
 def change_password(request):
     if request.method == 'POST':
