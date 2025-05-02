@@ -17,6 +17,8 @@
             --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             --border-radius: 6px;
             --transition: all 0.3s ease;
+            --error-color: #e74c3c;
+            --warning-color: #f39c12;
         }
 
         * {
@@ -152,6 +154,7 @@
             width: 350px;
             box-shadow: var(--box-shadow);
             transition: var(--transition);
+            position: relative;
         }
 
         .job-card:hover {
@@ -208,7 +211,7 @@
 
         .delete-button {
             padding: 8px 12px;
-            background-color: #e74c3c;
+            background-color: var(--error-color);
             color: var(--light-text);
             border: none;
             border-radius: var(--border-radius);
@@ -300,11 +303,11 @@
         }
 
         .alert-error {
-            background-color: #e74c3c;
+            background-color: var(--error-color);
         }
 
         .alert-warning {
-            background-color: #f39c12;
+            background-color: var(--warning-color);
         }
 
         .alert-info {
@@ -316,48 +319,148 @@
             -webkit-box-orient: vertical;
             line-clamp: 3;
             overflow: hidden;
-        }/* Styles for highlighting jobs with new applications */
-.unseen {
-    background-color: #e6f7ff;
-    border-left: 5px solid var(--secondary-color);
-    transition: background-color 1s ease;
-}
+        }
+        
+        /* Styles for highlighting jobs with new applications */
+        .unseen {
+            background-color: #e6f7ff;
+            border-left: 5px solid var(--secondary-color);
+            transition: background-color 1s ease;
+        }
 
-.notification-dot {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 12px;
-    height: 12px;
-    background: #e74c3c;
-    border-radius: 50%;
-}
+        .notification-dot {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 12px;
+            height: 12px;
+            background: var(--error-color);
+            border-radius: 50%;
+        }
 
-.new-applications-badge {
-    position: absolute;
-    top: 15px;
-    right: 35px;
-    background-color: #e74c3c;
-    color: white;
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: bold;
-}
+        .new-applications-badge {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            background-color: var(--error-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
 
-.application-count {
-    background-color: #e74c3c;
-    color: white;
-    border-radius: 50%;
-    padding: 2px 6px;
-    font-size: 12px;
-    margin-left: 5px;
-}
+        .application-count {
+            background-color: var(--error-color);
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
 
-/* Make sure job-card has positioning for absolute elements */
-.job-card {
-    position: relative;
-}
+        /* UPDATED: Custom question badge */
+        .custom-questions-badge {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: var(--light-text);
+            padding: 4px 10px;
+            border-radius: var(--border-radius);
+            font-size: 13px;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        /* UPDATED: Toggle button for custom questions */
+        .toggle-questions {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            border: 1px solid #ddd;
+            padding: 6px 12px;
+            margin-top: 10px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .toggle-questions:hover {
+            background-color: #e1e1e1;
+        }
+
+        .toggle-questions i {
+            margin-right: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-questions.expanded i {
+            transform: rotate(180deg);
+        }
+
+        /* UPDATED: Custom question panel */
+        .custom-questions-panel {
+            margin-top: 15px;
+            background-color: var(--light-bg);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .custom-questions-panel h4 {
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            font-size: 15px;
+            border-bottom: 1px solid #e1e1e1;
+            padding-bottom: 8px;
+        }
+
+        .custom-question-item {
+            margin-bottom: 10px;
+            font-size: 13px;
+            display: flex;
+            align-items: flex-start;
+            padding: 6px 0;
+            border-bottom: 1px dashed #e1e1e1;
+        }
+
+        .custom-question-item:last-child {
+            border-bottom: none;
+        }
+
+        /* UPDATED: Question type badges */
+        .question-type-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: var(--border-radius);
+            margin-right: 8px;
+            color: var(--light-text);
+            min-width: 50px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .type-text { background-color: var(--secondary-color); }
+        .type-yesno { background-color: var(--accent-color); }
+        .type-file { background-color: #9b59b6; }
+        .type-link { background-color: var(--warning-color); }
+        
+        /* UPDATED: Required badge */
+        .required-badge {
+            display: inline-block;
+            background-color: var(--error-color);
+            color: var(--light-text);
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: var(--border-radius);
+            margin-left: 8px;
+            font-weight: 500;
+        }
 
         @keyframes slideIn {
             from {
@@ -408,6 +511,14 @@
                 margin-right: 0;
                 margin-bottom: 10px;
                 text-align: center;
+            }
+            
+            .custom-question-item {
+                flex-direction: column;
+            }
+            
+            .question-type-badge {
+                margin-bottom: 5px;
             }
         }
     </style>
@@ -468,13 +579,14 @@
     <main>
         
         {% if jobs %}
-        <div class="job-grid {% if job.new_apps_count > 0 %}unseen{% endif %}">
+        <div class="job-grid">
             {% for job in jobs %}
-            <div class="job-card">
+            <div class="job-card {% if job.new_apps_count > 0 %}unseen{% endif %}">
                 {% if job.new_apps_count > 0 %}
-        <span class="notification-dot"></span>
-        <div class="new-applications-badge">{{ job.new_apps_count }} new</div>
-    {% endif %}
+                    <span class="notification-dot"></span>
+                    <div class="new-applications-badge">{{ job.new_apps_count }} new</div>
+                {% endif %}
+                
                 {% if job.logo %}
                     <img src="{{ job.logo.url }}" alt="Company Logo" class="job-logo">
                 {% else %}
@@ -489,6 +601,44 @@
                 <p class="job-detail"><strong>Job Type:</strong> {{ job.job_type }}</p>
                 <p class="job-detail"><strong>Salary:</strong> ₹{{ job.salary }}</p>
                 <p class="job-detail"><strong>Last Date to Apply:</strong> <span class="job-last-date">{{ job.last_date_to_apply|date:"F d, Y" }}</span></p>
+                
+                <!-- Updated Custom Questions Badge -->
+                {% if job.custom_questions.count > 0 %}
+                    <div class="custom-questions-badge">
+                        <i class="fas fa-list-ul"></i> {{ job.custom_questions.count }} Custom Questions
+                    </div>
+                    <button class="toggle-questions" onclick="toggleQuestions(this, 'questions-{{ job.id }}')">
+                        <i class="fas fa-chevron-down"></i> Show Questions
+                    </button>
+                    
+                    <!-- Updated Custom Questions Panel (Hidden by default) -->
+                    <div id="questions-{{ job.id }}" class="custom-questions-panel" style="display: none;">
+                        <h4><i class="fas fa-question-circle"></i> Custom Application Questions</h4>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            {% for question in job.custom_questions.all %}
+                                <li class="custom-question-item">
+                                    <span class="question-type-badge type-{{ question.question_type }}">
+                                        {% if question.question_type == 'text' %}
+                                            <i class="fas fa-font"></i>
+                                        {% elif question.question_type == 'yesno' %}
+                                            <i class="fas fa-check-circle"></i>
+                                        {% elif question.question_type == 'file' %}
+                                            <i class="fas fa-file-upload"></i>
+                                        {% elif question.question_type == 'link' %}
+                                            <i class="fas fa-link"></i>
+                                        {% endif %}
+                                        {{ question.get_question_type_display }}
+                                    </span>
+                                    {{ question.question_text }}
+                                    {% if question.is_required %}
+                                        <span class="required-badge"><i class="fas fa-asterisk"></i> Required</span>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                
                 <div class="action-buttons">
                     <a href="{% url 'view_job_applications' job.id %}" class="view-button">View Applications</a>
                     <a href="{% url 'edit_job' job.id %}" class="view-button edit-button">Edit</a>
@@ -519,6 +669,10 @@
     <footer>
         <p>&copy; 2025 Career Edge. All rights reserved.</p>
     </footer>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
     <script>
         // Get today's date
         const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD' format
@@ -533,10 +687,25 @@
                 
                 if (jobLastDate <= new Date(today)) {
                     // If the last date has passed, highlight the job listing as "Application Closed"
-                    lastDateElement.parentElement.innerHTML += '<p class="job-detail" style="color: #e74c3c; font-weight: bold; margin-top: 5px;"><strong>Application Closed</strong></p>';
+                    lastDateElement.parentElement.innerHTML += '<p class="job-detail" style="color: var(--error-color); font-weight: bold; margin-top: 5px;"><strong>Application Closed</strong></p>';
                 }
             }
         });
+        
+        // Function to toggle showing/hiding custom questions
+        function toggleQuestions(button, questionsId) {
+            const questionsPanel = document.getElementById(questionsId);
+            
+            if (questionsPanel.style.display === 'none') {
+                questionsPanel.style.display = 'block';
+                button.innerHTML = '<i class="fas fa-chevron-up"></i> Hide Questions';
+                button.classList.add('expanded');
+            } else {
+                questionsPanel.style.display = 'none';
+                button.innerHTML = '<i class="fas fa-chevron-down"></i> Show Questions';
+                button.classList.remove('expanded');
+            }
+        }
     </script>
 </body>
 </html>

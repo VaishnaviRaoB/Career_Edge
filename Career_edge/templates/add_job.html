@@ -207,6 +207,64 @@
             margin-top: auto;
         }
 
+        /* Custom Question Styles */
+        .custom-questions-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .custom-questions-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .custom-question {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            position: relative;
+        }
+
+        .delete-question {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        #add-question-btn {
+            background-color: var(--secondary-color);
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-check-input {
+            width: auto;
+            margin-right: 8px;
+        }
+
+        .required-toggle {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .required-toggle label {
+            margin-bottom: 0;
+            margin-left: 5px;
+        }
+
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
@@ -266,6 +324,9 @@
 
         <form method="POST" enctype="multipart/form-data" novalidate> 
             {% csrf_token %}
+            
+            <!-- Job Details Section -->
+            <h3>Job Details</h3>
             {% for field in form %}
                 <div class="form-group">
                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
@@ -277,6 +338,60 @@
                     {% endif %}
                 </div>
             {% endfor %}
+            
+            <!-- Custom Questions Section -->
+            <div class="custom-questions-section">
+                <h3>Custom Questions for Applicants</h3>
+                <p>Add questions you would like applicants to answer when applying to this job.</p>
+                
+                {{ question_formset.management_form }}
+                
+                <div id="question-forms">
+                    {% for question_form in question_formset %}
+                        <div class="custom-question">
+                            {{ question_form.id }}
+                            {% if question_form.instance.pk %}{{ question_form.DELETE }}{% endif %}
+                            
+                            <div class="form-group">
+                                <label for="{{ question_form.question_text.id_for_label }}">Question</label>
+                                {{ question_form.question_text }}
+                                {% if question_form.question_text.errors %}
+                                    <div class="text-danger">
+                                        {{ question_form.question_text.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ question_form.question_type.id_for_label }}">Answer Type</label>
+                                {{ question_form.question_type }}
+                                {% if question_form.question_type.errors %}
+                                    <div class="text-danger">
+                                        {{ question_form.question_type.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="required-toggle">
+                                {{ question_form.is_required }}
+                                <label for="{{ question_form.is_required.id_for_label }}">Required</label>
+                                {% if question_form.is_required.errors %}
+                                    <div class="text-danger">
+                                        {{ question_form.is_required.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            {% if question_form.instance.pk and not forloop.first %}
+                                <button type="button" class="delete-question" onclick="deleteQuestion(this)">×</button>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <button type="button" id="add-question-btn" class="btn btn-primary">Add Another Question</button>
+            </div>
+            
             <button type="submit">Add Job</button>
         </form>
     </main>
@@ -284,5 +399,77 @@
     <footer>
         <p>&copy; 2025 Career Edge. All rights reserved.</p>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the form container and template
+            const questionForms = document.getElementById('question-forms');
+            const formTemplate = questionForms.querySelector('.custom-question');
+            const totalFormsInput = document.querySelector('#id_custom_questions-TOTAL_FORMS');
+            const addQuestionBtn = document.getElementById('add-question-btn');
+            
+            // Add new question form
+            addQuestionBtn.addEventListener('click', function() {
+                const formCount = parseInt(totalFormsInput.value);
+                const newForm = formTemplate.cloneNode(true);
+                
+                // Update form index
+                newForm.innerHTML = newForm.innerHTML.replace(/custom_questions-0/g, `custom_questions-${formCount}`);
+                newForm.innerHTML = newForm.innerHTML.replace(/custom_questions-0-/g, `custom_questions-${formCount}-`);
+                
+                // Clear input values
+                newForm.querySelectorAll('input[type="text"], select').forEach(input => {
+                    input.value = '';
+                });
+                
+                // Add delete button
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.className = 'delete-question';
+                deleteBtn.innerHTML = '×';
+                deleteBtn.onclick = function() { deleteQuestion(this); };
+                newForm.appendChild(deleteBtn);
+                
+                // Add the new form to the container and update the form count
+                questionForms.appendChild(newForm);
+                totalFormsInput.value = formCount + 1;
+            });
+            
+            // Function to delete a question
+            window.deleteQuestion = function(btn) {
+                const questionForm = btn.closest('.custom-question');
+                const deleteCheckbox = questionForm.querySelector('input[type="checkbox"][name$="-DELETE"]');
+                
+                if (deleteCheckbox) {
+                    // If it's an existing form, mark it for deletion
+                    deleteCheckbox.checked = true;
+                    questionForm.style.display = 'none';
+                } else {
+                    // If it's a new form, just remove it
+                    questionForm.remove();
+                    
+                    // Update all the form indices
+                    const forms = questionForms.querySelectorAll('.custom-question');
+                    totalFormsInput.value = forms.length;
+                    
+                    forms.forEach((form, index) => {
+                        form.querySelectorAll('input, select, textarea').forEach(input => {
+                            const name = input.getAttribute('name');
+                            if (name) {
+                                const newName = name.replace(/custom_questions-\d+/g, `custom_questions-${index}`);
+                                input.setAttribute('name', newName);
+                                
+                                const id = input.getAttribute('id');
+                                if (id) {
+                                    const newId = id.replace(/id_custom_questions-\d+/g, `id_custom_questions-${index}`);
+                                    input.setAttribute('id', newId);
+                                }
+                            }
+                        });
+                    });
+                }
+            };
+        });
+    </script>
 </body>
 </html>

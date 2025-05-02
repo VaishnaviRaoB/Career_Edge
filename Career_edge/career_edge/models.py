@@ -66,6 +66,7 @@ class Job(models.Model):
     logo = models.ImageField(upload_to='job_logos/', blank=True, null=True)
     last_date_to_apply = models.DateField(null=True, blank=True)
     is_new = models.BooleanField(default=True) 
+    has_custom_questions = models.BooleanField(default=False)
     
     def is_recent(self):
         return (timezone.now() - self.date_posted).days <= 3
@@ -128,3 +129,31 @@ class SavedJob(models.Model):
         return f"{self.user.username} - {self.job.title}"
 
 
+class JobCustomQuestion(models.Model):
+    QUESTION_TYPES = [
+        ('text', 'Text Answer'),
+        ('yesno', 'Yes/No Answer'),
+        ('file', 'File Upload'),
+        ('link', 'Link (URL)'),
+    ]
+    
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='custom_questions')
+    question_text = models.CharField(max_length=255)
+    question_type = models.CharField(max_length=10, choices=QUESTION_TYPES, default='text')
+    is_required = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"{self.question_text} ({self.get_question_type_display()})"
+        
+# Add this to your models.py file after the JobApplication model
+
+class JobApplicationAnswer(models.Model):
+    application = models.ForeignKey(JobApplication, on_delete=models.CASCADE, related_name='answers')
+    question = models.ForeignKey(JobCustomQuestion, on_delete=models.CASCADE)
+    text_answer = models.TextField(blank=True, null=True)
+    boolean_answer = models.BooleanField(null=True, blank=True)
+    file_answer = models.FileField(upload_to='application_answers/', blank=True, null=True)
+    link_answer = models.URLField(blank=True, null=True)
+    
+    def __str__(self):
+        return f"Answer for {self.question.question_text}"

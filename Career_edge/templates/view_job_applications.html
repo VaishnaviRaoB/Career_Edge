@@ -304,6 +304,82 @@
             background-color: #636e72;
         }
 
+        /* Custom Question Answers */
+        .custom-answers {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.custom-answers-toggle {
+    color: var(--primary-color);
+    margin-bottom: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    background-color: #f0f3f6;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.custom-answers-toggle:hover {
+    background-color: #e6ebf0;
+}
+
+.toggle-icon {
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.answers-container {
+    max-height: 300px;
+    overflow-y: auto;
+    transition: max-height 0.3s ease;
+}
+
+.answer-item {
+    background-color: #f8f9fa;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border-radius: var(--border-radius);
+    border-left: 3px solid var(--secondary-color);
+}
+
+.answer-item p {
+    margin: 5px 0;
+}
+
+.question-text {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.answer-text {
+    color: #333;
+}
+
+.file-answer a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+}
+
+.file-answer a:hover {
+    text-decoration: underline;
+}
+
+.no-answers {
+    font-style: italic;
+    color: #777;
+    padding: 5px 0;
+}
+       
+
         /* Footer styles */
         footer {
             background-color: var(--primary-color);
@@ -342,73 +418,75 @@
                 width: 100%;
                 max-width: 100%;
             }
-        }.messages {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    max-width: 300px;
-}
+        }
+        
+        .messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 300px;
+        }
 
-.alert {
-    background-color: #333;
-    color: white;
-    padding: 12px 15px;
-    margin: 10px 0;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    position: relative;
-    animation: slideIn 0.5s ease;
-}
+        .alert {
+            background-color: #333;
+            color: white;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            position: relative;
+            animation: slideIn 0.5s ease;
+        }
 
-.alert-success {
-    background-color: var(--accent-color);
-}
+        .alert-success {
+            background-color: var(--accent-color);
+        }
 
-.alert-error {
-    background-color: #e74c3c;
-}
+        .alert-error {
+            background-color: #e74c3c;
+        }
 
-.alert-warning {
-    background-color: #f39c12;
-}
+        .alert-warning {
+            background-color: #f39c12;
+        }
 
-.alert-info {
-    background-color: var(--secondary-color);
-}
+        .alert-info {
+            background-color: var(--secondary-color);
+        }
 
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
     <header>
         {% if messages %}
-<div class="messages">
-    {% for message in messages %}
-        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-            {{ message }}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-</div>
-<script>
-    // Auto-hide messages after 5 seconds
-    setTimeout(function() {
-        const messageElements = document.querySelectorAll('.messages .alert');
-        messageElements.forEach(function(element) {
-            element.style.display = 'none';
-        });
-    }, 5000);
-</script>
-{% endif %}
+        <script>
+            // Auto-hide messages after 5 seconds
+            setTimeout(function() {
+                const messageElements = document.querySelectorAll('.messages .alert');
+                messageElements.forEach(function(element) {
+                    element.style.display = 'none';
+                });
+            }, 5000);
+        </script>
+        {% endif %}
         <div class="logo">
             <img src="{% static 'images/logo.png' %}" alt="Career Edge Logo">
             <nav>
@@ -458,6 +536,49 @@
                 <p><strong>Applied On:</strong> {{ application.created_at|date:"d M Y, h:i A" }}</p>
                 <p><strong>Status:</strong> {{ application.get_status_display }}</p>
 
+                <!-- Custom Questions & Answers Section -->
+                <div class="custom-answers">
+                    <h4 class="custom-answers-toggle">
+                        Custom Questions 
+                        <span class="toggle-icon">▼</span>
+                    </h4>
+                    <div class="answers-container">
+                        {% if application.answers.all %}
+                            {% for answer in application.answers.all %}
+                                <div class="answer-item">
+                                    <p class="question-text">{{ answer.question.question_text }}</p>
+                                    
+                                    {% if answer.question.question_type == 'text' %}
+                                        <p class="answer-text">{{ answer.text_answer }}</p>
+                                    {% elif answer.question.question_type == 'yesno' %}
+                                        <p class="answer-text">{% if answer.boolean_answer %}Yes{% else %}No{% endif %}</p>
+                                    {% elif answer.question.question_type == 'file' %}
+                                        <p class="file-answer">
+                                            {% if answer.file_answer %}
+                                                <a href="{{ answer.file_answer.url }}" download>
+                                                    Download File
+                                                </a>
+                                            {% else %}
+                                                No file uploaded
+                                            {% endif %}
+                                        </p>
+                                    {% elif answer.question.question_type == 'link' %}
+                                        <p class="answer-text">
+                                            {% if answer.link_answer %}
+                                                <a href="{{ answer.link_answer }}" target="_blank">{{ answer.link_answer }}</a>
+                                            {% else %}
+                                                No link provided
+                                            {% endif %}
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="no-answers">No custom questions were answered for this application.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
                 <form method="post" action="{% url 'update_application_status' application.id %}" class="status-form">
                     {% csrf_token %}
                     <label for="status_{{ application.id }}">Change Status:</label>
@@ -486,6 +607,31 @@
     <footer>
         <p>&copy; 2025 Career Edge. All rights reserved.</p>
     </footer>
-
+    <script>
+        // Initialize collapsible custom answers sections
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggles = document.querySelectorAll('.custom-answers-toggle');
+            
+            toggles.forEach(toggle => {
+                // Start with containers collapsed
+                const container = toggle.nextElementSibling;
+                container.style.display = 'none';
+                
+                // Add click event to toggle visibility
+                toggle.addEventListener('click', function() {
+                    const container = this.nextElementSibling;
+                    const icon = this.querySelector('.toggle-icon');
+                    
+                    if (container.style.display === 'none') {
+                        container.style.display = 'block';
+                        icon.textContent = '▼';
+                    } else {
+                        container.style.display = 'none';
+                        icon.textContent = '►';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

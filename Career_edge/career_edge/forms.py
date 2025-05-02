@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Job, JobApplication, UserProfile, JobProvider, JobSeeker
+from .models import Job, JobApplication, UserProfile, JobProvider, JobSeeker, JobCustomQuestion, JobApplication, JobApplicationAnswer
 from django import forms
 from .models import Job
+from django.forms import inlineformset_factory
 class JobForm(forms.ModelForm):
     class Meta:
         model = Job
@@ -155,3 +156,35 @@ class JobSeekerProfileForm(forms.ModelForm):
             'education': forms.Textarea(attrs={'placeholder': 'Describe your education background'}),
             'about_me': forms.Textarea(attrs={'placeholder': 'Write a short bio about yourself'}),
         }
+class CustomQuestionForm(forms.ModelForm):
+    class Meta:
+        model = JobCustomQuestion
+        fields = ['question_text', 'question_type', 'is_required']
+        widgets = {
+            'question_text': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Question Text'}),
+            'question_type': forms.Select(attrs={'class': 'form-control'}),
+            'is_required': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+# Create a formset for adding multiple custom questions
+CustomQuestionFormSet = inlineformset_factory(
+    Job, 
+    JobCustomQuestion, 
+    form=CustomQuestionForm,
+    extra=1, 
+    can_delete=True
+)
+class TextAnswerForm(forms.Form):
+    answer = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}))
+
+class YesNoAnswerForm(forms.Form):
+    answer = forms.BooleanField(required=False, widget=forms.RadioSelect(choices=[(True, 'Yes'), (False, 'No')]))
+
+class FileAnswerForm(forms.Form):
+    answer = forms.FileField(widget=forms.FileInput(attrs={'class': 'form-control'}))
+
+class LinkAnswerForm(forms.Form):
+    answer = forms.URLField(widget=forms.URLInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Enter a valid URL (e.g., https://...)'
+    }))

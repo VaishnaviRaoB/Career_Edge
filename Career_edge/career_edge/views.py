@@ -6,6 +6,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views import View
+from .models import Job, JobApplication, JobCustomQuestion, JobApplicationAnswer
+from django.db import transaction
+from .models import Job, JobCustomQuestion
+from .forms import JobForm, CustomQuestionFormSet
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.utils import timezone
@@ -477,6 +481,9 @@ def view_jobs(request):
 @login_required
 def apply_for_job(request, job_id):
     job = get_object_or_404(Job, id=job_id)
+    
+    # Get all custom questions for this job
+    custom_questions = JobCustomQuestion.objects.filter(job=job)
 
     # Check if the user has already applied to this job
     already_applied = JobApplication.objects.filter(job=job, applicant=request.user).exists()
@@ -494,7 +501,8 @@ def apply_for_job(request, job_id):
         resume = request.FILES.get('resume')
         experience = request.POST.get('experience')
 
-        JobApplication.objects.create(
+        # Create the application
+        application = JobApplication.objects.create(
             job=job,
             applicant=request.user,
             name=name,
@@ -505,10 +513,49 @@ def apply_for_job(request, job_id):
             resume=resume,
             experience=experience,
         )
+        
+        # Process custom questions
+        for question in custom_questions:
+            answer = None
+            
+            if question.question_type == 'text':
+                answer = request.POST.get(f'question_{question.id}')
+                JobApplicationAnswer.objects.create(
+                    application=application,
+                    question=question,
+                    text_answer=answer
+                )
+            
+            elif question.question_type == 'yesno':
+                answer_value = request.POST.get(f'question_{question.id}')
+                boolean_answer = True if answer_value == 'True' else False if answer_value == 'False' else None
+                JobApplicationAnswer.objects.create(
+                    application=application,
+                    question=question,
+                    boolean_answer=boolean_answer
+                )
+            
+            elif question.question_type == 'file':
+                file_answer = request.FILES.get(f'question_{question.id}')
+                if file_answer:
+                    JobApplicationAnswer.objects.create(
+                        application=application,
+                        question=question,
+                        file_answer=file_answer
+                    )
+            
+            elif question.question_type == 'link':
+                link_answer = request.POST.get(f'question_{question.id}')
+                JobApplicationAnswer.objects.create(
+                    application=application,
+                    question=question,
+                    link_answer=link_answer
+                )
+
         messages.success(request, "Application submitted successfully.")
         return redirect('seeker_dashboard')
 
-    return render(request, 'apply.html', {'job': job})
+    return render(request, 'apply.html', {'job': job, 'custom_questions': custom_questions})
 # User logout view
 @login_required
 def user_logout(request):
@@ -626,17 +673,40 @@ class ProviderDashboardView(View):
 class AddJobView(View):
     def get(self, request):
         form = JobForm()
-        return render(request, 'add_job.html', {'form': form})
+        question_formset = CustomQuestionFormSet()
+        return render(request, 'add_job.html', {
+            'form': form,
+            'question_formset': question_formset
+        })
 
     def post(self, request):
         form = JobForm(request.POST, request.FILES)
+        
         if form.is_valid():
-            job = form.save(commit=False)
-            job.provider = request.user
-            job.save()
-            messages.success(request, 'Job posted successfull!')
-            return redirect('view_jobs')  # or change this to 'add_job'
-        return render(request, 'add_job.html', {'form': form})
+            with transaction.atomic():
+                # Save the job first without committing to get an ID
+                job = form.save(commit=False)
+                job.provider = request.user
+                job.save()
+                
+                # Process the custom questions formset
+                question_formset = CustomQuestionFormSet(request.POST, request.FILES, instance=job)
+                
+                if question_formset.is_valid():
+                    question_formset.save()
+                    messages.success(request, 'Job posted successfully!')
+                    return redirect('view_jobs')  # or change this to 'add_job'
+                else:
+                    # If formset is not valid, we need to display errors
+                    # Since we're in a transaction, if we rollback here, the job won't be saved
+                    job.delete()  # Delete the already saved job
+        
+        # If we get here, either form or formset is invalid
+        question_formset = CustomQuestionFormSet(request.POST, request.FILES)
+        return render(request, 'add_job.html', {
+            'form': form,
+            'question_formset': question_formset
+        })
 
 @login_required
 def job_details(request, job_id):
@@ -842,15 +912,33 @@ def edit_job(request, job_id):
     if request.method == 'POST':
         # Create a form instance with POST data and files (for logo)
         form = JobForm(request.POST, request.FILES, instance=job)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Job updated successfully!')
-            return redirect('view_jobs')
+        question_formset = CustomQuestionFormSet(request.POST, request.FILES, instance=job)
+        
+        if form.is_valid() and question_formset.is_valid():
+            with transaction.atomic():
+                # Save the job details
+                job_obj = form.save()
+                
+                # Save custom questions
+                question_formset.save()
+                
+                # Update has_custom_questions flag based on whether there are any questions
+                has_questions = job.custom_questions.filter(question_text__isnull=False).exists()
+                job.has_custom_questions = has_questions
+                job.save()
+                
+                messages.success(request, 'Job updated successfully!')
+                return redirect('view_jobs')
     else:
         # Create a form pre-filled with the job data
         form = JobForm(instance=job)
+        question_formset = CustomQuestionFormSet(instance=job)
     
-    return render(request, 'edit_job.html', {'form': form, 'job': job})
+    return render(request, 'edit_job.html', {
+        'form': form, 
+        'job': job,
+        'question_formset': question_formset
+    })
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -988,7 +1076,7 @@ def export_job_applications(request, job_id):
         'pattern: pattern solid, fore_colour dark_blue; '
         'align: wrap on, vert centre, horiz center'
     )
-    columns = ['Name', 'Email', 'Phone', 'Skills', 'Qualification', 'Experience', 'Status', 'Applied On', 'Resume', 'Notes']
+    columns = ['Name', 'Email', 'Phone', 'Skills', 'Qualification', 'Experience', 'Status', 'Applied On', 'Resume']
     
     for col_num, column_title in enumerate(columns):
         worksheet.write(3, col_num, column_title, header_style)
@@ -997,7 +1085,23 @@ def export_job_applications(request, job_id):
     # Sheet body
     row_num = 4
     font_style = xlwt.easyxf('align: wrap on, vert centre')
+    link_style = xlwt.easyxf('font: color blue, underline single; align: wrap on, vert centre')
     
+    # Get all custom questions for this job
+    custom_questions = JobCustomQuestion.objects.filter(job=job)
+    
+    # If there are custom questions, add them as additional columns
+    if custom_questions.exists():
+        worksheet.col(10).width = 2000
+        
+        # Add custom question columns
+        q_col_start = 9
+        for idx, question in enumerate(custom_questions):
+            col_num = q_col_start + idx
+            worksheet.write(3, col_num, f"Q: {question.question_text}", header_style)
+            worksheet.col(col_num).width = 7500  # Set wider column width for questions/answers
+    
+    # Now populate the data
     for application in applications:
         worksheet.write(row_num, 0, application.name, font_style)
         worksheet.write(row_num, 1, application.email, font_style)
@@ -1008,16 +1112,52 @@ def export_job_applications(request, job_id):
         worksheet.write(row_num, 6, application.get_status_display(), font_style)
         worksheet.write(row_num, 7, application.created_at.strftime("%d %b %Y, %H:%M"), font_style)
         
-        # Create a style for links - blue and underlined
-        link_style = xlwt.easyxf('font: color blue, underline single; align: wrap on, vert centre')
-
         if application.resume:
             resume_url = request.build_absolute_uri(application.resume.url)
             worksheet.write(row_num, 8, xlwt.Formula(f'HYPERLINK("{resume_url}";"View Resume")'), link_style)
         else:
             worksheet.write(row_num, 8, "No resume", font_style)
+            
+              # Empty column for notes
         
-        worksheet.write(row_num, 9, "", font_style)  # Empty column for notes
+        # Add the custom question answers
+        if custom_questions.exists():
+            # Skip the separator column
+            q_col_start = 9
+            
+            for idx, question in enumerate(custom_questions):
+                col_num = q_col_start + idx
+                
+                # Try to find the answer for this question
+                try:
+                    answer = JobApplicationAnswer.objects.get(application=application, question=question)
+                    
+                    # Format the answer based on question type
+                    if question.question_type == 'text':
+                        answer_text = answer.text_answer or "N/A"
+                    elif question.question_type == 'yesno':
+                        answer_text = "Yes" if answer.boolean_answer else "No"
+                    elif question.question_type == 'file':
+                        if answer.file_answer:
+                            file_url = request.build_absolute_uri(answer.file_answer.url)
+                            worksheet.write(row_num, col_num, xlwt.Formula(f'HYPERLINK("{file_url}";"Download File")'), link_style)
+                            continue  # Skip the regular write below for file answers
+                        else:
+                            answer_text = "No file uploaded"
+                    elif question.question_type == 'link':
+                        if answer.link_answer:
+                            worksheet.write(row_num, col_num, xlwt.Formula(f'HYPERLINK("{answer.link_answer}";"View Link")'), link_style)
+                            continue  # Skip the regular write below for link answers
+                        else:
+                            answer_text = "No link provided"
+                    else:
+                        answer_text = "Unknown answer type"
+                        
+                    worksheet.write(row_num, col_num, answer_text, font_style)
+                    
+                except JobApplicationAnswer.DoesNotExist:
+                    worksheet.write(row_num, col_num, "Not answered", font_style)
+                
         row_num += 1
     
     # Create HTTP response

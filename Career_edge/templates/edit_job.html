@@ -282,6 +282,88 @@
             color: #e74c3c;
         }
 
+        /* Custom Questions Styling */
+        .custom-questions-section {
+            margin-top: 40px;
+            border-top: 2px dashed #ddd;
+            padding-top: 30px;
+        }
+
+        .custom-questions-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .question-item {
+            background-color: var(--light-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .delete-question {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 18px;
+            line-height: 1;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .delete-question:hover {
+            background-color: #c0392b;
+            transform: scale(1.1);
+        }
+
+        .add-question-btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .add-question-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .field-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .field-col {
+            flex: 1;
+        }
+
+        .required-checkbox {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .required-checkbox input {
+            margin-right: 8px;
+        }
+
         /* Responsive styling */
         @media (max-width: 768px) {
             header {
@@ -309,6 +391,11 @@
             .submit-button, .cancel-button {
                 width: 100%;
             }
+
+            .field-row {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -320,6 +407,11 @@
             nav ul li {
                 margin-bottom: 10px;
             }
+        }
+
+        /* Empty form styles */
+        .empty-form {
+            display: none;
         }
     </style>
 </head>
@@ -454,6 +546,92 @@
                     {% endif %}
                 </div>
                 
+                <!-- Custom Questions Section -->
+                <div class="custom-questions-section">
+                    <h2>Custom Questions for Applicants</h2>
+                    <p class="help-text">Add questions that applicants must answer when applying for this job</p>
+                    
+                    {{ question_formset.management_form }}
+                    
+                    <div id="question-forms">
+                        {% for question_form in question_formset %}
+                            <div class="question-item">
+                                <div class="question-header">
+                                    <h3>Question #{{ forloop.counter }}</h3>
+                                    {% if question_formset.can_delete %}
+                                        <button type="button" class="delete-question" onclick="removeQuestion(this)">×</button>
+                                    {% endif %}
+                                </div>
+                                
+                                {{ question_form.id }}
+                                {% if question_form.DELETE %}
+                                    <div style="display:none">{{ question_form.DELETE }}</div>
+                                {% endif %}
+                                
+                                <div class="form-group">
+                                    <label for="{{ question_form.question_text.id_for_label }}">Question:</label>
+                                    {{ question_form.question_text }}
+                                    {% if question_form.question_text.errors %}
+                                        <p class="help-text error">{{ question_form.question_text.errors }}</p>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="field-row">
+                                    <div class="field-col">
+                                        <label for="{{ question_form.question_type.id_for_label }}">Answer Type:</label>
+                                        {{ question_form.question_type }}
+                                        {% if question_form.question_type.errors %}
+                                            <p class="help-text error">{{ question_form.question_type.errors }}</p>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="field-col required-checkbox">
+                                        {{ question_form.is_required }}
+                                        <label for="{{ question_form.is_required.id_for_label }}">Required?</label>
+                                        {% if question_form.is_required.errors %}
+                                            <p class="help-text error">{{ question_form.is_required.errors }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Empty form template for JavaScript -->
+                    <div id="empty-form" class="empty-form">
+                        <div class="question-item">
+                            <div class="question-header">
+                                <h3>New Question</h3>
+                                <button type="button" class="delete-question" onclick="removeQuestion(this)">×</button>
+                            </div>
+                            
+                            {{ question_formset.empty_form.id }}
+                            {% if question_formset.empty_form.DELETE %}
+                                <div style="display:none">{{ question_formset.empty_form.DELETE }}</div>
+                            {% endif %}
+                            
+                            <div class="form-group">
+                                <label for="{{ question_formset.empty_form.question_text.id_for_label }}">Question:</label>
+                                {{ question_formset.empty_form.question_text }}
+                            </div>
+                            
+                            <div class="field-row">
+                                <div class="field-col">
+                                    <label for="{{ question_formset.empty_form.question_type.id_for_label }}">Answer Type:</label>
+                                    {{ question_formset.empty_form.question_type }}
+                                </div>
+                                
+                                <div class="field-col required-checkbox">
+                                    {{ question_formset.empty_form.is_required }}
+                                    <label for="{{ question_formset.empty_form.is_required.id_for_label }}">Required?</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="add-question-btn" id="add-question">Add Question</button>
+                </div>
+                
                 <div class="button-group">
                     <a href="{% url 'view_jobs' %}" class="cancel-button">Cancel</a>
                     <button type="submit" class="submit-button">Update Job</button>
@@ -466,5 +644,50 @@
     <footer>
         <p>&copy; 2025 Career Edge. All rights reserved.</p>
     </footer>
+
+    <script>
+        // Script to handle dynamic form for custom questions
+        document.addEventListener('DOMContentLoaded', function() {
+            const addQuestionBtn = document.getElementById('add-question');
+            const totalFormsInput = document.querySelector('[name="form-TOTAL_FORMS"]');
+            const formContainer = document.getElementById('question-forms');
+            const emptyForm = document.getElementById('empty-form').innerHTML;
+            
+            // Add new question form
+            addQuestionBtn.addEventListener('click', function() {
+                const formCount = parseInt(totalFormsInput.value);
+                
+                // Create new form by replacing '__prefix__' with the current form count
+                let newForm = emptyForm.replace(/__prefix__/g, formCount);
+                
+                // Create a temporary container to hold the HTML
+                const tempContainer = document.createElement('div');
+                tempContainer.innerHTML = newForm;
+                
+                // Append the new form to the container
+                formContainer.appendChild(tempContainer.firstElementChild);
+                
+                // Update the total form count
+                totalFormsInput.value = formCount + 1;
+            });
+        });
+        
+        // Function to mark a question for deletion (hide rather than remove)
+        function removeQuestion(btn) {
+            const questionItem = btn.closest('.question-item');
+            
+            // Check if there's a DELETE checkbox (for existing items)
+            const deleteCheckbox = questionItem.querySelector('[id$="-DELETE"]');
+            
+            if (deleteCheckbox) {
+                // Mark existing item for deletion
+                deleteCheckbox.checked = true;
+                questionItem.style.display = 'none';
+            } else {
+                // Just remove new items from DOM
+                questionItem.remove();
+            }
+        }
+    </script>
 </body>
 </html>
