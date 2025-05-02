@@ -19,7 +19,7 @@ class JobSeeker(models.Model):
     user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=100)
     email = models.EmailField(blank=True, null=True)
-    phone = models.CharField(max_length=15, blank=True, null=True)
+    phone = models.CharField(max_length=10, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     location_preferences = models.CharField(max_length=255, null=True, blank=True)
     education = models.TextField(blank=True, null=True)
@@ -44,7 +44,7 @@ class JobProvider(models.Model):
     contact_email = models.EmailField()
     company_logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
     website = models.URLField(blank=True, null=True)
-    phone = models.CharField(max_length=20, blank=True, null=True) 
+    phone = models.CharField(max_length=10, blank=True, null=True) 
     location = models.CharField(max_length=100, blank=True, null=True)
     security_question = models.CharField(max_length=50, blank=True, null=True)
     security_answer = models.CharField(max_length=255, blank=True, null=True)
@@ -89,7 +89,7 @@ class JobApplication(models.Model):
     qualifications = models.CharField(max_length=255, blank=True)
     email = models.EmailField(max_length=255,  default="")  # Add email field
     phone = models.CharField(
-        max_length=20,
+        max_length=10,
         validators=[
             MinLengthValidator(10, message="Phone number must be at least 10 digits."),
             RegexValidator(r'^\+?\d{10,20}$', message="Enter a valid phone number.")
