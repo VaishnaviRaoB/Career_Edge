@@ -6,17 +6,20 @@
     <title>Job Applications for {{ job.title }} - Career Edge</title>
     {% load static %}
     <style>
-        /* Global Styles */
+        /* Clean, Professional Styling */
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
             --accent-color: #1abc9c;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --success-color: #27ae60;
             --light-bg: #f5f7fa;
             --dark-text: #333;
             --light-text: #fff;
-            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --border-radius: 6px;
-            --transition: all 0.3s ease;
+            --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --border-radius: 5px;
+            --transition: all 0.2s ease;
         }
 
         * {
@@ -67,7 +70,6 @@
 
         nav ul li {
             margin: 0 10px;
-            position: relative;
         }
 
         nav ul li a {
@@ -86,10 +88,7 @@
         /* Main content */
         main {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 60px 20px;
+            padding: 30px 20px;
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
@@ -97,11 +96,11 @@
 
         .page-title {
             color: var(--primary-color);
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             text-align: center;
             font-size: 28px;
-            position: relative;
             padding-bottom: 10px;
+            position: relative;
         }
 
         .page-title:after {
@@ -110,7 +109,7 @@
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 80px;
+            width: 60px;
             height: 3px;
             background-color: var(--accent-color);
         }
@@ -119,33 +118,34 @@
         .filter-form {
             display: flex;
             flex-wrap: wrap;
-            justify-content: center;
             gap: 15px;
             margin-bottom: 25px;
-            width: 100%;
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
         }
 
         .filter-form input[type="text"],
-        .filter-form input[type="date"],
         .filter-form select {
-            padding: 12px;
+            padding: 10px;
             border-radius: var(--border-radius);
             border: 1px solid #ddd;
             font-size: 14px;
             flex: 1;
-            min-width: 200px;
-            max-width: 250px;
+            min-width: 180px;
         }
 
         .filter-form button,
-        .email-link {
-            padding: 12px 20px;
+        .btn-link {
+            padding: 10px 15px;
             border: none;
             border-radius: var(--border-radius);
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 500;
             font-size: 14px;
             transition: var(--transition);
+            text-align: center;
         }
 
         .filter-form button {
@@ -155,20 +155,35 @@
 
         .filter-form button:hover {
             background-color: #2980b9;
-            transform: translateY(-2px);
         }
 
-        .email-link {
+        .btn-link {
             background-color: #7f8c8d;
             color: var(--light-text);
             text-decoration: none;
             display: inline-block;
-            text-align: center;
         }
 
-        .email-link:hover {
+        .btn-link:hover {
             background-color: #636e72;
-            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #219653;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
         }
 
         .application-count {
@@ -179,34 +194,79 @@
             color: var(--primary-color);
         }
 
+        /* Bulk actions bar */
+        .bulk-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 25px;
+        }
+
+        .bulk-actions select {
+            padding: 10px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ddd;
+        }
+
+        .bulk-actions button {
+            padding: 10px 15px;
+            background-color: var(--accent-color);
+            color: var(--light-text);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .bulk-actions button:hover {
+            background-color: #16a085;
+        }
+
+        .bulk-actions button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .select-all-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         /* Applications list */
         .applications-list {
             list-style: none;
             padding: 0;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-            gap: 25px;
-            width: 100%;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
         }
 
         .application-item {
             background-color: var(--light-text);
             border-radius: var(--border-radius);
-            padding: 25px;
+            padding: 20px;
             box-shadow: var(--box-shadow);
-            transition: var(--transition);
             position: relative;
+            border-left: 3px solid transparent;
         }
 
         .application-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .application-item h3 {
             margin: 0 0 15px;
             color: var(--primary-color);
             font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .application-item p {
@@ -216,19 +276,32 @@
         }
 
         .unseen {
-            background-color: #e6f7ff;
-            border-left: 5px solid var(--secondary-color);
-            transition: background-color 1s ease;
+            border-left-color: var(--secondary-color);
+            background-color: #f0f7fb;
+        }
+
+        .rejected {
+            border-left-color: var(--danger-color);
+            background-color: #fdf0f0;
         }
 
         .notification-dot {
             position: absolute;
             top: 15px;
             right: 15px;
-            width: 12px;
-            height: 12px;
-            background: #e74c3c;
+            width: 10px;
+            height: 10px;
+            background: var(--danger-color);
             border-radius: 50%;
+        }
+
+        .select-checkbox {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
         }
 
         /* Status form */
@@ -251,19 +324,17 @@
             margin-bottom: 12px;
             border-radius: var(--border-radius);
             border: 1px solid #ddd;
-            font-size: 14px;
         }
 
         .status-form button {
+            width: 100%;
+            padding: 10px;
             background-color: var(--accent-color);
-            color: var(--light-text);
-            padding: 10px 15px;
+            color: white;
             border: none;
             border-radius: var(--border-radius);
             cursor: pointer;
-            font-weight: 600;
             transition: var(--transition);
-            width: 100%;
         }
 
         .status-form button:hover {
@@ -273,112 +344,103 @@
         /* Action links */
         .action-links {
             display: flex;
-            flex-wrap: wrap;
             gap: 10px;
             margin-top: 15px;
         }
 
-        .action-links a {
+        .action-links a, 
+        .action-links button {
             flex: 1;
-            padding: 10px 15px;
-            background-color: var(--secondary-color);
-            color: var(--light-text);
+            padding: 10px;
+            color: white;
             text-decoration: none;
             border-radius: var(--border-radius);
             text-align: center;
             font-weight: 500;
             font-size: 14px;
+            border: none;
+            cursor: pointer;
             transition: var(--transition);
+        }
+
+        .action-links a {
+            background-color: var(--secondary-color);
         }
 
         .action-links a:hover {
             background-color: #2980b9;
-            transform: translateY(-2px);
         }
 
-        .action-links a:last-child {
+        .action-links a:last-of-type {
             background-color: #7f8c8d;
         }
 
-        .action-links a:last-child:hover {
+        .action-links a:last-of-type:hover {
             background-color: #636e72;
         }
 
         /* Custom Question Answers */
         .custom-answers {
-    margin-top: 15px;
-    padding-top: 10px;
-    border-top: 1px solid #eee;
-}
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
 
-.custom-answers-toggle {
-    color: var(--primary-color);
-    margin-bottom: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 10px;
-    background-color: #f0f3f6;
-    border-radius: var(--border-radius);
-    transition: var(--transition);
-}
+        .custom-answers-toggle {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+            background-color: #f0f3f6;
+            border-radius: var(--border-radius);
+        }
 
-.custom-answers-toggle:hover {
-    background-color: #e6ebf0;
-}
+        .custom-answers-toggle:hover {
+            background-color: #e6ebf0;
+        }
 
-.toggle-icon {
-    font-size: 12px;
-    transition: transform 0.2s ease;
-}
+        .answers-container {
+            max-height: 300px;
+            overflow-y: auto;
+        }
 
-.answers-container {
-    max-height: 300px;
-    overflow-y: auto;
-    transition: max-height 0.3s ease;
-}
+        .answer-item {
+            background-color: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: var(--border-radius);
+            border-left: 3px solid var(--secondary-color);
+        }
 
-.answer-item {
-    background-color: #f8f9fa;
-    padding: 10px 12px;
-    margin-bottom: 8px;
-    border-radius: var(--border-radius);
-    border-left: 3px solid var(--secondary-color);
-}
+        .question-text {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
 
-.answer-item p {
-    margin: 5px 0;
-}
+        .answer-text,
+        .file-answer a {
+            color: #333;
+        }
 
-.question-text {
-    font-weight: 600;
-    color: var(--primary-color);
-}
+        .file-answer a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
 
-.answer-text {
-    color: #333;
-}
+        .file-answer a:hover {
+            text-decoration: underline;
+        }
 
-.file-answer a {
-    color: var(--secondary-color);
-    text-decoration: none;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-}
-
-.file-answer a:hover {
-    text-decoration: underline;
-}
-
-.no-answers {
-    font-style: italic;
-    color: #777;
-    padding: 5px 0;
-}
-       
+        .no-answers {
+            font-style: italic;
+            color: #777;
+            padding: 5px 0;
+        }
 
         /* Footer styles */
         footer {
@@ -389,37 +451,102 @@
             margin-top: auto;
         }
 
-        /* Responsive styling */
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                padding: 15px;
-            }
-
-            .logo {
-                margin-bottom: 15px;
-            }
-
-            nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
-                margin-bottom: 10px;
-            }
-
-            .filter-form {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .filter-form input,
-            .filter-form select,
-            .filter-form button,
-            .filter-form .email-link {
-                width: 100%;
-                max-width: 100%;
-            }
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            margin-left: 10px;
         }
-        
+
+        .status-pending {
+            background-color: var(--warning-color);
+        }
+
+        .status-reviewing {
+            background-color: var(--secondary-color);
+        }
+
+        .status-shortlisted {
+            background-color: var(--accent-color);
+        }
+
+        .status-rejected {
+            background-color: var(--danger-color);
+        }
+
+        .status-hired {
+            background-color: var(--success-color);
+        }
+
+        /* Sort dropdown */
+        .sort-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .modal h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .modal p {
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .modal-buttons button,
+        .modal-buttons .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            color: white;
+        }
+
+        .cancel-btn {
+            background-color: #95a5a6;
+        }
+
+        .confirm-btn {
+            background-color: var(--danger-color);
+        }
+
+        /* Messages */
         .messages {
             position: fixed;
             top: 20px;
@@ -432,23 +559,22 @@
             background-color: #333;
             color: white;
             padding: 12px 15px;
-            margin: 10px 0;
+            margin-bottom: 10px;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
-            position: relative;
-            animation: slideIn 0.5s ease;
+            animation: slideIn 0.3s ease;
         }
 
         .alert-success {
-            background-color: var(--accent-color);
+            background-color: var(--success-color);
         }
 
         .alert-error {
-            background-color: #e74c3c;
+            background-color: var(--danger-color);
         }
 
         .alert-warning {
-            background-color: #f39c12;
+            background-color: var(--warning-color);
         }
 
         .alert-info {
@@ -465,28 +591,42 @@
                 opacity: 1;
             }
         }
+
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .filter-form,
+            .bulk-actions {
+                flex-direction: column;
+            }
+
+            .sort-container {
+                margin-left: 0;
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .applications-list {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
     <header>
-        {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-        <script>
-            // Auto-hide messages after 5 seconds
-            setTimeout(function() {
-                const messageElements = document.querySelectorAll('.messages .alert');
-                messageElements.forEach(function(element) {
-                    element.style.display = 'none';
-                });
-            }, 5000);
-        </script>
-        {% endif %}
         <div class="logo">
             <img src="{% static 'images/logo.png' %}" alt="Career Edge Logo">
             <nav>
@@ -500,6 +640,25 @@
         </div>
     </header>
 
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    <script>
+        // Auto-hide messages after 5 seconds
+        setTimeout(function() {
+            const messageElements = document.querySelectorAll('.messages .alert');
+            messageElements.forEach(function(element) {
+                element.style.display = 'none';
+            });
+        }, 5000);
+    </script>
+    {% endif %}
+
     <main>
         <h1 class="page-title">Job Applications for {{ job.title }}</h1>
        
@@ -512,29 +671,63 @@
                     <option value="{{ key }}" {% if status_query == key %}selected{% endif %}>{{ label }}</option>
                 {% endfor %}
             </select>
-            <button type="submit">Filter</button>
-            <a href="?" class="email-link">Clear</a>
-            <a href="{% url 'export_job_applications' job.id %}" class="email-link" style="background-color: #27ae60;">Download Excel</a>
+            <div class="sort-container">
+                <label for="sort">Sort by:</label>
+                <select name="sort" id="sort" onchange="this.form.submit()">
+                    <option value="-created_at" {% if sort_by == '-created_at' %}selected{% endif %}>Date (Newest)</option>
+                    <option value="created_at" {% if sort_by == 'created_at' %}selected{% endif %}>Date (Oldest)</option>
+                    <option value="status" {% if sort_by == 'status' %}selected{% endif %}>Status (A-Z)</option>
+                    <option value="-status" {% if sort_by == '-status' %}selected{% endif %}>Status (Z-A)</option>
+                    <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Name (A-Z)</option>
+                    <option value="-name" {% if sort_by == '-name' %}selected{% endif %}>Name (Z-A)</option>
+                </select>
+            </div>
+            <button type="submit">Apply Filters</button>
+            <a href="?" class="btn-link">Clear</a>
+            <a href="{% url 'export_job_applications' job.id %}?{{ request.GET.urlencode }}" class="btn-link btn-success">Download Excel</a>
         </form>
 
         <div class="application-count">
             {{ applications.count }} application{{ applications.count|pluralize }} found
         </div>
 
+        <!-- Bulk Actions Bar -->
+        <form method="post" action="{% url 'bulk_update_applications' %}" id="bulk-actions-form" class="bulk-actions">
+            {% csrf_token %}
+            <input type="hidden" name="job_id" value="{{ job.id }}">
+            <div class="select-all-container">
+                <input type="checkbox" id="select-all" name="select-all">
+                <label for="select-all">Select All</label>
+            </div>
+            <select name="bulk_status" required>
+                <option value="">Change Status To...</option>
+                {% for key, label in status_choices %}
+                    <option value="{{ key }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" id="bulk-update-btn" disabled>Update Selected</button>
+        </form>
+
         <ul class="applications-list">
             {% for application in applications %}
-            <li class="application-item {% if application.id in unseen_ids %}unseen{% endif %}">
+            <li class="application-item {% if application.id in unseen_ids %}unseen{% endif %} {% if application.status == 'rejected' %}rejected{% endif %}" data-status="{{ application.status }}">
+                <input type="checkbox" class="select-checkbox" name="selected_applications" value="{{ application.id }}" form="bulk-actions-form">
+                
                 {% if not application.is_seen_by_provider %}
                     <span class="notification-dot"></span>
                 {% endif %}
-                <h3>{{ application.name }}</h3>
+                
+                <h3>
+                    {{ application.name }}
+                    <span class="status-badge status-{{ application.status }}">{{ application.get_status_display }}</span>
+                </h3>
+                
                 <p><strong>Skills:</strong> {{ application.skills }}</p>
                 <p><strong>Qualification:</strong> {{ application.qualifications }}</p>
                 <p><strong>Email:</strong> {{ application.email }}</p>
                 <p><strong>Phone:</strong> {{ application.phone }}</p>
                 <p><strong>Experience:</strong> {{ application.experience }}</p>
                 <p><strong>Applied On:</strong> {{ application.created_at|date:"d M Y, h:i A" }}</p>
-                <p><strong>Status:</strong> {{ application.get_status_display }}</p>
 
                 <!-- Custom Questions & Answers Section -->
                 <div class="custom-answers">
@@ -579,6 +772,7 @@
                     </div>
                 </div>
 
+                {% if application.status != 'rejected' %}
                 <form method="post" action="{% url 'update_application_status' application.id %}" class="status-form">
                     {% csrf_token %}
                     <label for="status_{{ application.id }}">Change Status:</label>
@@ -594,6 +788,12 @@
                     <a href="{{ application.resume.url }}" download>Download Resume</a>
                     <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ application.email }}" target="_blank">Email via Gmail</a>
                 </div>
+                {% else %}
+                <div class="action-links">
+                    <a href="{{ application.resume.url }}" download>Download Resume</a>
+                    <button class="btn-danger" onclick="openDeleteModal('{{ application.id }}')">Delete Application</button>
+                </div>
+                {% endif %}
             </li>
             {% empty %}
             <li class="application-item">
@@ -604,9 +804,22 @@
         </ul>
     </main>
 
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h3>Delete Application</h3>
+            <p>Are you sure you want to permanently delete this application? This action cannot be undone.</p>
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="closeDeleteModal()">Cancel</button>
+                <a href="#" id="delete-confirmation-link" class="confirm-btn btn">Delete</a>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <p>&copy; 2025 Career Edge. All rights reserved.</p>
     </footer>
+
     <script>
         // Initialize collapsible custom answers sections
         document.addEventListener('DOMContentLoaded', function() {
@@ -631,7 +844,54 @@
                     }
                 });
             });
+
+            // Setup select all functionality
+            const selectAllCheckbox = document.getElementById('select-all');
+            const applicationCheckboxes = document.querySelectorAll('.select-checkbox');
+            const bulkUpdateBtn = document.getElementById('bulk-update-btn');
+            
+            // Select all checkbox functionality
+            selectAllCheckbox.addEventListener('change', function() {
+                applicationCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateBulkActionButton();
+            });
+            
+            // Individual checkbox functionality
+            applicationCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateBulkActionButton();
+                    // Check if all boxes are checked
+                    const allChecked = Array.from(applicationCheckboxes).every(c => c.checked);
+                    selectAllCheckbox.checked = allChecked;
+                });
+            });
+            
+            // Enable/disable bulk update button based on selections
+            function updateBulkActionButton() {
+                const anyChecked = Array.from(applicationCheckboxes).some(c => c.checked);
+                bulkUpdateBtn.disabled = !anyChecked;
+            }
         });
+
+        // Modal functions
+        function openDeleteModal(applicationId) {
+            document.getElementById('delete-confirmation-link').href = "{% url 'delete_application' 0 %}".replace('0', applicationId);
+            document.getElementById('deleteModal').style.display = 'block';
+        }
+        
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+        }
+        
+        // Close modal if clicked outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('deleteModal');
+            if (event.target == modal) {
+                closeDeleteModal();
+            }
+        }
     </script>
 </body>
 </html>

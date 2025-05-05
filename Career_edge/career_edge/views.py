@@ -561,17 +561,19 @@ def apply_for_job(request, job_id):
 def user_logout(request):
     logout(request)
     return redirect('home')
-
 @login_required
 def view_job_applications(request, job_id):
     job = get_object_or_404(Job, id=job_id)
     applications = JobApplication.objects.filter(job=job)
     
+    # Get all query parameters
     skill_query = request.GET.get('skill', '')
     qualification_query = request.GET.get('qualification', '')
     date_query = request.GET.get('date', '')
     status_query = request.GET.get('status', '')
+    sort_by = request.GET.get('sort', '-created_at')  # Default sort by newest
     
+    # Apply filters
     if skill_query:
         applications = applications.filter(skills__icontains=skill_query)
     if qualification_query:
@@ -583,7 +585,37 @@ def view_job_applications(request, job_id):
     if status_query:
         applications = applications.filter(status=status_query)
     
-    applications = applications.order_by('-created_at')
+    # Apply sorting
+    valid_sort_fields = ['name', '-name', 'created_at', '-created_at', 'status', '-status']
+    
+    if sort_by in valid_sort_fields:
+        applications = applications.order_by(sort_by)
+    else:
+        applications = applications.order_by('-created_at')  # Default sorting
+    
+    # Process bulk actions if submitted
+    if request.method == 'POST':
+        action = request.POST.get('bulk_action')
+        selected_ids = request.POST.getlist('selected_applications')
+        
+        if selected_ids and action:
+            selected_applications = JobApplication.objects.filter(id__in=selected_ids)
+            
+            if action == 'delete':
+                # Only allow deletion of rejected applications
+                rejected_apps = selected_applications.filter(status='rejected')
+                rejected_count = rejected_apps.count()
+                rejected_apps.delete()
+                if rejected_count > 0:
+                    messages.success(request, f"{rejected_count} rejected application(s) have been deleted.")
+                if rejected_count < len(selected_ids):
+                    messages.warning(request, f"{len(selected_ids) - rejected_count} application(s) were not deleted because they are not rejected.")
+            
+            elif action in dict(JobApplication.STATUS_CHOICES):
+                selected_applications.update(status=action)
+                messages.success(request, f"Status updated for {len(selected_ids)} application(s).")
+        
+        return redirect('view_job_applications', job_id=job.id)
     
     # Unseen application popup
     unseen_applications = JobApplication.objects.filter(job=job, is_seen_by_provider=False)
@@ -592,7 +624,7 @@ def view_job_applications(request, job_id):
     
     # Show notification if there are unseen applications
     if unseen_count > 0:
-        messages.success(request, f"You have {unseen_count} new application!")
+        messages.success(request, f"You have {unseen_count} new application(s)!")
     
     # Mark applications as seen after showing the notification
     unseen_applications.update(is_seen_by_provider=True)
@@ -603,11 +635,12 @@ def view_job_applications(request, job_id):
         'skill_query': skill_query,
         'qualification_query': qualification_query,
         'date_query': date_query,
+        'status_query': status_query,
+        'sort_by': sort_by,  # Pass the sort parameter to the template
         'status_choices': JobApplication.STATUS_CHOICES,
-        'STATUS_CHOICES': JobApplication.STATUS_CHOICES,
         'unseen_ids': unseen_ids,
     })
-    
+
 @require_POST
 @login_required
 def update_application_status(request, application_id):
@@ -616,8 +649,40 @@ def update_application_status(request, application_id):
     if status in dict(JobApplication.STATUS_CHOICES):
         application.status = status
         application.save()
-        messages.success(request, "Application status updated!!")
+        messages.success(request, "Application status updated successfully!")
     return redirect('view_job_applications', job_id=application.job.id)
+@require_POST
+@login_required
+def bulk_update_applications(request):
+    job_id = request.POST.get('job_id')
+    job = get_object_or_404(Job, id=job_id)
+    
+    # Get selected applications and new status
+    selected_ids = request.POST.getlist('selected_applications')
+    new_status = request.POST.get('bulk_status')
+    
+    if selected_ids and new_status in dict(JobApplication.STATUS_CHOICES):
+        # Update all selected applications
+        updated_count = JobApplication.objects.filter(id__in=selected_ids).update(status=new_status)
+        messages.success(request, f"Status updated for {updated_count} application(s).")
+    else:
+        messages.error(request, "No applications selected or invalid status.")
+    
+    return redirect('view_job_applications', job_id=job_id)
+@login_required
+def delete_application(request, application_id):
+    application = get_object_or_404(JobApplication, id=application_id)
+    
+    if application.status == 'rejected':
+        job_id = application.job.id  # capture job_id before deleting
+        application.delete()
+        messages.success(request, "Rejected application deleted successfully!")
+        return redirect('view_job_applications', job_id=job_id)
+    else:
+        messages.error(request, "Only rejected applications can be deleted!")
+        return redirect('view_job_applications', job_id=application.job.id)
+
+
 # Delete a job view
 @login_required
 def delete_job(request, job_id):
@@ -1056,7 +1121,33 @@ def recommended_jobs(request):
 @login_required
 def export_job_applications(request, job_id):
     job = get_object_or_404(Job, id=job_id)
-    applications = JobApplication.objects.filter(job=job).order_by('-created_at')
+    applications = JobApplication.objects.filter(job=job)
+    
+    # Apply the same filters as in the view
+    skill_query = request.GET.get('skill', '')
+    qualification_query = request.GET.get('qualification', '')
+    date_query = request.GET.get('date', '')
+    status_query = request.GET.get('status', '')
+    sort_by = request.GET.get('sort', '-created_at')
+    
+    # Apply filters
+    if skill_query:
+        applications = applications.filter(skills__icontains=skill_query)
+    if qualification_query:
+        applications = applications.filter(qualifications__icontains=qualification_query)
+    if date_query:
+        parsed_date = parse_date(date_query)
+        if parsed_date:
+            applications = applications.filter(created_at__date=parsed_date)
+    if status_query:
+        applications = applications.filter(status=status_query)
+    
+    # Apply sorting
+    valid_sort_fields = ['name', '-name', 'created_at', '-created_at', 'status', '-status']
+    if sort_by in valid_sort_fields:
+        applications = applications.order_by(sort_by)
+    else:
+        applications = applications.order_by('-created_at')
     
     # Create a workbook and add a worksheet
     workbook = xlwt.Workbook(encoding='utf-8')
@@ -1066,9 +1157,24 @@ def export_job_applications(request, job_id):
     title_style = xlwt.easyxf('font: bold on, height 280; align: wrap on, vert centre, horiz center')
     worksheet.write_merge(0, 0, 0, 10, f'Job Applications for: {job.title}', title_style)
     
-    # Add date
+    # Add date and filter information
     date_style = xlwt.easyxf('font: height 180; align: wrap on, vert centre, horiz right')
     worksheet.write_merge(1, 1, 8, 10, f'Generated on: {datetime.now().strftime("%d %b %Y, %H:%M")}', date_style)
+    
+    filter_info = []
+    if skill_query:
+        filter_info.append(f"Skills: {skill_query}")
+    if qualification_query:
+        filter_info.append(f"Qualification: {qualification_query}")
+    if status_query:
+        status_display = dict(JobApplication.STATUS_CHOICES).get(status_query, status_query)
+        filter_info.append(f"Status: {status_display}")
+    if date_query:
+        filter_info.append(f"Date: {date_query}")
+        
+    if filter_info:
+        filter_style = xlwt.easyxf('font: italic on; align: wrap on, vert centre, horiz left')
+        worksheet.write_merge(2, 2, 0, 10, f'Filters applied: {", ".join(filter_info)}', filter_style)
     
     # Column headers
     header_style = xlwt.easyxf(
@@ -1078,12 +1184,14 @@ def export_job_applications(request, job_id):
     )
     columns = ['Name', 'Email', 'Phone', 'Skills', 'Qualification', 'Experience', 'Status', 'Applied On', 'Resume']
     
+    row_offset = 4  # Start data rows after headers with filter info
+    
     for col_num, column_title in enumerate(columns):
-        worksheet.write(3, col_num, column_title, header_style)
+        worksheet.write(row_offset-1, col_num, column_title, header_style)
         worksheet.col(col_num).width = 5500  # Set column width
     
     # Sheet body
-    row_num = 4
+    row_num = row_offset
     font_style = xlwt.easyxf('align: wrap on, vert centre')
     link_style = xlwt.easyxf('font: color blue, underline single; align: wrap on, vert centre')
     
@@ -1098,27 +1206,37 @@ def export_job_applications(request, job_id):
         q_col_start = 9
         for idx, question in enumerate(custom_questions):
             col_num = q_col_start + idx
-            worksheet.write(3, col_num, f"Q: {question.question_text}", header_style)
+            worksheet.write(row_offset-1, col_num, f"Q: {question.question_text}", header_style)
             worksheet.col(col_num).width = 7500  # Set wider column width for questions/answers
+    
+    # Color styles for different statuses
+    status_styles = {
+        'pending': xlwt.easyxf('pattern: pattern solid, fore_colour light_yellow; align: wrap on, vert centre'),
+        'shortlisted': xlwt.easyxf('pattern: pattern solid, fore_colour light_green; align: wrap on, vert centre'),
+        'interview': xlwt.easyxf('pattern: pattern solid, fore_colour light_blue; align: wrap on, vert centre'),
+        'rejected': xlwt.easyxf('pattern: pattern solid, fore_colour rose; align: wrap on, vert centre'),
+        'hired': xlwt.easyxf('pattern: pattern solid, fore_colour bright_green; align: wrap on, vert centre'),
+    }
     
     # Now populate the data
     for application in applications:
-        worksheet.write(row_num, 0, application.name, font_style)
-        worksheet.write(row_num, 1, application.email, font_style)
-        worksheet.write(row_num, 2, application.phone, font_style)
-        worksheet.write(row_num, 3, application.skills, font_style)
-        worksheet.write(row_num, 4, application.qualifications, font_style)
-        worksheet.write(row_num, 5, application.experience, font_style)
-        worksheet.write(row_num, 6, application.get_status_display(), font_style)
-        worksheet.write(row_num, 7, application.created_at.strftime("%d %b %Y, %H:%M"), font_style)
+        # Choose style based on status
+        current_style = status_styles.get(application.status, font_style)
+        
+        worksheet.write(row_num, 0, application.name, current_style)
+        worksheet.write(row_num, 1, application.email, current_style)
+        worksheet.write(row_num, 2, application.phone, current_style)
+        worksheet.write(row_num, 3, application.skills, current_style)
+        worksheet.write(row_num, 4, application.qualifications, current_style)
+        worksheet.write(row_num, 5, application.experience, current_style)
+        worksheet.write(row_num, 6, application.get_status_display(), current_style)
+        worksheet.write(row_num, 7, application.created_at.strftime("%d %b %Y, %H:%M"), current_style)
         
         if application.resume:
             resume_url = request.build_absolute_uri(application.resume.url)
             worksheet.write(row_num, 8, xlwt.Formula(f'HYPERLINK("{resume_url}";"View Resume")'), link_style)
         else:
-            worksheet.write(row_num, 8, "No resume", font_style)
-            
-              # Empty column for notes
+            worksheet.write(row_num, 8, "No resume", current_style)
         
         # Add the custom question answers
         if custom_questions.exists():
@@ -1135,34 +1253,37 @@ def export_job_applications(request, job_id):
                     # Format the answer based on question type
                     if question.question_type == 'text':
                         answer_text = answer.text_answer or "N/A"
+                        worksheet.write(row_num, col_num, answer_text, current_style)
                     elif question.question_type == 'yesno':
                         answer_text = "Yes" if answer.boolean_answer else "No"
+                        worksheet.write(row_num, col_num, answer_text, current_style)
                     elif question.question_type == 'file':
                         if answer.file_answer:
                             file_url = request.build_absolute_uri(answer.file_answer.url)
                             worksheet.write(row_num, col_num, xlwt.Formula(f'HYPERLINK("{file_url}";"Download File")'), link_style)
-                            continue  # Skip the regular write below for file answers
                         else:
-                            answer_text = "No file uploaded"
+                            worksheet.write(row_num, col_num, "No file uploaded", current_style)
                     elif question.question_type == 'link':
                         if answer.link_answer:
                             worksheet.write(row_num, col_num, xlwt.Formula(f'HYPERLINK("{answer.link_answer}";"View Link")'), link_style)
-                            continue  # Skip the regular write below for link answers
                         else:
-                            answer_text = "No link provided"
+                            worksheet.write(row_num, col_num, "No link provided", current_style)
                     else:
-                        answer_text = "Unknown answer type"
+                        worksheet.write(row_num, col_num, "Unknown answer type", current_style)
                         
-                    worksheet.write(row_num, col_num, answer_text, font_style)
-                    
                 except JobApplicationAnswer.DoesNotExist:
-                    worksheet.write(row_num, col_num, "Not answered", font_style)
+                    worksheet.write(row_num, col_num, "Not answered", current_style)
                 
         row_num += 1
     
-    # Create HTTP response
+    # Create HTTP response with filter indicators in filename
+    filename_parts = [job.title]
+    if status_query:
+        filename_parts.append(dict(JobApplication.STATUS_CHOICES).get(status_query, status_query))
+    filename = f"{'_'.join(filename_parts)}_applications_{datetime.now().strftime('%Y%m%d')}.xls"
+    
     response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = f'attachment; filename="{job.title}_applications_{datetime.now().strftime("%Y%m%d")}.xls"'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
     workbook.save(response)
 
     return response
