@@ -127,6 +127,33 @@
             transition: var(--transition);
         }
 
+        /* Password input container for positioning the toggle */
+        .password-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .password-container input {
+            margin-bottom: 0;
+            padding-right: 45px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 30%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+            user-select: none;
+            font-size: 18px;
+            transition: var(--transition);
+        }
+
+        .password-toggle:hover {
+            color: var(--secondary-color);
+        }
+
         form input[type="text"]:focus,
         form input[type="password"]:focus {
             border-color: var(--secondary-color);
@@ -266,7 +293,10 @@
             <input type="text" id="username" name="username" placeholder="Enter your username">
             
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password">
+            <div class="password-container">
+                <input type="password" id="password" name="password" placeholder="Enter your password">
+                <span class="password-toggle" onclick="togglePassword()">Show</span>
+            </div>
             
             <button type="submit">Login</button>
             
@@ -283,5 +313,20 @@
     <footer>
         <p>&copy; 2025 Career Edge. All rights reserved.</p>
     </footer>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.querySelector('.password-toggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = 'Hide';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = 'Show';
+            }
+        }
+    </script>
 </body>
 </html>

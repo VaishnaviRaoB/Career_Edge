@@ -1009,7 +1009,6 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import render
 from .models import Job, JobSeeker
-
 @login_required
 def recommended_jobs(request):
     try:
@@ -1046,8 +1045,13 @@ def recommended_jobs(request):
             elif job_seeker.experience_years >= 2:
                 experience_level = "Mid-level"
 
-        # Get all jobs
-        all_jobs = Job.objects.all().order_by('-date_posted')
+        # Get current date
+        today = date.today()
+        
+        # Get all active jobs (exclude closed jobs based on last_date_to_apply)
+        all_jobs = Job.objects.filter(
+            models.Q(last_date_to_apply__isnull=True) | models.Q(last_date_to_apply__gte=today)
+        ).order_by('-date_posted')
         
         # Get jobs that the user has already applied for
         applied_job_ids = JobApplication.objects.filter(applicant=request.user).values_list('job_id', flat=True)
