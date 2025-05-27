@@ -8,8 +8,8 @@ from django.contrib import messages
 from django.views import View
 from .models import Job, JobApplication, JobCustomQuestion, JobApplicationAnswer
 from django.db import transaction
-from .models import Job, JobCustomQuestion
-from .forms import JobForm, CustomQuestionFormSet
+from .models import Job, JobCustomQuestion, validate_phone_number
+from .forms import JobForm, CustomQuestionFormSet, JobApplicationForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.utils import timezone
@@ -28,6 +28,12 @@ from django.db.models import Q
 from django.db import models
 from django.views.decorators.http import require_POST
 from django.urls import reverse
+
+from django.contrib import messages
+from django.core.paginator import Paginator
+import logging
+import requests
+
 # Home page view
 def home(request):
     return render(request, 'home.html')
@@ -477,7 +483,6 @@ def view_jobs(request):
         'jobs': jobs,
         'query': query,
     })
-# Apply for a job view
 @login_required
 def apply_for_job(request, job_id):
     job = get_object_or_404(Job, id=job_id)
@@ -490,70 +495,129 @@ def apply_for_job(request, job_id):
 
     if already_applied:
         messages.warning(request, "You have already applied for this job.")
-        return redirect('seeker_dashboard')  # or show the same apply page with a message
+        return redirect('seeker_dashboard')
 
     if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-        skills = request.POST.get('skills')
-        qualifications = request.POST.get('qualification')
-        resume = request.FILES.get('resume')
-        experience = request.POST.get('experience')
-
-        # Create the application
-        application = JobApplication.objects.create(
-            job=job,
-            applicant=request.user,
-            name=name,
-            email=email,
-            phone=phone,
-            skills=skills,
-            qualifications=qualifications,
-            resume=resume,
-            experience=experience,
-        )
+        # Create form instance with POST data
+        form = JobApplicationForm(request.POST, request.FILES)
         
-        # Process custom questions
+        # Manual validation for required fields
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        skills = request.POST.get('skills', '').strip()
+        qualifications = request.POST.get('qualification', '').strip()
+        resume = request.FILES.get('resume')
+        experience = request.POST.get('experience', '').strip()
+        
+        errors = []
+        
+        # Validate required fields
+        if not name:
+            errors.append("Name is required.")
+        if not email:
+            errors.append("Email is required.")
+        if not phone:
+            errors.append("Phone number is required.")
+        if not skills:
+            errors.append("Skills are required.")
+        if not resume:
+            errors.append("Resume is required.")
+        if not experience:
+            errors.append("Experience is required.")
+        
+        # Validate phone number specifically
+        if phone:
+            try:
+                validate_phone_number(phone)
+            except ValidationError as e:
+                errors.append(f"Phone validation error: {e.message}")
+        
+        # Validate custom questions
         for question in custom_questions:
-            answer = None
-            
-            if question.question_type == 'text':
+            if question.is_required:
                 answer = request.POST.get(f'question_{question.id}')
-                JobApplicationAnswer.objects.create(
-                    application=application,
-                    question=question,
-                    text_answer=answer
-                )
-            
-            elif question.question_type == 'yesno':
-                answer_value = request.POST.get(f'question_{question.id}')
-                boolean_answer = True if answer_value == 'True' else False if answer_value == 'False' else None
-                JobApplicationAnswer.objects.create(
-                    application=application,
-                    question=question,
-                    boolean_answer=boolean_answer
-                )
-            
-            elif question.question_type == 'file':
                 file_answer = request.FILES.get(f'question_{question.id}')
-                if file_answer:
-                    JobApplicationAnswer.objects.create(
-                        application=application,
-                        question=question,
-                        file_answer=file_answer
-                    )
-            
-            elif question.question_type == 'link':
-                link_answer = request.POST.get(f'question_{question.id}')
-                JobApplicationAnswer.objects.create(
-                    application=application,
-                    question=question,
-                    link_answer=link_answer
-                )
+                
+                if question.question_type == 'file':
+                    if not file_answer:
+                        errors.append(f"Question '{question.question_text}' is required.")
+                else:
+                    if not answer or not answer.strip():
+                        errors.append(f"Question '{question.question_text}' is required.")
+        
+        if errors:
+            for error in errors:
+                messages.error(request, error)
+            return render(request, 'apply.html', {
+                'job': job, 
+                'custom_questions': custom_questions,
+                'form_data': request.POST  # Pass back form data to preserve user input
+            })
 
-        messages.success(request, "Application submitted successfully.")
-        return redirect('seeker_dashboard')
+        try:
+            # Create the application
+            application = JobApplication.objects.create(
+                job=job,
+                applicant=request.user,
+                name=name,
+                email=email,
+                phone=phone,
+                skills=skills,
+                qualifications=qualifications,
+                resume=resume,
+                experience=experience,
+            )
+            
+            # Process custom questions (same as before)
+            for question in custom_questions:
+                if question.question_type == 'text':
+                    answer = request.POST.get(f'question_{question.id}')
+                    if answer:  # Only create if there's an answer
+                        JobApplicationAnswer.objects.create(
+                            application=application,
+                            question=question,
+                            text_answer=answer
+                        )
+                
+                elif question.question_type == 'yesno':
+                    answer_value = request.POST.get(f'question_{question.id}')
+                    if answer_value:
+                        boolean_answer = True if answer_value == 'True' else False
+                        JobApplicationAnswer.objects.create(
+                            application=application,
+                            question=question,
+                            boolean_answer=boolean_answer
+                        )
+                
+                elif question.question_type == 'file':
+                    file_answer = request.FILES.get(f'question_{question.id}')
+                    if file_answer:
+                        JobApplicationAnswer.objects.create(
+                            application=application,
+                            question=question,
+                            file_answer=file_answer
+                        )
+                
+                elif question.question_type == 'link':
+                    link_answer = request.POST.get(f'question_{question.id}')
+                    if link_answer:
+                        JobApplicationAnswer.objects.create(
+                            application=application,
+                            question=question,
+                            link_answer=link_answer
+                        )
+
+            messages.success(request, "Application submitted successfully.")
+            return redirect('seeker_dashboard')
+            
+        except ValidationError as e:
+            messages.error(request, f"Validation error: {str(e)}")
+            return render(request, 'apply.html', {
+                'job': job, 
+                'custom_questions': custom_questions,
+                'form_data': request.POST
+            })
 
     return render(request, 'apply.html', {'job': job, 'custom_questions': custom_questions})
 # User logout view
@@ -1346,3 +1410,183 @@ def provider_delete_account(request):
         return redirect('home')
 
     return redirect('edit_company_profile')
+
+
+logger = logging.getLogger(__name__)
+
+APP_ID = 'a85ff09d'
+APP_KEY = 'e2e9029fc58f76be06e317d85018ab1a'
+
+def fetch_adzuna_jobs(keyword="developer", location="India", results=10):
+    """Fetch jobs from Adzuna API with error handling"""
+    url = "https://api.adzuna.com/v1/api/jobs/in/search/1"
+    
+    params = {
+        "app_id": APP_ID,
+        "app_key": APP_KEY,
+        "what": keyword,
+        "where": location,
+        "results_per_page": min(results, 50),  # API limit is 50
+        "content-type": "application/json"
+    }
+    
+    try:
+        response = requests.get(url, params=params, timeout=15)
+        response.raise_for_status()
+        
+        data = response.json()
+        jobs = data.get("results", [])
+        
+        print(f"API Response: Found {len(jobs)} jobs")  # Debug log
+        print(f"API URL: {response.url}")  # Debug log
+        
+        # Clean and format job data
+        formatted_jobs = []
+        for job in jobs:
+            # Handle missing company info
+            if not job.get('company'):
+                job['company'] = {'display_name': 'Company Not Specified'}
+            elif isinstance(job.get('company'), dict) and not job['company'].get('display_name'):
+                job['company']['display_name'] = 'Company Not Specified'
+            
+            # Handle missing location info
+            if not job.get('location'):
+                job['location'] = {'display_name': 'Location Not Specified'}
+            elif isinstance(job.get('location'), dict) and not job['location'].get('display_name'):
+                job['location']['display_name'] = 'Location Not Specified'
+            
+            # Format salary values - make them more readable
+            if job.get('salary_min'):
+                try:
+                    job['salary_min'] = float(job['salary_min'])
+                except (ValueError, TypeError):
+                    job['salary_min'] = None
+            if job.get('salary_max'):
+                try:
+                    job['salary_max'] = float(job['salary_max'])
+                except (ValueError, TypeError):
+                    job['salary_max'] = None
+            
+            # Clean description HTML and limit length
+            if job.get('description'):
+                import re
+                # Remove HTML tags
+                description = re.sub(r'<[^>]+>', '', job['description'])
+                # Clean up extra whitespace
+                description = ' '.join(description.split())
+                job['description'] = description
+            
+            formatted_jobs.append(job)
+        
+        return formatted_jobs, None
+    
+    except requests.exceptions.Timeout:
+        error_msg = "Request timed out. Please try again."
+        logger.error(f"Adzuna API timeout: {error_msg}")
+        return [], error_msg
+    
+    except requests.exceptions.RequestException as e:
+        error_msg = f"Network error: Unable to fetch external jobs."
+        logger.error(f"Adzuna API error: {str(e)}")
+        return [], error_msg
+    
+    except ValueError as e:
+        error_msg = "Invalid response from job service."
+        logger.error(f"Adzuna API JSON error: {str(e)}")
+        return [], error_msg
+    
+    except Exception as e:
+        error_msg = "An unexpected error occurred."
+        logger.error(f"Adzuna API unexpected error: {str(e)}")
+        return [], error_msg
+
+def external_jobs_view(request):
+    """View for displaying external jobs from Adzuna"""
+    
+    # Get filter parameters with better defaults
+    keyword = request.GET.get('keyword', '').strip()
+    location = request.GET.get('location', '').strip()
+    results_per_page = request.GET.get('results_per_page', '20')
+    
+    # Set defaults if empty
+    if not keyword:
+        keyword = 'software'  # More generic term
+    if not location:  
+        location = 'India'
+    
+    # Validate results_per_page
+    try:
+        results_per_page = int(results_per_page)
+        results_per_page = min(max(results_per_page, 5), 50)  # Between 5 and 50
+    except (ValueError, TypeError):
+        results_per_page = 20
+    
+    context = {
+        'loading': False,
+        'error': None,
+        'jobs': [],
+        'search_keyword': keyword,
+        'search_location': location,
+        'search_results_per_page': results_per_page,
+    }
+    
+    try:
+        # Fetch jobs from Adzuna
+        jobs, error = fetch_adzuna_jobs(
+            keyword=keyword,
+            location=location,
+            results=results_per_page
+        )
+        
+        if error:
+            context['error'] = error
+            messages.error(request, f"Could not load external jobs: {error}")
+        elif jobs:
+            context['jobs'] = jobs
+            messages.success(request, f"Found {len(jobs)} external job opportunities!")
+        else:
+            messages.info(request, "No external jobs found for your search criteria. Try different keywords.")
+        
+        context['loading'] = False
+    
+    except Exception as e:
+        logger.error(f"External jobs view error: {str(e)}")
+        context['error'] = "Unable to load external jobs at this time."
+        context['loading'] = False
+        messages.error(request, "Unable to load external jobs. Please try again later.")
+    
+    return render(request, "external_jobs.html", context)
+
+# Add a utility function to get popular job searches
+def get_popular_searches():
+    """Return popular job search terms for suggestions"""
+    return [
+        "Software Engineer",
+        "Data Scientist", 
+        "Product Manager",
+        "Full Stack Developer",
+        "DevOps Engineer",
+        "UI/UX Designer",
+        "Business Analyst",
+        "Digital Marketing",
+        "Python Developer",
+        "Java Developer",
+        "React Developer",
+        "Marketing Manager",
+    ]
+
+# Add location suggestions
+def get_popular_locations():
+    """Return popular location searches"""
+    return [
+        "Bangalore",
+        "Mumbai", 
+        "Delhi",
+        "Hyderabad",
+        "Chennai",
+        "Pune",
+        "Gurgaon",
+        "Noida",
+        "Kolkata",
+        "Remote",
+    ]

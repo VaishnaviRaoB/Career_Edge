@@ -458,6 +458,7 @@
         <nav>
             <ul>
                 <li><a href="{% url 'seeker_dashboard' %}">Home</a></li>
+                <li><a href="{% url 'external_jobs' %}" >External Jobs</a></li>
                 <li><a href="{% url 'saved_jobs' %}">Saved Jobs</a></li>
                 <li>
                     <a href="{% url 'my_applications' %}" class="{% if unseen_count > 0 %}has-updates{% else %}active{% endif %}">

@@ -1,0 +1,746 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>External Jobs - Career Edge</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Global Styles */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #1abc9c;
+            --light-bg: #f5f7fa;
+            --dark-text: #333;
+            --light-text: #fff;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+            --star-color: #f1c40f;
+            --notification-color: #e74c3c;
+            --external-color: #2c3e50; /* Teal color matching accent */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            background-color: var(--primary-color);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 40px;
+            margin-right: 15px;
+        }
+
+        .logo-text {
+            color: var(--light-text);
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        nav ul li {
+            margin: 0 5px;
+            position: relative;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--light-text);
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            display: block;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            background-color: var(--secondary-color);
+        }
+
+        /* Main section */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+        }
+
+        /* Message Box Styles */
+        .messages-container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto 20px;
+        }
+
+        .message-box {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            color: #155724;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .message-box.success {
+            background-color: #d4edda;
+        }
+
+        .message-box.error,
+        .message-box.warning {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .message-box.info {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        /* Dashboard Content */
+        .dashboard-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 25px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: var(--light-text);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            position: sticky;
+            top: 90px;
+            max-height: calc(100vh - 150px);
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 10px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+
+        .sidebar {
+            scrollbar-width: thin;
+            scrollbar-color: var(--secondary-color) #f1f1f1;
+        }
+
+        .sidebar h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 18px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--external-color);
+        }
+
+        .filter-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .filter-form input,
+        .filter-form select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .filter-form input:focus,
+        .filter-form select:focus {
+            outline: none;
+            border-color: var(--external-color);
+            box-shadow: 0 0 5px rgba(22, 160, 133, 0.3);
+        }
+
+        .filter-form label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .filter-form button {
+            padding: 12px;
+            background-color: var(--external-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .filter-form button:hover {
+            background-color: #148f77;
+        }
+
+        .filter-form .clear-btn {
+            background-color: #95a5a6;
+            text-align: center;
+            display: block;
+            text-decoration: none;
+            color: white;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .filter-form .clear-btn:hover {
+            background-color: #7f8c8d;
+        }
+
+        /* Content Area */
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .content-header h2 {
+            color: var(--primary-color);
+            font-size: 24px;
+            position: relative;
+        }
+
+        .content-header h2:after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--external-color);
+        }
+
+        .external-badge {
+            background-color: var(--external-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Jobs List */
+        .jobs-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .job-card {
+            background-color: var(--light-text);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+            border-left: 4px solid var(--external-color);
+        }
+
+        .job-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .job-header {
+            background: linear-gradient(135deg, var(--external-color), #148f77);
+            color: var(--light-text);
+            padding: 15px 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .job-title-info {
+            flex: 1;
+        }
+
+        .job-title {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .job-company {
+            margin-top: 5px;
+            font-size: 15px;
+            opacity: 0.9;
+        }
+
+        .external-logo {
+            background-color: rgba(255,255,255,0.2);
+            padding: 8px;
+            border-radius: 8px;
+            margin-left: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .external-icon {
+            font-size: 24px;
+            color: white;
+        }
+
+        .job-body {
+            display: flex;
+            flex: 1;
+        }
+
+        .job-details {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .job-detail-group {
+            width: 50%;
+            margin-bottom: 12px;
+        }
+
+        .job-detail-label {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .job-detail-value {
+            display: block;
+        }
+
+        .job-description {
+            width: 100%;
+            margin-top: 10px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .job-description p {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .job-actions {
+            display: flex;
+            gap: 15px;
+            padding: 15px 20px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+
+        .external-apply-btn {
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            transition: var(--transition);
+            font-weight: 500;
+            background-color: var(--external-color);
+            color: white;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .external-apply-btn:hover {
+            background-color: #148f77;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--external-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .empty-state p {
+            font-size: 18px;
+            color: #888;
+            margin-bottom: 20px;
+        }
+
+        .error-state {
+            text-align: center;
+            padding: 50px 20px;
+            background-color: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: var(--border-radius);
+            color: #e53e3e;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            padding: 20px;
+            text-align: center;
+            color: var(--light-text);
+            margin-top: auto;
+        }
+
+        /* Responsive styling */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            nav ul {
+                justify-content: center;
+                margin: 10px 0;
+            }
+
+            nav ul li {
+                margin-bottom: 5px;
+            }
+            
+            .job-body {
+                flex-direction: column;
+            }
+            
+            .job-detail-group {
+                width: 100%;
+            }
+
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="Career Edge Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'seeker_dashboard' %}">Home</a></li>
+                <li><a href="{% url 'external_jobs' %}" class="active">External Jobs</a></li>
+                <li><a href="{% url 'saved_jobs' %}">Saved Jobs</a></li>
+                <li><a href="{% url 'my_applications' %}">My Applications</a></li>
+                <li><a href="{% url 'recommended_jobs' %}">Recommended</a></li>
+                <li><a href="{% url 'seeker_profile' %}">Profile</a></li>
+                <li><a href="{% url 'user_logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="message-box {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="dashboard-container">
+            <!-- Sidebar with Filters -->
+            <div class="sidebar">
+                <h3><i class="fas fa-external-link-alt"></i> Filter External Jobs</h3>
+                <form method="get" class="filter-form">
+                    <input type="text" name="keyword" placeholder="Job title or keywords..." value="{{ current_keyword }}">
+                    <input type="text" name="location" placeholder="Location (e.g., Bangalore, Mumbai)" value="{{ current_location }}">
+                    
+                    <select name="results_per_page">
+                        <option value="10" {% if current_results == 10 %}selected{% endif %}>10 jobs</option>
+                        <option value="20" {% if current_results == 20 %}selected{% endif %}>20 jobs</option>
+                        <option value="30" {% if current_results == 30 %}selected{% endif %}>30 jobs</option>
+                        <option value="50" {% if current_results == 50 %}selected{% endif %}>50 jobs</option>
+                    </select>
+                    
+                    <button type="submit">
+                        <i class="fas fa-search"></i> Search External Jobs
+                    </button>
+                    <a href="{% url 'external_jobs' %}" class="clear-btn">Clear Filters</a>
+                </form>
+
+                <div style="margin-top: 30px; padding: 15px; background-color: #f8f9fa; border-radius: var(--border-radius); border-left: 4px solid var(--external-color);">
+                    <h4 style="color: var(--external-color); margin-bottom: 10px;">
+                        <i class="fas fa-info-circle"></i> About External Jobs
+                    </h4>
+                    <p style="font-size: 13px; color: #666; line-height: 1.4;">
+                        These jobs are sourced from Adzuna's job database and will redirect you to the original job posting when you apply.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="content-area">
+                <div class="content-header">
+                    <h2>External Job Opportunities</h2>
+                </div>
+
+                {% if loading %}
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p>Fetching latest job opportunities...</p>
+                </div>
+                {% elif error %}
+                <div class="error-state">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
+                    <h3>Unable to Load External Jobs</h3>
+                    <p>{{ error }}</p>
+                    <a href="{% url 'external_jobs' %}" class="external-apply-btn" style="margin-top: 20px; display: inline-flex;">
+                        <i class="fas fa-refresh"></i> Try Again
+                    </a>
+                </div>
+                {% elif jobs %}
+                <div class="jobs-list">
+                    {% for job in jobs %}
+                    <div class="job-card">
+                        <div class="job-header">
+                            <div class="job-title-info">
+                                <h3 class="job-title">{{ job.title }}</h3>
+                                <p class="job-company">
+                                    {% if job.company.display_name %}
+                                        {{ job.company.display_name }}
+                                    {% else %}
+                                        Company Not Specified
+                                    {% endif %}
+                                </p>
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="job-body">
+                            <div class="job-details">
+                                <div class="job-detail-group">
+                                    <span class="job-detail-label">Location:</span>
+                                    <span class="job-detail-value">
+                                        <i class="fas fa-map-marker-alt"></i> 
+                                        {% if job.location.display_name %}
+                                            {{ job.location.display_name }}
+                                        {% else %}
+                                            Location not specified
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                
+                                {% if job.salary_min or job.salary_max %}
+                                <div class="job-detail-group">
+                                    <span class="job-detail-label">Salary:</span>
+                                    <span class="job-detail-value">
+                                        <i class="fas fa-rupee-sign"></i>
+                                        {% if job.salary_min and job.salary_max %}
+                                            {{ job.salary_min|floatformat:0 }} - {{ job.salary_max|floatformat:0 }}
+                                        {% elif job.salary_min %}
+                                            From {{ job.salary_min|floatformat:0 }}
+                                        {% elif job.salary_max %}
+                                            Up to {{ job.salary_max|floatformat:0 }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                {% endif %}
+                                
+                                {% if job.contract_type %}
+                                <div class="job-detail-group">
+                                    <span class="job-detail-label">Job Type:</span>
+                                    <span class="job-detail-value">
+                                        <i class="fas fa-briefcase"></i> {{ job.contract_type|title }}
+                                    </span>
+                                </div>
+                                {% endif %}
+                                
+                                {% if job.category %}
+                                <div class="job-detail-group">
+                                    <span class="job-detail-label">Category:</span>
+                                    <span class="job-detail-value">
+                                        <i class="fas fa-tags"></i> {{ job.category.label|default:job.category.tag }}
+                                    </span>
+                                </div>
+                                {% endif %}
+                                
+                                {% if job.description %}
+                                <div class="job-description">
+                                    <span class="job-detail-label">Description:</span>
+                                    <p>{{ job.description|truncatewords:40|safe }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="job-actions">
+                            <a href="{{ job.redirect_url }}" target="_blank" class="external-apply-btn">
+                                <i class="fas fa-external-link-alt"></i>
+                                View & Apply on {{ job.company.display_name|default:"External Site" }}
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {% if jobs|length >= 10 %}
+                <div style="text-align: center; margin-top: 30px;">
+                    <p style="color: #666; margin-bottom: 15px;">
+                        Showing {{ jobs|length }} external job opportunities. 
+                        Try different search terms or increase results per page for more jobs.
+                    </p>
+                </div>
+                {% endif %}
+                
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-search" style="font-size: 48px; color: #ccc; margin-bottom: 20px;"></i>
+                    <p>No external jobs found for your search criteria.</p>
+                    <p style="font-size: 14px; color: #999; margin-top: 10px;">
+                        Try different keywords or locations to find more opportunities.
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Career Edge. All rights reserved. External jobs powered by Adzuna.</p>
+    </footer>
+    
+    <script>
+        // Auto-hide messages after 5 seconds
+        setTimeout(function() {
+            const messages = document.querySelectorAll('.message-box');
+            messages.forEach(function(element) {
+                element.style.opacity = '0';
+                element.style.transition = 'opacity 1s ease';
+                setTimeout(() => element.remove(), 1000);
+            });
+        }, 5000);
+
+        // Add loading state when form is submitted
+        document.querySelector('.filter-form').addEventListener('submit', function() {
+            const button = this.querySelector('button[type="submit"]');
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching...';
+            button.disabled = true;
+        });
+    </script>
+</body>
+</html>

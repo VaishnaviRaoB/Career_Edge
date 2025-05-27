@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.validators import MinLengthValidator, RegexValidator
+from django.core.exceptions import ValidationError
+import re
 
 class UserProfile(models.Model):
     USER_ROLES = (
@@ -74,7 +76,35 @@ class Job(models.Model):
         return self.jobapplication_set.count()
     def __str__(self):
         return self.title
-
+def validate_phone_number(value):
+    """Custom validator for phone numbers"""
+    if not value:
+        return  # Allow empty if field is not required
+    
+    # Remove common separators and spaces
+    phone_clean = re.sub(r'[\s\-\(\)\.]', '', value.strip())
+    
+    # Check if it starts with + (international format)
+    if phone_clean.startswith('+'):
+        digits_part = phone_clean[1:]
+        
+        if not digits_part.isdigit():
+            raise ValidationError("Phone number can only contain digits after country code (+).")
+        
+        if len(digits_part) < 10:
+            raise ValidationError("International phone number must have at least 10 digits after country code.")
+        elif len(digits_part) > 15:
+            raise ValidationError("Phone number cannot exceed 15 digits.")
+    else:
+        # Domestic format
+        if not phone_clean.isdigit():
+            raise ValidationError("Phone number can only contain digits (and optional + for country code).")
+        
+        if len(phone_clean) < 10:
+            raise ValidationError("Phone number must be at least 10 digits long.")
+        elif len(phone_clean) > 15:
+            raise ValidationError("Phone number cannot exceed 15 digits.")
+        
 class JobApplication(models.Model):
     STATUS_CHOICES = [
         ('shortlisted', 'Shortlisted'),
@@ -82,20 +112,18 @@ class JobApplication(models.Model):
         ('interview', 'Interview Scheduled'),
         ('pending', 'Pending'),
     ]
+    
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     applicant = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     skills = models.CharField(max_length=255)
     qualifications = models.CharField(max_length=255, blank=True)
-    email = models.EmailField(max_length=255,  default="")  # Add email field
+    email = models.EmailField(max_length=255, default="")
     phone = models.CharField(
-        max_length=10,
-        validators=[
-            MinLengthValidator(10, message="Phone number must be at least 10 digits."),
-            RegexValidator(r'^\+?\d{10,20}$', message="Enter a valid phone number.")
-        ],
-        blank=True,
-        default=""
+        max_length=20,  # Increased to accommodate international formats with formatting
+        validators=[validate_phone_number],  # Using custom validator
+        blank=False,  # Made required
+        help_text="Enter phone number (10-15 digits, optional country code with +)"
     )
     resume = models.FileField(upload_to='resumes/')
     created_at = models.DateTimeField(default=timezone.now)
@@ -106,12 +134,12 @@ class JobApplication(models.Model):
     
     def save(self, *args, **kwargs):
         if self.pk is not None:
-          try:
-            old_instance = JobApplication.objects.get(pk=self.pk)
-            if old_instance.status != self.status:
-                self.is_seen_by_seeker = False
-          except JobApplication.DoesNotExist:
-            pass
+            try:
+                old_instance = JobApplication.objects.get(pk=self.pk)
+                if old_instance.status != self.status:
+                    self.is_seen_by_seeker = False
+            except JobApplication.DoesNotExist:
+                pass
         super().save(*args, **kwargs)
         
     def __str__(self):

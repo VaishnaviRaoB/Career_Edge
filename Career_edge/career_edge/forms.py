@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from .models import Job, JobApplication, UserProfile, JobProvider, JobSeeker, JobCustomQuestion, JobApplication, JobApplicationAnswer
 from django import forms
 from .models import Job
+from django.core.validators import MinLengthValidator, RegexValidator
+from django.core.exceptions import ValidationError
+import re
 from django.forms import inlineformset_factory
 class JobForm(forms.ModelForm):
     class Meta:
@@ -120,9 +123,58 @@ class ProviderRegistrationForm(forms.ModelForm):
         return user
 
 class JobApplicationForm(forms.ModelForm):
+    phone = forms.CharField(
+        max_length=15,
+        required=True,  # Made required since it's important contact info
+        help_text="Enter a valid phone number (10-15 digits, with optional country code)",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'e.g., +1234567890 or 1234567890',
+            'class': 'form-control',
+            'pattern': r'^\+?[1-9]\d{9,14}$',  # Updated pattern
+            'title': 'Phone number must be 10-15 digits long'
+        })
+    )
+    
     class Meta:
         model = JobApplication
-        fields = ['skills', 'qualifications', 'resume']
+        fields = ['name', 'email', 'phone', 'skills', 'qualifications', 'resume', 'experience']
+    
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone', '').strip()
+        
+        if not phone:
+            raise ValidationError("Phone number is required.")
+        
+        # Remove common separators and spaces
+        phone_clean = re.sub(r'[\s\-\(\)\.]', '', phone)
+        
+        # Check if it starts with + (country code)
+        if phone_clean.startswith('+'):
+            # Remove the + for digit counting
+            digits_part = phone_clean[1:]
+            
+            # Must contain only digits after +
+            if not digits_part.isdigit():
+                raise ValidationError("Phone number can only contain digits after country code (+).")
+            
+            # International format: minimum 10 digits (without country code), maximum 15
+            if len(digits_part) < 10:
+                raise ValidationError("Phone number must have at least 10 digits after country code.")
+            elif len(digits_part) > 15:
+                raise ValidationError("Phone number cannot exceed 15 digits.")
+                
+        else:
+            # Domestic format - must be all digits
+            if not phone_clean.isdigit():
+                raise ValidationError("Phone number can only contain digits (and optional + for country code).")
+            
+            # Must be between 10-15 digits for domestic numbers
+            if len(phone_clean) < 10:
+                raise ValidationError("Phone number must be at least 10 digits long.")
+            elif len(phone_clean) > 15:
+                raise ValidationError("Phone number cannot exceed 15 digits.")
+        
+        return phone_clean
 
 class EditCompanyProfileForm(forms.ModelForm):
     class Meta:

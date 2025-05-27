@@ -12,6 +12,7 @@
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
             --accent-color: #1abc9c;
+            --error-color: #e74c3c;
             --light-bg: #f5f7fa;
             --dark-text: #333;
             --light-text: #fff;
@@ -184,6 +185,11 @@
             outline: none;
         }
 
+        .form-row input.error {
+            border-color: var(--error-color);
+            background-color: #fdf2f2;
+        }
+
         .form-row input[type="file"] {
             padding: 10px;
             background-color: #f9f9f9;
@@ -193,6 +199,17 @@
             margin-top: 5px;
             font-size: 14px;
             color: #666;
+        }
+
+        .error-message {
+            margin-top: 5px;
+            font-size: 14px;
+            color: var(--error-color);
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
         }
 
         .form-grid {
@@ -227,6 +244,11 @@
 
         .submit-btn:hover {
             background-color: #16a085;
+        }
+
+        .submit-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
         }
 
         .cancel-btn {
@@ -340,7 +362,7 @@
             </div>
 
             <div class="application-content">
-                <form method="POST" enctype="multipart/form-data">
+                <form method="POST" enctype="multipart/form-data" id="applicationForm">
                     {% csrf_token %}
                     
                     <div class="form-section">
@@ -356,7 +378,9 @@
                             </div>
                             <div class="form-row">
                                 <label for="phone">Phone Number</label>
-                                <input type="tel" id="phone" name="phone" required placeholder="Enter your phone number">
+                                <input type="tel" id="phone" name="phone" required placeholder="Enter your phone number" minlength="10" maxlength="15">
+                                
+                                <p class="error-message" id="phoneError">Please enter a valid phone number with a 10 digits</p>
                             </div>
                         </div>
                     </div>
@@ -435,7 +459,7 @@
                     {% endif %}
                     
                     <div class="form-actions">
-                        <button type="submit" class="submit-btn">
+                        <button type="submit" class="submit-btn" id="submitBtn">
                             <i class="fas fa-paper-plane"></i> Submit Application
                         </button>
                         <a href="{% url 'job_details' job.id %}" class="cancel-btn">
@@ -450,5 +474,85 @@
     <footer>
         <p>&copy; 2025 Career Edge. All rights reserved.</p>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const phoneInput = document.getElementById('phone');
+            const phoneError = document.getElementById('phoneError');
+            const submitBtn = document.getElementById('submitBtn');
+            const form = document.getElementById('applicationForm');
+
+            // Phone number validation function
+            function validatePhoneNumber(phone) {
+                // Remove all non-digit characters
+                const cleanPhone = phone.replace(/\D/g, '');
+                
+                // Check if phone number has at least 7 digits and at most 15 digits
+                return cleanPhone.length >= 10 && cleanPhone.length <= 10;
+            }
+
+            // Real-time phone validation
+            phoneInput.addEventListener('input', function() {
+                const phoneValue = this.value.trim();
+                
+                if (phoneValue === '') {
+                    // Empty field - remove error styling
+                    this.classList.remove('error');
+                    phoneError.classList.remove('show');
+                } else if (!validatePhoneNumber(phoneValue)) {
+                    // Invalid phone number
+                    this.classList.add('error');
+                    phoneError.classList.add('show');
+                } else {
+                    // Valid phone number
+                    this.classList.remove('error');
+                    phoneError.classList.remove('show');
+                }
+            });
+
+            // Form submission validation
+            form.addEventListener('submit', function(e) {
+                const phoneValue = phoneInput.value.trim();
+                
+                // Check if phone number is valid
+                if (!validatePhoneNumber(phoneValue)) {
+                    e.preventDefault(); // Prevent form submission
+                    
+                    // Show error
+                    phoneInput.classList.add('error');
+                    phoneError.classList.add('show');
+                    
+                    // Focus on the phone input
+                    phoneInput.focus();
+                    
+                    // Scroll to the phone field
+                    phoneInput.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                    
+                    return false;
+                }
+                
+                // Additional validation for other fields can be added here
+                return true;
+            });
+
+            // Format phone number as user types (optional enhancement)
+            phoneInput.addEventListener('input', function() {
+                // Remove all non-digit characters except + at the beginning
+                let value = this.value;
+                
+                // Allow + at the beginning for international numbers
+                if (value.startsWith('+')) {
+                    value = '+' + value.substring(1).replace(/\D/g, '');
+                } else {
+                    value = value.replace(/\D/g, '');
+                }
+                
+                this.value = value;
+            });
+        });
+    </script>
 </body>
 </html>

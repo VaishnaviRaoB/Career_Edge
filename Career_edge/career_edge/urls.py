@@ -39,6 +39,7 @@ urlpatterns = [
     path('provider/delete-account/', views.provider_delete_account, name='provider_delete_account'),
     path('bulk-update-applications/', views.bulk_update_applications, name='bulk_update_applications'),
     path('delete-application/<int:application_id>/', views.delete_application, name='delete_application'),
+    path('external-jobs/', views.external_jobs_view, name='external_jobs'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
